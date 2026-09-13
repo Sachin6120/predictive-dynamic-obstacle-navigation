@@ -1,22 +1,35 @@
 // lidar_obstacle_tracker_node.cpp
 //
-// Stage-4B pipeline:
+// Stage-4B pipeline (unchanged):
 //   /scan -> valid points -> transform to map frame -> reject points that
 //   coincide with known-occupied static map cells -> cluster remaining
 //   points -> gated nearest-neighbour association against existing tracks
-//   -> velocity from short position history -> publish TrackedObjectArray
-//   + RViz MarkerArray.
+//   -> publish TrackedObjectArray + RViz MarkerArray.
 //
-// Deliberately no Kalman filter / prediction model beyond simple constant-
-// velocity extrapolation for the association gate. That is Stage-4C.
+// Stage-4C additions:
+//   - a per-track constant-velocity Kalman filter (see kalman_filter.hpp)
+//     that becomes the published velocity/position source once a track has
+//     enough observations for a real velocity estimate; the Stage-4B raw
+//     finite-difference velocity remains available on every track for
+//     RAW vs KALMAN evaluation.
+//   - future trajectory prediction (0..prediction_horizon_) with covariance,
+//     computed by peeking the filter forward without mutating live state.
+//   - RViz markers for the raw measurement, filtered state, predicted path
+//     and per-sample uncertainty ellipses.
+//
+// Deliberately no JPDA/MHT, no prediction-aware replanning, no costmap
+// plugin: that is Stage-4D+.
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <deque>
 #include <memory>
 #include <optional>
 #include <unordered_set>
 #include <vector>
+
+#include <Eigen/Dense>
 
 #include "geometry_msgs/msg/point_stamped.hpp"
 #include "nav_msgs/msg/occupancy_grid.hpp"
@@ -30,8 +43,11 @@
 
 #include "predictive_nav_msgs/msg/tracked_object.hpp"
 #include "predictive_nav_msgs/msg/tracked_object_array.hpp"
+#include "predictive_nav_msgs/msg/tracked_object_prediction.hpp"
+#include "predictive_nav_tracking/kalman_filter.hpp"
 
 using std::placeholders::_1;
+using predictive_nav_tracking::ConstantVelocityKalmanFilter2D;
 
 namespace
 {
@@ -49,13 +65,37 @@ struct Observation
   double y{0.0};
 };
 
-struct Track
+// One future state sample produced by peeking a track's Kalman filter
+// forward; never derived from a mutated live filter.
+struct PredictionSample
 {
-  uint32_t id{0};
+  double time_from_now{0.0};
   double x{0.0};
   double y{0.0};
   double vx{0.0};
   double vy{0.0};
+  std::array<double, 4> position_covariance{{0.0, 0.0, 0.0, 0.0}};  // row-major [xx, xy, yx, yy]
+};
+
+struct Track
+{
+  uint32_t id{0};
+
+  // Kalman state x = [px, py, vx, vy] and covariance P, map frame.
+  Eigen::Vector4d kf_x{Eigen::Vector4d::Zero()};
+  Eigen::Matrix4d kf_P{Eigen::Matrix4d::Identity()};
+  // True once >= min_observations_for_kalman_velocity_ measurements have
+  // corrected the filter, i.e. the velocity estimate reflects real motion
+  // rather than the zero-velocity initialization prior.
+  bool kalman_initialized{false};
+
+  // Stage-4B raw finite-difference baseline (unchanged semantics): kept on
+  // every track so RAW vs KALMAN comparison remains possible.
+  double raw_x{0.0};
+  double raw_y{0.0};
+  double raw_vx{0.0};
+  double raw_vy{0.0};
+
   uint32_t age{0};
   uint32_t observations{0};
   uint32_t missed_count{0};
@@ -96,9 +136,13 @@ public:
     RCLCPP_INFO(
       get_logger(),
       "lidar_obstacle_tracker started: scan_topic=%s map_topic=%s static_reject_radius=%.2fm "
-      "cluster_distance=%.2fm association_gate=%.2fm track_timeout=%.2fs",
+      "cluster_distance=%.2fm association_gate=%.2fm track_timeout=%.2fs | kalman: "
+      "accel_noise=%.2fm/s^2 measurement_noise=%.3fm init_pos_var=%.3f init_vel_var=%.3f "
+      "prediction_horizon=%.1fs step=%.1fs (%zu samples)",
       scan_topic_.c_str(), map_topic_.c_str(), static_reject_radius_, cluster_distance_,
-      association_gate_, track_timeout_);
+      association_gate_, track_timeout_, kf_accel_noise_, kf_measurement_noise_,
+      kf_initial_position_variance_, kf_initial_velocity_variance_, prediction_horizon_,
+      prediction_time_step_, num_prediction_samples_);
   }
 
 private:
@@ -129,6 +173,42 @@ private:
     this->declare_parameter<bool>("publish_candidate_markers", true);
     this->declare_parameter<double>("velocity_marker_scale", 1.0);
     this->declare_parameter<double>("tf_lookup_timeout", 0.1);
+
+    // --- Stage-4C: constant-velocity Kalman filter -----------------------
+    // 1-sigma unmodeled-acceleration noise (m/s^2) driving Q(dt); see
+    // kalman_filter.hpp for the continuous white-noise-acceleration model.
+    // 0.5 m/s^2 is a generic slow-indoor-obstacle default (not tuned to the
+    // single recorded validation run): large enough that the filter
+    // re-converges within roughly one second of an abrupt bounce reversal,
+    // small enough to meaningfully smooth per-scan centroid noise on
+    // straight segments.
+    this->declare_parameter<double>("kf_process_accel_noise", 0.5);
+    // 1-sigma position measurement noise (m) driving R. The cluster
+    // centroid is an average over several LiDAR returns, so the per-scan
+    // random component is well under typical planar-LiDAR range noise
+    // (~1-3 cm/point); 0.05 m is a conservative round-number default.
+    // NOTE: this is measurement *noise*, not the ~0.149 m surface-vs-center
+    // bias documented for Stage-4B -- that bias is geometric and must not
+    // be compensated here.
+    this->declare_parameter<double>("kf_measurement_noise", 0.05);
+    this->declare_parameter<double>("kf_initial_position_variance", 0.01);
+    this->declare_parameter<double>("kf_initial_velocity_variance", 4.0);
+    this->declare_parameter<double>("kf_min_dt", 1.0e-3);
+    this->declare_parameter<double>("kf_max_dt", 1.0);
+    // A track's velocity estimate is treated as real (rather than the
+    // zero-velocity initialization prior) once this many measurements have
+    // corrected the filter -- mirrors Stage-4B's own requirement of >= 2
+    // history points before it trusts a finite-difference velocity.
+    this->declare_parameter<int>("min_observations_for_kalman_velocity", 2);
+
+    this->declare_parameter<double>("prediction_horizon", 3.0);
+    this->declare_parameter<double>("prediction_time_step", 0.5);
+    // Semi-axis scale factor for the uncertainty ellipse: semi-axis =
+    // sigma * sqrt(eigenvalue of the 2x2 position covariance). sigma=2.0
+    // encloses ~86% of probability mass for a 2D Gaussian
+    // (1 - exp(-sigma^2/2)); this is a mathematically-defined confidence
+    // region, not an arbitrary fixed-width corridor.
+    this->declare_parameter<double>("uncertainty_ellipse_sigma", 2.0);
   }
 
   void read_parameters()
@@ -157,10 +237,25 @@ private:
     publish_candidate_markers_ = this->get_parameter("publish_candidate_markers").as_bool();
     velocity_marker_scale_ = this->get_parameter("velocity_marker_scale").as_double();
     tf_lookup_timeout_ = this->get_parameter("tf_lookup_timeout").as_double();
+
+    kf_accel_noise_ = this->get_parameter("kf_process_accel_noise").as_double();
+    kf_measurement_noise_ = this->get_parameter("kf_measurement_noise").as_double();
+    kf_initial_position_variance_ = this->get_parameter("kf_initial_position_variance").as_double();
+    kf_initial_velocity_variance_ = this->get_parameter("kf_initial_velocity_variance").as_double();
+    kf_min_dt_ = this->get_parameter("kf_min_dt").as_double();
+    kf_max_dt_ = this->get_parameter("kf_max_dt").as_double();
+    min_observations_for_kalman_velocity_ = static_cast<uint32_t>(
+      this->get_parameter("min_observations_for_kalman_velocity").as_int());
+
+    prediction_horizon_ = this->get_parameter("prediction_horizon").as_double();
+    prediction_time_step_ = this->get_parameter("prediction_time_step").as_double();
+    uncertainty_ellipse_sigma_ = this->get_parameter("uncertainty_ellipse_sigma").as_double();
+    num_prediction_samples_ = (prediction_time_step_ > 1e-6) ?
+      static_cast<size_t>(std::lround(prediction_horizon_ / prediction_time_step_)) : 0;
   }
 
   // ---------------------------------------------------------------------
-  // Map handling
+  // Map handling (unchanged)
   // ---------------------------------------------------------------------
   void map_callback(const nav_msgs::msg::OccupancyGrid::SharedPtr msg)
   {
@@ -170,15 +265,9 @@ private:
       msg->info.height, msg->info.resolution);
   }
 
-  // True if (x, y) in map frame lies within static_reject_radius_ of a cell
-  // whose occupancy probability is >= occupied_threshold_ (i.e. it is
-  // consistent with known static geometry and should be rejected before
-  // clustering).
   bool is_static_point(double x, double y) const
   {
     if (!map_) {
-      // No map yet: fail safe by treating everything as static so we never
-      // spawn false tracks before the environment reference is available.
       return true;
     }
 
@@ -221,7 +310,7 @@ private:
   }
 
   // ---------------------------------------------------------------------
-  // Scan processing
+  // Scan processing (unchanged)
   // ---------------------------------------------------------------------
   void scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg)
   {
@@ -284,8 +373,6 @@ private:
     return dynamic_points;
   }
 
-  // Simple O(n^2) single-link clustering: adequate for a handful of
-  // non-static returns per scan cleared out of an otherwise static scene.
   std::vector<Point2D> cluster_points(const std::vector<Point2D> & points) const
   {
     std::vector<Point2D> centroids;
@@ -299,7 +386,6 @@ private:
       std::vector<size_t> cluster_indices{seed};
       visited[seed] = true;
 
-      // Grow the cluster with a simple frontier expansion.
       for (size_t idx = 0; idx < cluster_indices.size(); ++idx) {
         const size_t current = cluster_indices[idx];
         for (size_t j = 0; j < n; ++j) {
@@ -350,16 +436,27 @@ private:
   // ---------------------------------------------------------------------
   // Association / track maintenance
   // ---------------------------------------------------------------------
+  double clamp_dt(double dt) const
+  {
+    return std::clamp(dt, kf_min_dt_, kf_max_dt_);
+  }
+
   void associate_and_update(const std::vector<Point2D> & centroids, const rclcpp::Time & stamp)
   {
     const size_t n_tracks = tracks_.size();
     const size_t n_dets = centroids.size();
 
+    // Gating uses the Kalman-predicted position (F(dt) * x), not a manual
+    // vx*dt formula -- for an established track this is the filtered
+    // velocity; for a brand-new track (v=0) it is identical to Stage-4B's
+    // "no-motion" prediction.
     std::vector<Point2D> predicted(n_tracks);
     for (size_t t = 0; t < n_tracks; ++t) {
-      const double dt = (stamp - tracks_[t].last_update).seconds();
-      predicted[t].x = tracks_[t].x + tracks_[t].vx * dt;
-      predicted[t].y = tracks_[t].y + tracks_[t].vy * dt;
+      const double dt = clamp_dt((stamp - tracks_[t].last_update).seconds());
+      const Eigen::Vector4d predicted_state =
+        ConstantVelocityKalmanFilter2D::stateTransition(dt) * tracks_[t].kf_x;
+      predicted[t].x = predicted_state(0);
+      predicted[t].y = predicted_state(1);
     }
 
     struct Candidate
@@ -412,10 +509,20 @@ private:
   {
     Track track;
     track.id = id;
-    track.x = det.x;
-    track.y = det.y;
-    track.vx = 0.0;
-    track.vy = 0.0;
+
+    track.kf_x << det.x, det.y, 0.0, 0.0;
+    track.kf_P.setZero();
+    track.kf_P(0, 0) = kf_initial_position_variance_;
+    track.kf_P(1, 1) = kf_initial_position_variance_;
+    track.kf_P(2, 2) = kf_initial_velocity_variance_;
+    track.kf_P(3, 3) = kf_initial_velocity_variance_;
+    track.kalman_initialized = false;
+
+    track.raw_x = det.x;
+    track.raw_y = det.y;
+    track.raw_vx = 0.0;
+    track.raw_vy = 0.0;
+
     track.age = 1;
     track.observations = 1;
     track.missed_count = 0;
@@ -426,27 +533,52 @@ private:
 
   void update_track(Track & track, const Point2D & det, const rclcpp::Time & stamp)
   {
+    // --- Stage-4B raw finite-difference baseline (unchanged) --------------
     track.history.push_back({stamp, det.x, det.y});
     while (track.history.size() > velocity_history_size_) {
       track.history.pop_front();
     }
-
     if (track.history.size() >= 2) {
       const auto & oldest = track.history.front();
       const auto & newest = track.history.back();
-      const double dt = (newest.stamp - oldest.stamp).seconds();
-      if (dt > 1e-3) {
-        track.vx = (newest.x - oldest.x) / dt;
-        track.vy = (newest.y - oldest.y) / dt;
+      const double raw_dt = (newest.stamp - oldest.stamp).seconds();
+      if (raw_dt > 1e-3) {
+        track.raw_vx = (newest.x - oldest.x) / raw_dt;
+        track.raw_vy = (newest.y - oldest.y) / raw_dt;
       }
     }
+    track.raw_x = det.x;
+    track.raw_y = det.y;
 
-    track.x = det.x;
-    track.y = det.y;
+    // --- Stage-4C Kalman predict + update ---------------------------------
+    const double dt = clamp_dt((stamp - track.last_update).seconds());
+    const Eigen::Matrix4d F = ConstantVelocityKalmanFilter2D::stateTransition(dt);
+    track.kf_x = F * track.kf_x;
+    track.kf_P = F * track.kf_P * F.transpose() +
+      ConstantVelocityKalmanFilter2D::processNoise(dt, kf_accel_noise_);
+
+    Eigen::Matrix<double, 2, 4> H = Eigen::Matrix<double, 2, 4>::Zero();
+    H(0, 0) = 1.0;
+    H(1, 1) = 1.0;
+    const Eigen::Matrix2d R =
+      Eigen::Matrix2d::Identity() * (kf_measurement_noise_ * kf_measurement_noise_);
+
+    const Eigen::Vector2d z(det.x, det.y);
+    const Eigen::Vector2d y = z - H * track.kf_x;
+    const Eigen::Matrix2d S = H * track.kf_P * H.transpose() + R;
+    const Eigen::Matrix<double, 4, 2> K = track.kf_P * H.transpose() * S.inverse();
+
+    track.kf_x = track.kf_x + K * y;
+    track.kf_P = (Eigen::Matrix4d::Identity() - K * H) * track.kf_P;
+
     track.age += 1;
     track.observations += 1;
     track.missed_count = 0;
     track.last_update = stamp;
+
+    if (track.observations >= min_observations_for_kalman_velocity_) {
+      track.kalman_initialized = true;
+    }
   }
 
   void prune_stale_tracks(const rclcpp::Time & stamp)
@@ -459,6 +591,38 @@ private:
           return t.missed_count > max_missed_scans_ || since_update > track_timeout_;
         }),
       tracks_.end());
+  }
+
+  // ---------------------------------------------------------------------
+  // Future trajectory prediction (Stage-4C)
+  // ---------------------------------------------------------------------
+  // Peeks the track's filter forward to t + i*prediction_time_step_ for
+  // i = 1..num_prediction_samples_, independently from the live (kf_x,
+  // kf_P) each time -- the live state is never modified.
+  std::vector<PredictionSample> predict_future(const Track & track) const
+  {
+    std::vector<PredictionSample> samples;
+    if (!track.kalman_initialized || num_prediction_samples_ == 0) {
+      return samples;
+    }
+    samples.reserve(num_prediction_samples_);
+    for (size_t i = 1; i <= num_prediction_samples_; ++i) {
+      const double dt = static_cast<double>(i) * prediction_time_step_;
+      const Eigen::Matrix4d F = ConstantVelocityKalmanFilter2D::stateTransition(dt);
+      const Eigen::Vector4d xp = F * track.kf_x;
+      const Eigen::Matrix4d Pp = F * track.kf_P * F.transpose() +
+        ConstantVelocityKalmanFilter2D::processNoise(dt, kf_accel_noise_);
+
+      PredictionSample s;
+      s.time_from_now = dt;
+      s.x = xp(0);
+      s.y = xp(1);
+      s.vx = xp(2);
+      s.vy = xp(3);
+      s.position_covariance = {Pp(0, 0), Pp(0, 1), Pp(1, 0), Pp(1, 1)};
+      samples.push_back(s);
+    }
+    return samples;
   }
 
   // ---------------------------------------------------------------------
@@ -476,20 +640,80 @@ private:
       }
       predictive_nav_msgs::msg::TrackedObject obj;
       obj.id = t.id;
-      obj.position.x = t.x;
-      obj.position.y = t.y;
+
+      const double pub_vx = t.kalman_initialized ? t.kf_x(2) : t.raw_vx;
+      const double pub_vy = t.kalman_initialized ? t.kf_x(3) : t.raw_vy;
+
+      obj.position.x = t.kf_x(0);
+      obj.position.y = t.kf_x(1);
       obj.position.z = 0.0;
-      obj.velocity.x = t.vx;
-      obj.velocity.y = t.vy;
+      obj.velocity.x = pub_vx;
+      obj.velocity.y = pub_vy;
       obj.velocity.z = 0.0;
-      obj.speed = std::hypot(t.vx, t.vy);
+      obj.speed = std::hypot(pub_vx, pub_vy);
+
+      obj.raw_position.x = t.raw_x;
+      obj.raw_position.y = t.raw_y;
+      obj.raw_position.z = 0.0;
+      obj.raw_velocity.x = t.raw_vx;
+      obj.raw_velocity.y = t.raw_vy;
+      obj.raw_velocity.z = 0.0;
+
+      obj.kalman_initialized = t.kalman_initialized;
+      for (int r = 0; r < 4; ++r) {
+        for (int c = 0; c < 4; ++c) {
+          obj.covariance[static_cast<size_t>(r * 4 + c)] = t.kf_P(r, c);
+        }
+      }
+
       obj.age = t.age;
       obj.observations = t.observations;
       obj.missed_count = t.missed_count;
       obj.stamp = t.last_update;
+
+      for (const auto & s : predict_future(t)) {
+        predictive_nav_msgs::msg::TrackedObjectPrediction pred;
+        pred.time_from_now = s.time_from_now;
+        pred.stamp = t.last_update + rclcpp::Duration::from_seconds(s.time_from_now);
+        pred.position.x = s.x;
+        pred.position.y = s.y;
+        pred.position.z = 0.0;
+        pred.velocity.x = s.vx;
+        pred.velocity.y = s.vy;
+        pred.velocity.z = 0.0;
+        pred.position_covariance = s.position_covariance;
+        obj.predictions.push_back(pred);
+      }
+
       array_msg.tracks.push_back(obj);
     }
     tracks_pub_->publish(array_msg);
+  }
+
+  // Fills scale.x/y and orientation.z/w of `marker` with the sigma-scaled
+  // 2D uncertainty ellipse of covariance block [[cxx, cxy], [cxy, cyy]].
+  // Eigen-decomposition of the symmetric 2x2 block gives the ellipse's
+  // principal axes directly -- this is a mathematically correct
+  // representation of growing positional uncertainty, not a fixed-width
+  // corridor.
+  void fill_ellipse_from_covariance(
+    visualization_msgs::msg::Marker & marker, double cxx, double cxy, double cyy) const
+  {
+    Eigen::Matrix2d cov;
+    cov << cxx, cxy, cxy, cyy;
+    const Eigen::SelfAdjointEigenSolver<Eigen::Matrix2d> solver(cov);
+    Eigen::Vector2d eigenvalues = solver.eigenvalues().cwiseMax(0.0);
+    const Eigen::Matrix2d eigenvectors = solver.eigenvectors();
+
+    const double semi_major = uncertainty_ellipse_sigma_ * std::sqrt(eigenvalues(1));
+    const double semi_minor = uncertainty_ellipse_sigma_ * std::sqrt(eigenvalues(0));
+    const double angle = std::atan2(eigenvectors(1, 1), eigenvectors(0, 1));
+
+    marker.scale.x = std::max(2.0 * semi_major, 0.02);
+    marker.scale.y = std::max(2.0 * semi_minor, 0.02);
+    marker.scale.z = 0.01;
+    marker.pose.orientation.z = std::sin(angle / 2.0);
+    marker.pose.orientation.w = std::cos(angle / 2.0);
   }
 
   void publish_markers(const rclcpp::Time & stamp, const std::vector<Point2D> & all_centroids)
@@ -503,35 +727,61 @@ private:
       }
       current_ids.insert(t.id);
 
-      visualization_msgs::msg::Marker centroid;
-      centroid.header.frame_id = map_frame_;
-      centroid.header.stamp = stamp;
-      centroid.ns = "centroid";
-      centroid.id = static_cast<int>(t.id);
-      centroid.type = visualization_msgs::msg::Marker::SPHERE;
-      centroid.action = visualization_msgs::msg::Marker::ADD;
-      centroid.pose.position.x = t.x;
-      centroid.pose.position.y = t.y;
-      centroid.pose.position.z = 0.15;
-      centroid.pose.orientation.w = 1.0;
-      centroid.scale.x = 0.3;
-      centroid.scale.y = 0.3;
-      centroid.scale.z = 0.3;
-      centroid.color.r = 1.0f;
-      centroid.color.g = 0.1f;
-      centroid.color.b = 0.1f;
-      centroid.color.a = 0.9f;
-      centroid.lifetime = rclcpp::Duration::from_seconds(0.5);
-      marker_array.markers.push_back(centroid);
+      const double pub_vx = t.kalman_initialized ? t.kf_x(2) : t.raw_vx;
+      const double pub_vy = t.kalman_initialized ? t.kf_x(3) : t.raw_vy;
+
+      // Raw measurement (this scan's associated cluster centroid, unfiltered).
+      visualization_msgs::msg::Marker measurement;
+      measurement.header.frame_id = map_frame_;
+      measurement.header.stamp = stamp;
+      measurement.ns = "measurement";
+      measurement.id = static_cast<int>(t.id);
+      measurement.type = visualization_msgs::msg::Marker::SPHERE;
+      measurement.action = visualization_msgs::msg::Marker::ADD;
+      measurement.pose.position.x = t.raw_x;
+      measurement.pose.position.y = t.raw_y;
+      measurement.pose.position.z = 0.10;
+      measurement.pose.orientation.w = 1.0;
+      measurement.scale.x = 0.15;
+      measurement.scale.y = 0.15;
+      measurement.scale.z = 0.15;
+      measurement.color.r = 1.0f;
+      measurement.color.g = 1.0f;
+      measurement.color.b = 1.0f;
+      measurement.color.a = 0.9f;
+      measurement.lifetime = rclcpp::Duration::from_seconds(0.5);
+      marker_array.markers.push_back(measurement);
+
+      // Filtered current position.
+      visualization_msgs::msg::Marker filtered;
+      filtered.header.frame_id = map_frame_;
+      filtered.header.stamp = stamp;
+      filtered.ns = "filtered_position";
+      filtered.id = static_cast<int>(t.id);
+      filtered.type = visualization_msgs::msg::Marker::SPHERE;
+      filtered.action = visualization_msgs::msg::Marker::ADD;
+      filtered.pose.position.x = t.kf_x(0);
+      filtered.pose.position.y = t.kf_x(1);
+      filtered.pose.position.z = 0.15;
+      filtered.pose.orientation.w = 1.0;
+      filtered.scale.x = 0.3;
+      filtered.scale.y = 0.3;
+      filtered.scale.z = 0.3;
+      filtered.color.r = 1.0f;
+      filtered.color.g = 0.1f;
+      filtered.color.b = 0.1f;
+      filtered.color.a = 0.9f;
+      filtered.lifetime = rclcpp::Duration::from_seconds(0.5);
+      marker_array.markers.push_back(filtered);
 
       visualization_msgs::msg::Marker label;
-      label.header = centroid.header;
+      label.header = filtered.header;
       label.ns = "label";
       label.id = static_cast<int>(t.id);
       label.type = visualization_msgs::msg::Marker::TEXT_VIEW_FACING;
       label.action = visualization_msgs::msg::Marker::ADD;
-      label.pose.position.x = t.x;
-      label.pose.position.y = t.y;
+      label.pose.position.x = t.kf_x(0);
+      label.pose.position.y = t.kf_x(1);
       label.pose.position.z = 0.6;
       label.pose.orientation.w = 1.0;
       label.scale.z = 0.25;
@@ -539,14 +789,17 @@ private:
       label.color.g = 1.0f;
       label.color.b = 1.0f;
       label.color.a = 1.0f;
-      char text[64];
-      std::snprintf(text, sizeof(text), "ID %u  %.2f m/s", t.id, std::hypot(t.vx, t.vy));
+      char text[96];
+      std::snprintf(
+        text, sizeof(text), "ID %u  %.2f m/s%s", t.id, std::hypot(pub_vx, pub_vy),
+        t.kalman_initialized ? " (KF)" : " (raw)");
       label.text = text;
       label.lifetime = rclcpp::Duration::from_seconds(0.5);
       marker_array.markers.push_back(label);
 
+      // Filtered velocity vector.
       visualization_msgs::msg::Marker velocity;
-      velocity.header = centroid.header;
+      velocity.header = filtered.header;
       velocity.ns = "velocity";
       velocity.id = static_cast<int>(t.id);
       velocity.type = visualization_msgs::msg::Marker::ARROW;
@@ -559,21 +812,22 @@ private:
       velocity.color.b = 1.0f;
       velocity.color.a = 0.9f;
       geometry_msgs::msg::Point start;
-      start.x = t.x;
-      start.y = t.y;
+      start.x = t.kf_x(0);
+      start.y = t.kf_x(1);
       start.z = 0.15;
       geometry_msgs::msg::Point end;
-      end.x = t.x + t.vx * velocity_marker_scale_;
-      end.y = t.y + t.vy * velocity_marker_scale_;
+      end.x = t.kf_x(0) + pub_vx * velocity_marker_scale_;
+      end.y = t.kf_x(1) + pub_vy * velocity_marker_scale_;
       end.z = 0.15;
       velocity.points.push_back(start);
       velocity.points.push_back(end);
       velocity.lifetime = rclcpp::Duration::from_seconds(0.5);
       marker_array.markers.push_back(velocity);
 
+      // Recent raw-measurement trail (shows measurement noise the filter smooths out).
       if (t.history.size() >= 2) {
         visualization_msgs::msg::Marker trail;
-        trail.header = centroid.header;
+        trail.header = filtered.header;
         trail.ns = "trail";
         trail.id = static_cast<int>(t.id);
         trail.type = visualization_msgs::msg::Marker::LINE_STRIP;
@@ -593,6 +847,57 @@ private:
         trail.lifetime = rclcpp::Duration::from_seconds(0.5);
         marker_array.markers.push_back(trail);
       }
+
+      // Future trajectory prediction + growing uncertainty ellipses.
+      const auto predictions = predict_future(t);
+      if (!predictions.empty()) {
+        visualization_msgs::msg::Marker path;
+        path.header = filtered.header;
+        path.ns = "prediction_path";
+        path.id = static_cast<int>(t.id);
+        path.type = visualization_msgs::msg::Marker::LINE_STRIP;
+        path.action = visualization_msgs::msg::Marker::ADD;
+        path.scale.x = 0.03;
+        path.color.r = 0.65f;
+        path.color.g = 0.2f;
+        path.color.b = 0.85f;
+        path.color.a = 0.9f;
+        geometry_msgs::msg::Point current_pt;
+        current_pt.x = t.kf_x(0);
+        current_pt.y = t.kf_x(1);
+        current_pt.z = 0.15;
+        path.points.push_back(current_pt);
+        path.lifetime = rclcpp::Duration::from_seconds(0.5);
+
+        for (size_t i = 0; i < predictions.size(); ++i) {
+          const auto & s = predictions[i];
+          geometry_msgs::msg::Point p;
+          p.x = s.x;
+          p.y = s.y;
+          p.z = 0.15;
+          path.points.push_back(p);
+
+          visualization_msgs::msg::Marker ellipse;
+          ellipse.header = filtered.header;
+          ellipse.ns = "prediction_uncertainty";
+          ellipse.id = static_cast<int>(t.id) * kPredictionMarkerIdStride + static_cast<int>(i);
+          ellipse.type = visualization_msgs::msg::Marker::CYLINDER;
+          ellipse.action = visualization_msgs::msg::Marker::ADD;
+          ellipse.pose.position.x = s.x;
+          ellipse.pose.position.y = s.y;
+          ellipse.pose.position.z = 0.05;
+          fill_ellipse_from_covariance(
+            ellipse, s.position_covariance[0], s.position_covariance[1],
+            s.position_covariance[3]);
+          ellipse.color.r = 0.65f;
+          ellipse.color.g = 0.2f;
+          ellipse.color.b = 0.85f;
+          ellipse.color.a = 0.25f;
+          ellipse.lifetime = rclcpp::Duration::from_seconds(0.5);
+          marker_array.markers.push_back(ellipse);
+        }
+        marker_array.markers.push_back(path);
+      }
     }
 
     // Delete markers for tracks that no longer exist / are no longer confirmed.
@@ -600,12 +905,23 @@ private:
       if (current_ids.count(prev_id)) {
         continue;
       }
-      for (const char * ns : {"centroid", "label", "velocity", "trail"}) {
+      for (const char * ns :
+        {"measurement", "filtered_position", "label", "velocity", "trail", "prediction_path"})
+      {
         visualization_msgs::msg::Marker del;
         del.header.frame_id = map_frame_;
         del.header.stamp = stamp;
         del.ns = ns;
         del.id = static_cast<int>(prev_id);
+        del.action = visualization_msgs::msg::Marker::DELETE;
+        marker_array.markers.push_back(del);
+      }
+      for (size_t i = 0; i < num_prediction_samples_; ++i) {
+        visualization_msgs::msg::Marker del;
+        del.header.frame_id = map_frame_;
+        del.header.stamp = stamp;
+        del.ns = "prediction_uncertainty";
+        del.id = static_cast<int>(prev_id) * kPredictionMarkerIdStride + static_cast<int>(i);
         del.action = visualization_msgs::msg::Marker::DELETE;
         marker_array.markers.push_back(del);
       }
@@ -643,6 +959,11 @@ private:
   // ---------------------------------------------------------------------
   // Members
   // ---------------------------------------------------------------------
+  // Spacing between per-track marker IDs in the "prediction_uncertainty"
+  // namespace; must exceed num_prediction_samples_ so two tracks' ellipse
+  // marker IDs never collide.
+  static constexpr int kPredictionMarkerIdStride = 1000;
+
   std::string scan_topic_;
   std::string map_topic_;
   std::string map_frame_;
@@ -665,6 +986,19 @@ private:
   bool publish_candidate_markers_{true};
   double velocity_marker_scale_{1.0};
   double tf_lookup_timeout_{0.1};
+
+  double kf_accel_noise_{0.5};
+  double kf_measurement_noise_{0.05};
+  double kf_initial_position_variance_{0.01};
+  double kf_initial_velocity_variance_{4.0};
+  double kf_min_dt_{1.0e-3};
+  double kf_max_dt_{1.0};
+  uint32_t min_observations_for_kalman_velocity_{2};
+
+  double prediction_horizon_{3.0};
+  double prediction_time_step_{0.5};
+  double uncertainty_ellipse_sigma_{2.0};
+  size_t num_prediction_samples_{6};
 
   nav_msgs::msg::OccupancyGrid::SharedPtr map_;
   std::vector<Track> tracks_;

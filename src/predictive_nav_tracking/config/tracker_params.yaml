@@ -26,3 +26,20 @@ lidar_obstacle_tracker:
     publish_candidate_markers: true
     velocity_marker_scale: 1.0
     tf_lookup_timeout: 0.1
+
+    # --- Stage-4C: constant-velocity Kalman filter ---
+    # 1-sigma unmodeled-acceleration noise (m/s^2), drives Q(dt). Generic
+    # slow-indoor-obstacle default (see node comments); not tuned to one run.
+    kf_process_accel_noise: 0.5
+    # 1-sigma position measurement noise (m), drives R.
+    kf_measurement_noise: 0.05
+    kf_initial_position_variance: 0.01      # m^2
+    kf_initial_velocity_variance: 4.0       # (m/s)^2 -- large: velocity unknown at track birth
+    kf_min_dt: 0.001                        # s, numerical safety floor
+    kf_max_dt: 1.0                          # s, numerical safety ceiling (== track_timeout)
+    min_observations_for_kalman_velocity: 2 # observations before velocity is trusted
+
+    # --- Stage-4C: future trajectory prediction ---
+    prediction_horizon: 3.0        # s
+    prediction_time_step: 0.5      # s -> samples at 0.5, 1.0, ..., 3.0 s
+    uncertainty_ellipse_sigma: 2.0 # ellipse semi-axis = sigma * sqrt(eigenvalue of P_pos)

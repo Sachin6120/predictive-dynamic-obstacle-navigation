@@ -1,0 +1,119 @@
+{
+  "mode": "stage4c",
+  "frames_observed": 450,
+  "matched_frames": 450,
+  "distinct_track_ids_seen": 1,
+  "id_switches": 0,
+  "dominant_track_id": 1,
+  "dominant_track_id_fraction": 1.0,
+  "reversal_events_detected": 10,
+  "current_state": {
+    "all": {
+      "n": 450,
+      "raw_finite_difference": {
+        "position_mae_m": 0.14740865820167334,
+        "position_rmse_m": 0.14754016007772167,
+        "velocity_mae_mps": 0.03209488994880941,
+        "velocity_rmse_mps": 0.08250680101599395
+      },
+      "kalman_filtered": {
+        "position_mae_m": 0.1475275530107454,
+        "position_rmse_m": 0.1479699380158487,
+        "velocity_mae_mps": 0.030908778658062713,
+        "velocity_rmse_mps": 0.08011365050289705
+      }
+    },
+    "near_reversal": {
+      "n": 50,
+      "raw_finite_difference": {
+        "position_mae_m": 0.15016398888952945,
+        "position_rmse_m": 0.15021653096899523,
+        "velocity_mae_mps": 0.16419992202885988,
+        "velocity_rmse_mps": 0.21848761537355393
+      },
+      "kalman_filtered": {
+        "position_mae_m": 0.15115398985491457,
+        "position_rmse_m": 0.15413043178451363,
+        "velocity_mae_mps": 0.1583605031261749,
+        "velocity_rmse_mps": 0.21049476041193982
+      }
+    },
+    "steady_state": {
+      "n": 400,
+      "raw_finite_difference": {
+        "position_mae_m": 0.1470642418656913,
+        "position_rmse_m": 0.1472021923008785,
+        "velocity_mae_mps": 0.015581760938803091,
+        "velocity_rmse_mps": 0.04112406815572441
+      },
+      "kalman_filtered": {
+        "position_mae_m": 0.1470742484052243,
+        "position_rmse_m": 0.14718174691756378,
+        "velocity_mae_mps": 0.014977313099548693,
+        "velocity_rmse_mps": 0.04101178003211863
+      }
+    }
+  },
+  "prediction": {
+    "by_horizon_all": {
+      "0.5": {
+        "n": 448,
+        "mae": 0.15249017362543604,
+        "rmse": 0.15923097755522067
+      },
+      "1.0": {
+        "n": 446,
+        "mae": 0.1723175337066682,
+        "rmse": 0.19518152400881628
+      },
+      "2.0": {
+        "n": 441,
+        "mae": 0.2562292555507694,
+        "rmse": 0.34270770876371826
+      },
+      "3.0": {
+        "n": 436,
+        "mae": 0.39445956553063405,
+        "rmse": 0.5574217979338825
+      }
+    },
+    "by_horizon_near_reversal": {
+      "0.5": {
+        "n": 50,
+        "mae": 0.1711205993960707,
+        "rmse": 0.19689214293292445
+      },
+      "1.0": {
+        "n": 50,
+        "mae": 0.23437352931726013,
+        "rmse": 0.27488125514223993
+      },
+      "2.0": {
+        "n": 50,
+        "mae": 0.3790241654526607,
+        "rmse": 0.46432809988452395
+      },
+      "3.0": {
+        "n": 50,
+        "mae": 0.5295320265070793,
+        "rmse": 0.6664900001386568
+      }
+    },
+    "ade_fde_all_trajectories": {
+      "n_trajectories": 448,
+      "ade_mean": 0.24789466724893963,
+      "fde_mean": 0.3880254911684745
+    },
+    "ade_fde_near_reversal": {
+      "n_trajectories": 50,
+      "ade_mean": 0.34555952207413093,
+      "fde_mean": 0.5295320265070793
+    },
+    "ade_fde_steady_state": {
+      "n_trajectories": 398,
+      "ade_mean": 0.2356252131251719,
+      "fde_mean": 0.3702482882364889
+    },
+    "dropped_predictions_end_of_run": 0
+  }
+}

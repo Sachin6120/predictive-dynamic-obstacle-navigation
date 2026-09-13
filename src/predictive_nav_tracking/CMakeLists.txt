@@ -16,8 +16,13 @@ find_package(tf2_ros REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(predictive_nav_msgs REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 add_executable(lidar_obstacle_tracker_node src/lidar_obstacle_tracker_node.cpp)
+target_include_directories(lidar_obstacle_tracker_node PRIVATE
+  include
+  ${EIGEN3_INCLUDE_DIR}
+)
 ament_target_dependencies(lidar_obstacle_tracker_node
   rclcpp
   sensor_msgs

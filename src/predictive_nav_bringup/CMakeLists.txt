@@ -20,6 +20,7 @@ install(PROGRAMS
   scripts/publish_initial_pose.py
   scripts/obstacle_mover.py
   scripts/evaluate_tracking.py
+  scripts/evaluate_stage4c.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
