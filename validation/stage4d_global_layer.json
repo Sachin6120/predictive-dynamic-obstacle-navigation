@@ -1,0 +1,36 @@
+{
+  "mode": "stage4d",
+  "debug_topic": "/global_costmap/predicted_obstacle_layer/debug_costmap",
+  "grid_messages": 30,
+  "frames_with_predictive_cost": 30,
+  "frames_total": 30,
+  "predictive_cells": {
+    "mean": 14757.333333333334,
+    "max": 14792,
+    "min": 14685
+  },
+  "max_cost_observed": 56,
+  "max_extent_m": 4.297839976026974,
+  "centroid_offset_m": {
+    "n": 30,
+    "mean": 0.23347968560040028,
+    "max": 0.28348589815794306,
+    "note": "confounded by rolling-window clipping of far-horizon ellipses"
+  },
+  "peak_offset_m": {
+    "n": 30,
+    "mean": 0.024738196677825695,
+    "max": 0.09462290770459052,
+    "note": "peak predictive cell vs nearest-horizon predicted mean; includes samples where the evaluator holds a newer tracks message than the layer rasterized"
+  },
+  "peak_offset_synchronized_m": {
+    "n": 3,
+    "sync_tolerance_s": 0.05,
+    "mean": 0.04648983604583017,
+    "max": 0.07792707533882975,
+    "samples_excluded_prediction_outside_window": 0,
+    "note": "strict coordinate-correctness check (map->costmap-frame transform of mean and covariance); near-synchronous samples whose predicted mean lies inside the rolling window"
+  },
+  "clear_latency_after_last_prediction_s": null,
+  "trailing_ghost_cells": 0
+}

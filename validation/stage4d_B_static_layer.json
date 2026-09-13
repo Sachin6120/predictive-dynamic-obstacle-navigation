@@ -1,0 +1,21 @@
+{
+  "mode": "stage4d",
+  "debug_topic": "/local_costmap/predicted_obstacle_layer/debug_costmap",
+  "grid_messages": 220,
+  "frames_with_predictive_cost": 0,
+  "frames_total": 220,
+  "predictive_cells": {
+    "mean": 0.0,
+    "max": 0,
+    "min": 0
+  },
+  "max_cost_observed": 0,
+  "max_extent_m": 0.0,
+  "centroid_offset_m": {
+    "n": 0,
+    "mean": null,
+    "max": null
+  },
+  "clear_latency_after_last_prediction_s": null,
+  "trailing_ghost_cells": 0
+}

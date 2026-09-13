@@ -1,0 +1,15 @@
+<class_libraries>
+  <library path="predictive_nav_costmap_layers">
+    <class type="predictive_nav_costmap::PredictedObstacleLayer"
+           base_class_type="nav2_costmap_2d::Layer">
+      <description>
+        Converts Stage-4C predicted obstacle trajectories on /tracked_objects into
+        uncertainty-aware future occupancy cost. Each prediction's 2x2 position
+        covariance is eigen-decomposed into a sigma-level ellipse and rasterized with
+        a Mahalanobis-distance-based spatial confidence and an exponential temporal
+        weight. Combined into the master costmap with max semantics, so it can never
+        erase static, obstacle or inflation costs.
+      </description>
+    </class>
+  </library>
+</class_libraries>

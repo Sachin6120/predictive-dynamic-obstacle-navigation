@@ -21,6 +21,7 @@ install(PROGRAMS
   scripts/obstacle_mover.py
   scripts/evaluate_tracking.py
   scripts/evaluate_stage4c.py
+  scripts/evaluate_stage4d.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
