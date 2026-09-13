@@ -1,0 +1,15 @@
+# ros_gz_bridge config for the Stage-4B moving-obstacle model only.
+# Kept separate from nav2_bringup's own bridge (which handles the robot's
+# /scan, /odom, /tf, /cmd_vel, /imu) so we never touch installed Nav2 files.
+
+- ros_topic_name: "/model/dynamic_obstacle/cmd_vel"
+  gz_topic_name: "/model/dynamic_obstacle/cmd_vel"
+  ros_type_name: "geometry_msgs/msg/Twist"
+  gz_type_name: "gz.msgs.Twist"
+  direction: ROS_TO_GZ
+
+- ros_topic_name: "/model/dynamic_obstacle/odometry"
+  gz_topic_name: "/model/dynamic_obstacle/odometry"
+  ros_type_name: "nav_msgs/msg/Odometry"
+  gz_type_name: "gz.msgs.Odometry"
+  direction: GZ_TO_ROS

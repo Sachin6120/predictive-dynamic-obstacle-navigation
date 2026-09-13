@@ -1,0 +1,28 @@
+lidar_obstacle_tracker:
+  ros__parameters:
+    scan_topic: "/scan"
+    map_topic: "/map"
+    map_frame: "map"
+
+    # Static-rejection: reject a transformed scan point if it falls within
+    # this radius of a map cell whose occupancy >= occupied_threshold.
+    static_reject_radius: 0.15
+    occupied_threshold: 65
+    unknown_cells_are_static: false
+
+    # Clustering of the surviving (non-static) points.
+    cluster_distance: 0.35
+    cluster_min_points: 3
+    cluster_max_points: 200
+    cluster_max_diameter: 1.2
+
+    # Gated nearest-neighbour association + track lifecycle.
+    association_gate: 0.6
+    track_timeout: 1.0
+    max_missed_scans: 5
+    min_observations_to_publish: 3
+    velocity_history_size: 5
+
+    publish_candidate_markers: true
+    velocity_marker_scale: 1.0
+    tf_lookup_timeout: 0.1
