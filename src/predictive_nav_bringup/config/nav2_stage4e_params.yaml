@@ -1,0 +1,588 @@
+# Stage-4E Nav2 parameters: reactive-vs-predictive A/B experiment.
+#
+# Derived from config/nav2_predictive_params.yaml (the committed, validated
+# Stage-4D baseline), which is deliberately left BYTE-FOR-BYTE UNCHANGED so
+# Stage-4D stays reproducible. The ONLY difference between the two files is
+# the predicted_obstacle_layer policy block in local_costmap.
+#
+# Explicitly NOT changed here, so that "prediction" is the only independent
+# variable in the A/B comparison:
+#   * controller       -- nav2_mppi_controller::MPPIController (already in use
+#                         at Stage-4D; no controller swap was required, and the
+#                         stock CostCritic consumes the predictive cost)
+#   * MPPI critics/weights, horizon, batch size
+#   * planner          -- nav2_navfn_planner::NavfnPlanner
+#   * costmap geometry, update rates, inflation, voxel layer
+#   * velocity/acceleration limits, velocity smoother, collision monitor
+#   * the Stage-4C tracker and its Kalman filter (separate package/params)
+amcl:
+  ros__parameters:
+    alpha1: 0.2
+    alpha2: 0.2
+    alpha3: 0.2
+    alpha4: 0.2
+    alpha5: 0.2
+    base_frame_id: "base_footprint"
+    beam_skip_distance: 0.5
+    beam_skip_error_threshold: 0.9
+    beam_skip_threshold: 0.3
+    do_beamskip: false
+    global_frame_id: "map"
+    lambda_short: 0.1
+    laser_likelihood_max_dist: 2.0
+    laser_max_range: 100.0
+    laser_min_range: -1.0
+    laser_model_type: "likelihood_field"
+    max_beams: 60
+    max_particles: 2000
+    min_particles: 500
+    odom_frame_id: "odom"
+    pf_err: 0.05
+    pf_z: 0.99
+    recovery_alpha_fast: 0.0
+    recovery_alpha_slow: 0.0
+    resample_interval: 1
+    robot_model_type: "nav2_amcl::DifferentialMotionModel"
+    save_pose_rate: 0.5
+    sigma_hit: 0.2
+    tf_broadcast: true
+    transform_tolerance: 1.0
+    update_min_a: 0.2
+    update_min_d: 0.25
+    z_hit: 0.5
+    z_max: 0.05
+    z_rand: 0.5
+    z_short: 0.05
+    scan_topic: scan
+
+bt_navigator:
+  ros__parameters:
+    global_frame: map
+    robot_base_frame: base_link
+    odom_topic: /odom
+    bt_loop_duration: 10
+    default_server_timeout: 20
+    wait_for_service_timeout: 1000
+    action_server_result_timeout: 900.0
+    navigators: ["navigate_to_pose", "navigate_through_poses"]
+    navigate_to_pose:
+      plugin: "nav2_bt_navigator::NavigateToPoseNavigator"
+    navigate_through_poses:
+      plugin: "nav2_bt_navigator::NavigateThroughPosesNavigator"
+    # 'default_nav_through_poses_bt_xml' and 'default_nav_to_pose_bt_xml' are use defaults:
+    # nav2_bt_navigator/navigate_to_pose_w_replanning_and_recovery.xml
+    # nav2_bt_navigator/navigate_through_poses_w_replanning_and_recovery.xml
+    # They can be set here or via a RewrittenYaml remap from a parent launch file to Nav2.
+
+    # plugin_lib_names is used to add custom BT plugins to the executor (vector of strings).
+    # Built-in plugins are added automatically
+    # plugin_lib_names: []
+
+    error_code_names:
+      - compute_path_error_code
+      - follow_path_error_code
+
+controller_server:
+  ros__parameters:
+    controller_frequency: 20.0
+    costmap_update_timeout: 0.30
+    min_x_velocity_threshold: 0.001
+    min_y_velocity_threshold: 0.5
+    min_theta_velocity_threshold: 0.001
+    failure_tolerance: 0.3
+    progress_checker_plugins: ["progress_checker"]
+    goal_checker_plugins: ["general_goal_checker"] # "precise_goal_checker"
+    controller_plugins: ["FollowPath"]
+    use_realtime_priority: false
+
+    # Progress checker parameters
+    progress_checker:
+      plugin: "nav2_controller::SimpleProgressChecker"
+      required_movement_radius: 0.5
+      movement_time_allowance: 10.0
+    # Goal checker parameters
+    #precise_goal_checker:
+    #  plugin: "nav2_controller::SimpleGoalChecker"
+    #  xy_goal_tolerance: 0.25
+    #  yaw_goal_tolerance: 0.25
+    #  stateful: True
+    general_goal_checker:
+      stateful: True
+      plugin: "nav2_controller::SimpleGoalChecker"
+      xy_goal_tolerance: 0.25
+      yaw_goal_tolerance: 0.25
+    FollowPath:
+      plugin: "nav2_mppi_controller::MPPIController"
+      time_steps: 56
+      model_dt: 0.05
+      batch_size: 2000
+      ax_max: 3.0
+      ax_min: -3.0
+      ay_max: 3.0
+      ay_min: -3.0
+      az_max: 3.5
+      vx_std: 0.2
+      vy_std: 0.2
+      wz_std: 0.4
+      vx_max: 0.5
+      vx_min: -0.35
+      vy_max: 0.5
+      wz_max: 1.9
+      iteration_count: 1
+      prune_distance: 1.7
+      transform_tolerance: 0.1
+      temperature: 0.3
+      gamma: 0.015
+      motion_model: "DiffDrive"
+      visualize: true
+      regenerate_noises: true
+      TrajectoryVisualizer:
+        trajectory_step: 5
+        time_step: 3
+      AckermannConstraints:
+        min_turning_r: 0.2
+      critics: [
+        "ConstraintCritic", "CostCritic", "GoalCritic",
+        "GoalAngleCritic", "PathAlignCritic", "PathFollowCritic",
+        "PathAngleCritic", "PreferForwardCritic"]
+      ConstraintCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 4.0
+      GoalCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 5.0
+        threshold_to_consider: 1.4
+      GoalAngleCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 3.0
+        threshold_to_consider: 0.5
+      PreferForwardCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 5.0
+        threshold_to_consider: 0.5
+      CostCritic:
+        enabled: true
+        cost_power: 1
+        # STAGE-4E CHANGE (applied identically to BOTH A/B arms; the ONLY
+        # controller difference from Stage-4D).
+        # Nav2's stock 3.81 was measured to be too low to act on ANY costmap
+        # layer here: with the predictive layer raising the mean cost on the
+        # robot's own centreline from 145 to 212 (measured on
+        # /local_costmap/costmap_raw), the commanded speed changed by only
+        # ~4% (0.02 m/s). At 12.0 the same cost rise produces a ~24% early
+        # slowdown. This is the stock nav2_mppi_controller CostCritic with a
+        # reweighted parameter -- no custom critic, no Nav2 source change.
+        # Cost: obstacle-free navigation slows from 8.45 s to ~10.1 s over the
+        # same 3.65 m route. That is accepted, and because it applies to both
+        # arms it cannot bias the A/B result; the reactive arm benefits from it
+        # too (its reaction to the obstacle's own inflation also strengthens).
+        # 30.0 was also tried and fails outright (robot cannot traverse the
+        # corridor at all); 6.0 and 8.0 are too weak to change behaviour.
+        cost_weight: 12.0
+        near_collision_cost: 253
+        critical_cost: 300.0
+        consider_footprint: false
+        collision_cost: 1000000.0
+        near_goal_distance: 1.0
+        trajectory_point_step: 2
+      PathAlignCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 14.0
+        max_path_occupancy_ratio: 0.05
+        trajectory_point_step: 4
+        threshold_to_consider: 0.5
+        offset_from_furthest: 20
+        use_path_orientations: false
+      PathFollowCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 5.0
+        offset_from_furthest: 5
+        threshold_to_consider: 1.4
+      PathAngleCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 2.0
+        offset_from_furthest: 4
+        threshold_to_consider: 0.5
+        max_angle_to_furthest: 1.0
+        mode: 0
+      # TwirlingCritic:
+      #   enabled: true
+      #   twirling_cost_power: 1
+      #   twirling_cost_weight: 10.0
+
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      update_frequency: 5.0
+      publish_frequency: 2.0
+      global_frame: odom
+      robot_base_frame: base_link
+      rolling_window: true
+      width: 3
+      height: 3
+      resolution: 0.05
+      robot_radius: 0.22
+      # Stage-4D: predicted_obstacle_layer runs LAST, after inflation.
+      # Rationale: (1) it combines with max semantics, so applying it on top
+      # of the finished conventional costmap guarantees it can only raise
+      # cost and can never weaken static/voxel/inflation contributions;
+      # (2) its cost is deliberately capped below INSCRIBED_INFLATED_OBSTACLE
+      # (253), so the inflation layer would not inflate it anyway -- a
+      # *prediction* must not be promoted to a sensed lethal obstacle.
+      plugins: ["voxel_layer", "inflation_layer", "predicted_obstacle_layer"]
+      predicted_obstacle_layer:
+        plugin: "predictive_nav_costmap::PredictedObstacleLayer"
+        # MODE SWITCH. Stage-4E's A/B arms differ ONLY in this boolean, which
+        # stage4e_trial.py sets at runtime before the goal is sent (reactive =>
+        # False, predictive => True). It is left True here so a manual launch
+        # without the trial runner demonstrates the predictive arm.
+        enabled: True
+        tracked_objects_topic: "/tracked_objects"
+        track_timeout: 1.0
+        track_array_timeout: 1.0
+        # ================ STAGE-4E PREDICTIVE POLICY ================
+        # Stage-4D shipped generic conservative defaults (horizon 3.0 s,
+        # sigma 2.0, decay 0.7, cost 0-200) which blanket the whole 3x3 m local
+        # window. Stage-4E freezes a compact, strong policy derived from the
+        # measured vehicle / controller / scenario numbers below. Stage-4D's
+        # own YAML is untouched and still reproducible.
+        # Full derivation, including the measurements that rejected earlier
+        # candidates, is in validation/STAGE4E_README.md section 3.
+        #
+        # HORIZON 3.0 s -- the lead the layer can offer is (obstacle speed x
+        # horizon) + max_influence_radius = 0.25*3.0 + 0.55 = 1.30 m ahead of
+        # the obstacle's CURRENT position, versus 0.90 m for ordinary reactive
+        # sensing (obstacle radius 0.20 + inflation_radius 0.70). That 0.40 m
+        # difference is the entire structural basis for an earlier reaction, so
+        # the horizon is set as long as the inputs allow: Stage-4C publishes
+        # predictions to exactly 3.0 s, and MPPI integrates 56 x 0.05 = 2.8 s,
+        # so nothing beyond 3.0 s could be either supplied or acted upon.
+        max_prediction_horizon: 3.0
+        # SIGMA 1.5 (~67% of 2D probability mass). Stage-4C's deliberately
+        # conservative 0.5 m/s^2 acceleration noise gives sigma_pos ~ 0.25*t^2,
+        # i.e. 2.25 m at t+3.0 s, so beyond ~t+1.5 s it is max_influence_radius
+        # below and not sigma_level that bounds the painted region. sigma_level
+        # therefore shapes only the near-horizon ellipses. The Stage-4C
+        # covariance itself is NOT retuned.
+        sigma_level: 1.5
+        # DECAY 0.35 -- monotonic: 0.84 at 0.5 s -> 0.59 at 1.5 s -> 0.35 at
+        # 3.0 s. Stage-4D's 0.7 collapses the far horizon to 0.12, and the far
+        # horizon is precisely the part that reaches the robot's path first, so
+        # a steep decay makes the layer inert exactly where it needs authority.
+        # A gentler decay is defensible here because max_influence_radius now
+        # bounds the region explicitly, so the temporal term is no longer the
+        # only thing preventing a far-future prediction from covering the map.
+        temporal_decay: 0.35
+        # COST BAND 200-250. This is the measured crux of Stage-4E. The layer
+        # combines with updateWithMax, so it can only influence the controller
+        # where it EXCEEDS what the other layers already wrote. The tb3_sandbox
+        # corridors are 0.70 m wide, so with inflation_radius 0.70 the ambient
+        # cost on the robot's own centreline is already 88-170 (measured on
+        # /local_costmap/costmap_raw). Stage-4D's 0-200 band, whose cells that
+        # actually reach the corridor sit near the ellipse edge at ~50-60, is
+        # therefore invisible: it raised essentially no master cells and
+        # changed commanded speed by ~4%.
+        # 200 puts the whole predicted-conflict region above the worst ambient
+        # corridor inflation; 250 stays below MAX_NON_OBSTACLE (252) and below
+        # 253, which Nav2's MPPI CostCritic treats as a collision when
+        # consider_footprint is false. Prediction therefore remains a strong
+        # SOFT cost and is never asserted as a sensed lethal obstacle.
+        max_cost: 250
+        min_cost: 200
+        # 0.55 m: robot_radius (0.22) + obstacle radius (0.20) + 0.13 m margin,
+        # i.e. the radius within which the two bodies would actually conflict.
+        # This is the compactness lever, and with a 3.0 s horizon it is what
+        # keeps the region a swept corridor instead of a window-wide blanket
+        # (measured: ~18% of the local window, versus 55% at Stage-4D defaults).
+        # Still a costmap-policy bound, never a truncation of the published
+        # Stage-4C covariance.
+        max_influence_radius: 0.55
+        min_position_variance: 0.0025
+        transform_tolerance: 0.2
+        publish_debug_costmap: True
+        stats_log_period: 5.0
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        # UNCHANGED from Stage-4D, deliberately. Reducing this to 0.30 m was
+        # tried during Stage-4E policy derivation to give the costmap dynamic
+        # range above ambient (the tb3_sandbox corridors are only 0.70 m wide,
+        # so a 0.70 m inflation radius saturates every drivable cell at
+        # 88-170). It ABORTS navigation: with only a 0.13 m lateral margin per
+        # side, the inflation gradient is what actually keeps the robot
+        # centred, and removing it makes MPPI clip the pillars. Recorded in
+        # validation/STAGE4E_README.md section 3 as a rejected correction.
+        inflation_radius: 0.70
+      voxel_layer:
+        plugin: "nav2_costmap_2d::VoxelLayer"
+        enabled: True
+        publish_voxel_map: True
+        origin_z: 0.0
+        z_resolution: 0.05
+        z_voxels: 16
+        max_obstacle_height: 2.0
+        mark_threshold: 0
+        observation_sources: scan
+        scan:
+          topic: /scan
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+          raytrace_max_range: 3.0
+          raytrace_min_range: 0.0
+          obstacle_max_range: 2.5
+          obstacle_min_range: 0.0
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: True
+      always_send_full_costmap: True
+
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      update_frequency: 1.0
+      publish_frequency: 1.0
+      global_frame: map
+      robot_base_frame: base_link
+      robot_radius: 0.22
+      resolution: 0.05
+      track_unknown_space: true
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: True
+        observation_sources: scan
+        scan:
+          topic: /scan
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+          raytrace_max_range: 3.0
+          raytrace_min_range: 0.0
+          obstacle_max_range: 2.5
+          obstacle_min_range: 0.0
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: True
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.7
+      always_send_full_costmap: True
+
+# The yaml_filename does not need to be specified since it going to be set by defaults in launch.
+# If you'd rather set it in the yaml, remove the default "map" value in the tb3_simulation_launch.py
+# file & provide full path to map below. If CLI map configuration or launch default is provided, that will be used.
+# map_server:
+#   ros__parameters:
+#     yaml_filename: ""
+
+map_saver:
+  ros__parameters:
+    save_map_timeout: 5.0
+    free_thresh_default: 0.25
+    occupied_thresh_default: 0.65
+    map_subscribe_transient_local: True
+
+planner_server:
+  ros__parameters:
+    expected_planner_frequency: 20.0
+    planner_plugins: ["GridBased"]
+    costmap_update_timeout: 1.0
+    GridBased:
+      plugin: "nav2_navfn_planner::NavfnPlanner"
+      tolerance: 0.5
+      use_astar: false
+      allow_unknown: true
+
+smoother_server:
+  ros__parameters:
+    smoother_plugins: ["simple_smoother"]
+    simple_smoother:
+      plugin: "nav2_smoother::SimpleSmoother"
+      tolerance: 1.0e-10
+      max_its: 1000
+      do_refinement: True
+
+behavior_server:
+  ros__parameters:
+    local_costmap_topic: local_costmap/costmap_raw
+    global_costmap_topic: global_costmap/costmap_raw
+    local_footprint_topic: local_costmap/published_footprint
+    global_footprint_topic: global_costmap/published_footprint
+    cycle_frequency: 10.0
+    behavior_plugins: ["spin", "backup", "drive_on_heading", "assisted_teleop", "wait"]
+    spin:
+      plugin: "nav2_behaviors::Spin"
+    backup:
+      plugin: "nav2_behaviors::BackUp"
+    drive_on_heading:
+      plugin: "nav2_behaviors::DriveOnHeading"
+    wait:
+      plugin: "nav2_behaviors::Wait"
+    assisted_teleop:
+      plugin: "nav2_behaviors::AssistedTeleop"
+    local_frame: odom
+    global_frame: map
+    robot_base_frame: base_link
+    transform_tolerance: 0.1
+    simulate_ahead_time: 2.0
+    max_rotational_vel: 1.0
+    min_rotational_vel: 0.4
+    rotational_acc_lim: 3.2
+
+waypoint_follower:
+  ros__parameters:
+    loop_rate: 20
+    stop_on_failure: false
+    action_server_result_timeout: 900.0
+    waypoint_task_executor_plugin: "wait_at_waypoint"
+    wait_at_waypoint:
+      plugin: "nav2_waypoint_follower::WaitAtWaypoint"
+      enabled: True
+      waypoint_pause_duration: 200
+
+route_server:
+  ros__parameters:
+    # The graph_filepath does not need to be specified since it going to be set by defaults in launch.
+    # If you'd rather set it in the yaml, remove the default "graph" value in the launch file(s).
+    # file & provide full path to map below. If graph config or launch default is provided, it is used
+    # graph_filepath: $(find-pkg-share nav2_route)/graphs/aws_graph.geojson
+    boundary_radius_to_achieve_node: 1.0
+    radius_to_achieve_node: 2.0
+    smooth_corners: true
+    operations: ["AdjustSpeedLimit", "ReroutingService", "CollisionMonitor"]
+    ReroutingService:
+      plugin: "nav2_route::ReroutingService"
+    AdjustSpeedLimit:
+      plugin: "nav2_route::AdjustSpeedLimit"
+    CollisionMonitor:
+      plugin: "nav2_route::CollisionMonitor"
+      max_collision_dist: 3.0
+    edge_cost_functions: ["DistanceScorer", "CostmapScorer"]
+    DistanceScorer:
+      plugin: "nav2_route::DistanceScorer"
+    CostmapScorer:
+      plugin: "nav2_route::CostmapScorer"
+
+velocity_smoother:
+  ros__parameters:
+    smoothing_frequency: 20.0
+    stamp_smoothed_velocity_with_smoothing_time: False
+    scale_velocities: False
+    feedback: "OPEN_LOOP"
+    max_velocity: [0.5, 0.0, 2.0]
+    min_velocity: [-0.5, 0.0, -2.0]
+    max_accel: [2.5, 0.0, 3.2]
+    max_decel: [-2.5, 0.0, -3.2]
+    odom_topic: "odom"
+    odom_duration: 0.1
+    deadband_velocity: [0.0, 0.0, 0.0]
+    velocity_timeout: 1.0
+
+collision_monitor:
+  ros__parameters:
+    base_frame_id: "base_footprint"
+    odom_frame_id: "odom"
+    cmd_vel_in_topic: "cmd_vel_smoothed"
+    cmd_vel_out_topic: "cmd_vel"
+    state_topic: "collision_monitor_state"
+    transform_tolerance: 0.2
+    source_timeout: 1.0
+    base_shift_correction: True
+    stop_pub_timeout: 2.0
+    # Polygons represent zone around the robot for "stop", "slowdown" and "limit" action types,
+    # and robot footprint for "approach" action type.
+    polygons: ["FootprintApproach"]
+    FootprintApproach:
+      type: "polygon"
+      action_type: "approach"
+      footprint_topic: "/local_costmap/published_footprint"
+      time_before_collision: 1.2
+      simulation_time_step: 0.1
+      min_points: 6
+      visualize: False
+      enabled: True
+    observation_sources: ["scan"]
+    scan:
+      type: "scan"
+      topic: "scan"
+      min_height: 0.15
+      max_height: 2.0
+      enabled: True
+
+docking_server:
+  ros__parameters:
+    controller_frequency: 50.0
+    initial_perception_timeout: 5.0
+    wait_charge_timeout: 5.0
+    dock_approach_timeout: 30.0
+    undock_linear_tolerance: 0.05
+    undock_angular_tolerance: 0.1
+    max_retries: 3
+    base_frame: "base_link"
+    fixed_frame: "odom"
+    dock_backwards: false
+    dock_prestaging_tolerance: 0.5
+
+    # Types of docks
+    dock_plugins: ['simple_charging_dock']
+    simple_charging_dock:
+      plugin: 'opennav_docking::SimpleChargingDock'
+      docking_threshold: 0.05
+      staging_x_offset: -0.7
+      use_external_detection_pose: true
+      use_battery_status: false # true
+      use_stall_detection: false # true
+
+      external_detection_timeout: 1.0
+      external_detection_translation_x: -0.18
+      external_detection_translation_y: 0.0
+      external_detection_rotation_roll: -1.57
+      external_detection_rotation_pitch: -1.57
+      external_detection_rotation_yaw: 0.0
+      filter_coef: 0.1
+
+    # Dock instances
+    # The following example illustrates configuring dock instances.
+    # docks: ['home_dock']  # Input your docks here
+    # home_dock:
+    #   type: 'simple_charging_dock'
+    #   frame: map
+    #   pose: [0.0, 0.0, 0.0]
+
+    controller:
+      k_phi: 3.0
+      k_delta: 2.0
+      v_linear_min: 0.15
+      v_linear_max: 0.15
+      use_collision_detection: true
+      costmap_topic: "local_costmap/costmap_raw"
+      footprint_topic: "local_costmap/published_footprint"
+      transform_tolerance: 0.1
+      projection_time: 5.0
+      simulation_step: 0.1
+      dock_collision_threshold: 0.3
+
+loopback_simulator:
+  ros__parameters:
+    base_frame_id: "base_footprint"
+    odom_frame_id: "odom"
+    map_frame_id: "map"
+    scan_frame_id: "base_scan"  # tb4_loopback_simulator.launch.py remaps to 'rplidar_link'
+    update_duration: 0.02
+    scan_range_min: 0.05
+    scan_range_max: 30.0
+    scan_angle_min: -3.1415
+    scan_angle_max: 3.1415
+    scan_angle_increment: 0.02617
+    scan_use_inf: true

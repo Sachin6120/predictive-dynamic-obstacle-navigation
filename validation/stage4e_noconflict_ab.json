@@ -1,0 +1,338 @@
+{
+ "label": "CONTROL: no future conflict, 5+5",
+ "n_trials": 10,
+ "modes": {
+  "reactive": {
+   "n_trials": 5,
+   "n_success": 5,
+   "n_collision": 0,
+   "statuses": {
+    "SUCCEEDED": 5
+   },
+   "success_rate": 1.0,
+   "nav_time": {
+    "n": 5,
+    "mean": 9.8712,
+    "sd": 0.1327,
+    "min": 9.651,
+    "max": 10.001
+   },
+   "path_length": {
+    "n": 5,
+    "mean": 2.9741,
+    "sd": 0.0112,
+    "min": 2.9626,
+    "max": 2.9953
+   },
+   "min_clearance": {
+    "n": 5,
+    "mean": 1.2881,
+    "sd": 0.0087,
+    "min": 1.2745,
+    "max": 1.3002
+   },
+   "min_center_separation": {
+    "n": 5,
+    "mean": 1.6423,
+    "sd": 0.008,
+    "min": 1.6292,
+    "max": 1.6532
+   },
+   "primary_reaction_time": null,
+   "n_stops": {
+    "n": 5,
+    "mean": 1,
+    "sd": 0.0,
+    "min": 1,
+    "max": 1
+   },
+   "stop_duration_total": {
+    "n": 5,
+    "mean": 1.0006,
+    "sd": 0.0016,
+    "min": 0.999,
+    "max": 1.003
+   },
+   "min_v_nav_approach": {
+    "n": 5,
+    "mean": 0.3889,
+    "sd": 0.0023,
+    "min": 0.3868,
+    "max": 0.3926
+   },
+   "mean_v_nav_approach": {
+    "n": 5,
+    "mean": 0.4831,
+    "sd": 0.001,
+    "min": 0.4813,
+    "max": 0.4839
+   },
+   "max_abs_w_nav_approach": {
+    "n": 5,
+    "mean": 0.0983,
+    "sd": 0.0277,
+    "min": 0.0621,
+    "max": 0.1392
+   },
+   "max_lateral_dev_approach": {
+    "n": 5,
+    "mean": 0.032,
+    "sd": 0.0015,
+    "min": 0.0301,
+    "max": 0.0347
+   },
+   "cmd_variation": {
+    "n": 5,
+    "mean": 0.0056,
+    "sd": 0.0001,
+    "min": 0.0054,
+    "max": 0.0058
+   },
+   "max_pred_cells": {
+    "n": 5,
+    "mean": 0,
+    "sd": 0.0,
+    "min": 0,
+    "max": 0
+   },
+   "max_pred_frac_window": {
+    "n": 5,
+    "mean": 0.0,
+    "sd": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "max_master_hi_ahead": {
+    "n": 5,
+    "mean": 102.6,
+    "sd": 2.5768,
+    "min": 99,
+    "max": 105
+   },
+   "mean_master_mean_ahead_approach": {
+    "n": 5,
+    "mean": 147.04,
+    "sd": 0.8015,
+    "min": 145.7,
+    "max": 148.2
+   },
+   "global_path_changes": {
+    "n": 5,
+    "mean": 0,
+    "sd": 0.0,
+    "min": 0,
+    "max": 0
+   },
+   "plan_publications": {
+    "n": 5,
+    "mean": 10,
+    "sd": 0.0,
+    "min": 10,
+    "max": 10
+   },
+   "collision_monitor_interventions": {
+    "n": 5,
+    "mean": 0,
+    "sd": 0.0,
+    "min": 0,
+    "max": 0
+   },
+   "advance_lead_s": null,
+   "first_pred_cost_at_crossing_t": null,
+   "first_obstacle_at_crossing_t": null,
+   "R1_speed_reduction_t": null,
+   "R1_speed_reduction_robot_dist_to_crossing": null,
+   "R1_speed_reduction_obstacle_dist_to_crossing": null,
+   "R1_speed_reduction_n_fired": 0,
+   "R2_angular_t": null,
+   "R2_angular_robot_dist_to_crossing": null,
+   "R2_angular_obstacle_dist_to_crossing": null,
+   "R2_angular_n_fired": 0,
+   "R3_lateral_deviation_t": null,
+   "R3_lateral_deviation_robot_dist_to_crossing": null,
+   "R3_lateral_deviation_obstacle_dist_to_crossing": null,
+   "R3_lateral_deviation_n_fired": 0,
+   "R4_stop_t": null,
+   "R4_stop_robot_dist_to_crossing": null,
+   "R4_stop_obstacle_dist_to_crossing": null,
+   "R4_stop_n_fired": 0
+  },
+  "predictive": {
+   "n_trials": 5,
+   "n_success": 5,
+   "n_collision": 0,
+   "statuses": {
+    "SUCCEEDED": 5
+   },
+   "success_rate": 1.0,
+   "nav_time": {
+    "n": 5,
+    "mean": 9.7214,
+    "sd": 0.1599,
+    "min": 9.502,
+    "max": 9.951
+   },
+   "path_length": {
+    "n": 5,
+    "mean": 2.9758,
+    "sd": 0.0092,
+    "min": 2.9635,
+    "max": 2.9898
+   },
+   "min_clearance": {
+    "n": 5,
+    "mean": 1.2821,
+    "sd": 0.0079,
+    "min": 1.2675,
+    "max": 1.2915
+   },
+   "min_center_separation": {
+    "n": 5,
+    "mean": 1.6367,
+    "sd": 0.0084,
+    "min": 1.6214,
+    "max": 1.6469
+   },
+   "primary_reaction_time": null,
+   "n_stops": {
+    "n": 5,
+    "mean": 1,
+    "sd": 0.0,
+    "min": 1,
+    "max": 1
+   },
+   "stop_duration_total": {
+    "n": 5,
+    "mean": 1.0014,
+    "sd": 0.001,
+    "min": 1.0,
+    "max": 1.003
+   },
+   "min_v_nav_approach": {
+    "n": 5,
+    "mean": 0.3932,
+    "sd": 0.0039,
+    "min": 0.3874,
+    "max": 0.3996
+   },
+   "mean_v_nav_approach": {
+    "n": 5,
+    "mean": 0.4815,
+    "sd": 0.0035,
+    "min": 0.4776,
+    "max": 0.4874
+   },
+   "max_abs_w_nav_approach": {
+    "n": 5,
+    "mean": 0.0765,
+    "sd": 0.0201,
+    "min": 0.0551,
+    "max": 0.1025
+   },
+   "max_lateral_dev_approach": {
+    "n": 5,
+    "mean": 0.0327,
+    "sd": 0.0018,
+    "min": 0.0307,
+    "max": 0.035
+   },
+   "cmd_variation": {
+    "n": 5,
+    "mean": 0.0058,
+    "sd": 0.0001,
+    "min": 0.0055,
+    "max": 0.0059
+   },
+   "max_pred_cells": {
+    "n": 5,
+    "mean": 675.6,
+    "sd": 60.0886,
+    "min": 578,
+    "max": 766
+   },
+   "max_pred_frac_window": {
+    "n": 5,
+    "mean": 0.1877,
+    "sd": 0.0167,
+    "min": 0.1606,
+    "max": 0.2128
+   },
+   "max_master_hi_ahead": {
+    "n": 5,
+    "mean": 102.6,
+    "sd": 3.4986,
+    "min": 97,
+    "max": 108
+   },
+   "mean_master_mean_ahead_approach": {
+    "n": 5,
+    "mean": 150.54,
+    "sd": 2.0991,
+    "min": 147.3,
+    "max": 153.5
+   },
+   "global_path_changes": {
+    "n": 5,
+    "mean": 0,
+    "sd": 0.0,
+    "min": 0,
+    "max": 0
+   },
+   "plan_publications": {
+    "n": 5,
+    "mean": 10,
+    "sd": 0.0,
+    "min": 10,
+    "max": 10
+   },
+   "collision_monitor_interventions": {
+    "n": 5,
+    "mean": 0,
+    "sd": 0.0,
+    "min": 0,
+    "max": 0
+   },
+   "advance_lead_s": null,
+   "first_pred_cost_at_crossing_t": {
+    "n": 4,
+    "mean": 6.4263,
+    "sd": 0.2046,
+    "min": 6.2511,
+    "max": 6.7512
+   },
+   "first_obstacle_at_crossing_t": null,
+   "R1_speed_reduction_t": null,
+   "R1_speed_reduction_robot_dist_to_crossing": null,
+   "R1_speed_reduction_obstacle_dist_to_crossing": null,
+   "R1_speed_reduction_n_fired": 0,
+   "R2_angular_t": null,
+   "R2_angular_robot_dist_to_crossing": null,
+   "R2_angular_obstacle_dist_to_crossing": null,
+   "R2_angular_n_fired": 0,
+   "R3_lateral_deviation_t": null,
+   "R3_lateral_deviation_robot_dist_to_crossing": null,
+   "R3_lateral_deviation_obstacle_dist_to_crossing": null,
+   "R3_lateral_deviation_n_fired": 0,
+   "R4_stop_t": null,
+   "R4_stop_robot_dist_to_crossing": null,
+   "R4_stop_obstacle_dist_to_crossing": null,
+   "R4_stop_n_fired": 0
+  }
+ },
+ "predictive_reaction_lead_s": null,
+ "welch": {
+  "min_clearance": {
+   "t": -1.026,
+   "df": 7.9
+  },
+  "nav_time": {
+   "t": -1.442,
+   "df": 7.7
+  },
+  "primary_reaction_time": null,
+  "path_length": {
+   "t": 0.227,
+   "df": 7.7
+  }
+ }
+}

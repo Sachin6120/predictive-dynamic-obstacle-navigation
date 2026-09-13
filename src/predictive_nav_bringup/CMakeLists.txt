@@ -22,6 +22,9 @@ install(PROGRAMS
   scripts/evaluate_tracking.py
   scripts/evaluate_stage4c.py
   scripts/evaluate_stage4d.py
+  scripts/stage4e_trial.py
+  scripts/run_stage4e_ab.py
+  scripts/summarize_stage4e.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
