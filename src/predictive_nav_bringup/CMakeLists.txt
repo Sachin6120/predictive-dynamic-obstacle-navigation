@@ -13,6 +13,8 @@ install(DIRECTORY
   config
   rviz
   models
+  worlds
+  maps
   DESTINATION share/${PROJECT_NAME}
 )
 
@@ -25,6 +27,10 @@ install(PROGRAMS
   scripts/stage4e_trial.py
   scripts/run_stage4e_ab.py
   scripts/summarize_stage4e.py
+  scripts/make_stage4f_world.py
+  scripts/stage4f_trial.py
+  scripts/run_stage4f_bench.py
+  scripts/summarize_stage4f.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

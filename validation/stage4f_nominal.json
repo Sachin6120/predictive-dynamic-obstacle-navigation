@@ -1,0 +1,211 @@
+{
+ "n_trials": 3,
+ "conditions": [
+  {
+   "condition": "nominal",
+   "n_trials": 3,
+   "modes": {
+    "reactive": {
+     "n_trials": 3,
+     "n_success": 3,
+     "n_collision": 0,
+     "statuses": {
+      "SUCCEEDED": 3
+     },
+     "response_classes": {
+      "none": 3
+     },
+     "success_rate": 1.0,
+     "min_clearance": null,
+     "min_center_separation": null,
+     "collision_monitor_interventions": {
+      "n": 3,
+      "mean": 0,
+      "sd": 0.0,
+      "median": 0,
+      "min": 0,
+      "max": 0
+     },
+     "nav_time": {
+      "n": 3,
+      "mean": 13.3543,
+      "sd": 0.045,
+      "median": 13.351,
+      "min": 13.301,
+      "max": 13.411
+     },
+     "path_length": {
+      "n": 3,
+      "mean": 5.683,
+      "sd": 0.0195,
+      "median": 5.6726,
+      "min": 5.6661,
+      "max": 5.7104
+     },
+     "n_stops": {
+      "n": 3,
+      "mean": 1,
+      "sd": 0.0,
+      "median": 1,
+      "min": 1,
+      "max": 1
+     },
+     "stop_duration_total": {
+      "n": 3,
+      "mean": 1.0007,
+      "sd": 0.0017,
+      "median": 1.0,
+      "min": 0.999,
+      "max": 1.003
+     },
+     "primary_reaction_time": null,
+     "min_v_nav_approach": {
+      "n": 3,
+      "mean": 0.3948,
+      "sd": 0.0013,
+      "median": 0.3947,
+      "min": 0.3932,
+      "max": 0.3964
+     },
+     "mean_v_nav_approach": {
+      "n": 3,
+      "mean": 0.4867,
+      "sd": 0.0002,
+      "median": 0.4867,
+      "min": 0.4865,
+      "max": 0.4869
+     },
+     "max_abs_lateral_offset_approach": {
+      "n": 3,
+      "mean": 0.041,
+      "sd": 0.0118,
+      "median": 0.0366,
+      "min": 0.0292,
+      "max": 0.0571
+     },
+     "integrated_abs_lateral_approach": {
+      "n": 3,
+      "mean": 0.1163,
+      "sd": 0.0331,
+      "median": 0.108,
+      "min": 0.0806,
+      "max": 0.1603
+     },
+     "max_abs_w_nav_approach": {
+      "n": 3,
+      "mean": 0.0708,
+      "sd": 0.013,
+      "median": 0.0672,
+      "min": 0.057,
+      "max": 0.0882
+     },
+     "cmd_variation": {
+      "n": 3,
+      "mean": 0.0038,
+      "sd": 0.0,
+      "median": 0.0038,
+      "min": 0.0038,
+      "max": 0.0038
+     },
+     "global_path_changes": {
+      "n": 3,
+      "mean": 0,
+      "sd": 0.0,
+      "median": 0,
+      "min": 0,
+      "max": 0
+     },
+     "plan_publications": {
+      "n": 3,
+      "mean": 13.3333,
+      "sd": 0.4714,
+      "median": 13,
+      "min": 13,
+      "max": 14
+     },
+     "max_pred_cells": {
+      "n": 3,
+      "mean": 0,
+      "sd": 0.0,
+      "median": 0,
+      "min": 0,
+      "max": 0
+     },
+     "max_pred_frac_window": {
+      "n": 3,
+      "mean": 0.0,
+      "sd": 0.0,
+      "median": 0.0,
+      "min": 0.0,
+      "max": 0.0
+     },
+     "max_master_hi_ahead": {
+      "n": 3,
+      "mean": 0,
+      "sd": 0.0,
+      "median": 0,
+      "min": 0,
+      "max": 0
+     },
+     "min_clearance_ci95": null,
+     "nav_time_ci95": [
+      13.292,
+      13.4167
+     ],
+     "reaction_time_ci95": null,
+     "advance_lead_s": null,
+     "tracking_position_error_m": null,
+     "tracking_velocity_error_mps": null,
+     "ADE_m": null,
+     "FDE_m": null,
+     "displacement_error_by_horizon_m": {}
+    },
+    "predictive": {
+     "n_trials": 0,
+     "n_success": 0,
+     "n_collision": 0,
+     "statuses": {},
+     "response_classes": {},
+     "success_rate": null,
+     "min_clearance": null,
+     "min_center_separation": null,
+     "collision_monitor_interventions": null,
+     "nav_time": null,
+     "path_length": null,
+     "n_stops": null,
+     "stop_duration_total": null,
+     "primary_reaction_time": null,
+     "min_v_nav_approach": null,
+     "mean_v_nav_approach": null,
+     "max_abs_lateral_offset_approach": null,
+     "integrated_abs_lateral_approach": null,
+     "max_abs_w_nav_approach": null,
+     "cmd_variation": null,
+     "global_path_changes": null,
+     "plan_publications": null,
+     "max_pred_cells": null,
+     "max_pred_frac_window": null,
+     "max_master_hi_ahead": null,
+     "min_clearance_ci95": null,
+     "nav_time_ci95": null,
+     "reaction_time_ci95": null,
+     "advance_lead_s": null,
+     "tracking_position_error_m": null,
+     "tracking_velocity_error_mps": null,
+     "ADE_m": null,
+     "FDE_m": null,
+     "displacement_error_by_horizon_m": {}
+    }
+   },
+   "reaction_lead_s": null,
+   "effect_size_cohens_d": {
+    "min_clearance": null,
+    "nav_time": null,
+    "primary_reaction_time": null,
+    "path_length": null,
+    "max_abs_lateral_offset_approach": null
+   }
+  }
+ ],
+ "failures_by_cause": {}
+}
