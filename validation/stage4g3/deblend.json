@@ -1,0 +1,14 @@
+{
+    "pass": true,
+    "recorded_geometry": true,
+    "case_a_observable_merges_split": 3,
+    "case_b_occlusions_refused": 2,
+    "worst_child_centroid_error_m": 0.190737,
+    "best_merged_centroid_error_m": 0.312255,
+    "single_object_cluster_not_split": true,
+    "gapless_cluster_not_split": true,
+    "single_track_cannot_split": true,
+    "tentative_track_cannot_seed": true,
+    "one_centroid_updates_one_track": true,
+    "coasting_track_state_untouched": true
+}

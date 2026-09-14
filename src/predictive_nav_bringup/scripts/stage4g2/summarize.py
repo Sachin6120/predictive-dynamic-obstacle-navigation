@@ -4,6 +4,7 @@ import argparse
 import csv
 import hashlib
 import json
+from collections import defaultdict
 from pathlib import Path
 import re
 import subprocess
@@ -113,7 +114,10 @@ def main():
             writer.writerow(row)
     performance={}
     for objects,name,directory in [(1,'single',args.baseline),(2,'parallel',args.baseline),(3,'triple',args.regressions)]:
-        values={k:[] for k in ['scan_us','cluster_us','association_us','callback_us','clusters','tracks']}
+        # Stage-4G3 adds deblend_us/measurements/splits/ambiguous to the perf
+        # line; collect whatever keys the log actually carries so the same
+        # summarizer reads both the G2 and G3 recordings.
+        values=defaultdict(list)
         for path in directory.glob(name+'_*/raw.json'):
             raw=json.loads(path.read_text())
             for line in (path.parent/'launch.log').read_text().splitlines():
@@ -121,7 +125,8 @@ def main():
                 if m and raw['t0']<=float(m[1])<=raw['end']:
                     for key,val in re.findall(r'(\w+)=([\d.]+)',m[2]):
                         values[key].append(float(val))
-        performance[objects]={'frames':len(values['callback_us']),**{k:describe(v) for k,v in values.items()}}
+        performance[objects]={'frames':len(values['callback_us']),
+            **{k:describe(v) for k,v in sorted(values.items())}}
     (args.out/'performance.json').write_text(json.dumps(performance,indent=2)+'\n')
     print(json.dumps(performance,indent=2))
     for logfile,name in [('costmap_regression.log','costmap.json'),('lifecycle_regression.log','lifecycle.json')]:
@@ -129,16 +134,38 @@ def main():
         result=next(json.loads(line) for line in logfile.read_text().splitlines() if line.startswith('{"pass"'))
         (args.out/name).write_text(json.dumps(result,indent=2)+'\n')
     root=Path(__file__).resolve().parents[4]
+    # Stage-4D costmap mathematics, the Kalman model and the Nav2 configuration
+    # must remain byte-identical across Stage-4G3; the tracker parameter file is
+    # NOT in this list because Stage-4G3 legitimately adds deblending settings
+    # to it, and its diff is reported separately below.
     protected=['src/predictive_nav_costmap/src/predicted_obstacle_layer.cpp',
-        'src/predictive_nav_tracking/config/tracker_params.yaml',
         'src/predictive_nav_tracking/include/predictive_nav_tracking/kalman_filter.hpp',
         'src/predictive_nav_bringup/config/nav2_stage4f_params.yaml']
-    manifest={'checkpoint':'eab2218765a19474d15daa26ab7cf7ac64631ba4',
+    frozen_params=['static_reject_radius','cluster_distance','cluster_min_points',
+        'cluster_max_points','cluster_max_diameter','association_gate','track_timeout',
+        'max_missed_scans','min_observations_to_publish','kf_process_accel_noise',
+        'kf_measurement_noise','prediction_horizon','prediction_time_step']
+    params=(root/'src/predictive_nav_tracking/config/tracker_params.yaml').read_text()
+    baseline=subprocess.check_output(
+        ['git','show','45bf1a0:src/predictive_nav_tracking/config/tracker_params.yaml'],
+        cwd=root,text=True)
+    def value_of(text,key):
+        for line in text.splitlines():
+            stripped=line.strip()
+            if stripped.startswith(key+':'):
+                return stripped.split(':',1)[1].split('#')[0].strip()
+        return None
+    manifest={'checkpoint':'45bf1a0',
         'stage4f_reference':subprocess.check_output(['git','rev-parse','stage4f-validated^{commit}'],cwd=root,text=True).strip(),
         'protected_files':{f:hashlib.sha256((root/f).read_bytes()).hexdigest() for f in protected},
-        'protected_files_unchanged':subprocess.check_output(['git','diff','eab2218','--',*protected],cwd=root,text=True)=='',
+        'protected_files_unchanged':subprocess.check_output(['git','diff','45bf1a0','--',*protected],cwd=root,text=True)=='',
+        'frozen_tracker_parameters_unchanged':{
+            k:(value_of(params,k)==value_of(baseline,k)) for k in frozen_params},
         'tracker_source_sha256_at_curation':hashlib.sha256((root/'src/predictive_nav_tracking/src/lidar_obstacle_tracker_node.cpp').read_bytes()).hexdigest(),
-        'note':'Tracking functions unchanged; only opt-in callback timing instrumentation added. Raw data hashes are recorded per trial.'}
+        'note':'Stage-4G3 adds track-aware cluster deblending between clustering and the '
+               'unchanged greedy association. Static rejection, association, Kalman update, '
+               'lifecycle and prediction are otherwise identical to 45bf1a0. Raw data hashes '
+               'are recorded per trial.'}
     (args.out/'provenance.json').write_text(json.dumps(manifest,indent=2)+'\n')
 
 

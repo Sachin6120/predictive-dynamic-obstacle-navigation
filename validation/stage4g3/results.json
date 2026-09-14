@@ -1,0 +1,4391 @@
+[
+  {
+    "scenario": "crossing",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1.5,
+            0
+          ],
+          "velocity": [
+            0.5,
+            0
+          ]
+        },
+        {
+          "start": [
+            0,
+            2.15
+          ],
+          "velocity": [
+            0,
+            -0.5
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 46
+        },
+        "id_switches": 0,
+        "track_fragments": 1,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 46,
+        "matched_frame_fraction": 0.92,
+        "position_error_m": {
+          "mean": 0.17006808077697588,
+          "p95": 0.19494269707164782,
+          "max": 0.2105814913203537
+        },
+        "velocity_error_mps": {
+          "mean": 0.045492934533208365,
+          "p95": 0.19896970317332807,
+          "max": 0.38591169994428626
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16646638719415702,
+          "p95": 0.17669363647462139,
+          "max": 0.17779909807323557
+        },
+        "velocity_error_mps": {
+          "mean": 0.050208677220372415,
+          "p95": 0.17866569154049605,
+          "max": 0.467954257947512
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 1,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 86,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {
+      "A_cluster_merge": 5,
+      "D_insufficient_lidar_returns": 4
+    },
+    "min_resolved_center_separation_m": 0.49392789462527886,
+    "merge_center_separation_m": {
+      "mean": 0.5414875100569267,
+      "p95": 0.6602621957983487,
+      "max": 0.679008054880137
+    },
+    "max_missed_scans_retained": 4,
+    "reacquisitions": [
+      {
+        "id": 1,
+        "missed_scans": 4,
+        "since_last_observation_s": 1.0020000000000007,
+        "t": 5.058000000000001,
+        "same_id": true
+      }
+    ],
+    "prediction_samples_checked": 600,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 12617.18146,
+        "p95": 30603.43345,
+        "max": 30697.713
+      },
+      "cluster_us": {
+        "mean": 37.757400000000004,
+        "p95": 61.906749999999995,
+        "max": 81.458
+      },
+      "deblend_us": {
+        "mean": 105.36368,
+        "p95": 149.18945,
+        "max": 183.965
+      },
+      "association_us": {
+        "mean": 163.67732,
+        "p95": 238.3002,
+        "max": 266.075
+      },
+      "callback_us": {
+        "mean": 14357.753299999998,
+        "p95": 32535.27735,
+        "max": 33067.929
+      },
+      "clusters": {
+        "mean": 1.82,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "measurements": {
+        "mean": 1.92,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "splits": {
+        "mean": 0.1,
+        "p95": 1.0,
+        "max": 1.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 52,
+    "costmap_nonzero_frames": 52,
+    "costmap_multi_eligible_frames": 16,
+    "costmap_multi_represented_frames": 16,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.0887771479199915e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 45,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 0.46168721004079066,
+    "source_trial": "validation_logs/stage4g3/baseline/crossing_01",
+    "raw_sha256": "ec28560d5aa92ff9cfa7b9144c97d68da0846c8051ffb70b9e64ce9edf097bf5"
+  },
+  {
+    "scenario": "crossing",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1.5,
+            0
+          ],
+          "velocity": [
+            0.5,
+            0
+          ]
+        },
+        {
+          "start": [
+            0,
+            2.15
+          ],
+          "velocity": [
+            0,
+            -0.5
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 46
+        },
+        "id_switches": 0,
+        "track_fragments": 1,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 46,
+        "matched_frame_fraction": 0.92,
+        "position_error_m": {
+          "mean": 0.18153408319130362,
+          "p95": 0.19938920949580005,
+          "max": 0.2175492743700029
+        },
+        "velocity_error_mps": {
+          "mean": 0.045999954348729395,
+          "p95": 0.19418303314999835,
+          "max": 0.4192507551828098
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.1691031304053117,
+          "p95": 0.18608509106083893,
+          "max": 0.1902500863861435
+        },
+        "velocity_error_mps": {
+          "mean": 0.0512277748371856,
+          "p95": 0.15776154653174962,
+          "max": 0.46196974377170835
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 1,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 86,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {
+      "A_cluster_merge": 5,
+      "D_insufficient_lidar_returns": 4
+    },
+    "min_resolved_center_separation_m": 0.5043977015711368,
+    "merge_center_separation_m": {
+      "mean": 0.5324682614153716,
+      "p95": 0.6419881705138193,
+      "max": 0.6600822906836655
+    },
+    "max_missed_scans_retained": 4,
+    "reacquisitions": [
+      {
+        "id": 1,
+        "missed_scans": 4,
+        "since_last_observation_s": 1.0020000000000007,
+        "t": 5.0969999999999995,
+        "same_id": true
+      }
+    ],
+    "prediction_samples_checked": 600,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 13818.775179999999,
+        "p95": 30608.8913,
+        "max": 30638.448
+      },
+      "cluster_us": {
+        "mean": 38.175580000000004,
+        "p95": 57.65579999999999,
+        "max": 137.637
+      },
+      "deblend_us": {
+        "mean": 103.17896,
+        "p95": 141.0328,
+        "max": 179.119
+      },
+      "association_us": {
+        "mean": 154.01858,
+        "p95": 204.89664999999997,
+        "max": 216.717
+      },
+      "callback_us": {
+        "mean": 15450.54226,
+        "p95": 32443.96245,
+        "max": 32902.54
+      },
+      "clusters": {
+        "mean": 1.82,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "measurements": {
+        "mean": 1.92,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "splits": {
+        "mean": 0.1,
+        "p95": 1.0,
+        "max": 1.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 52,
+    "costmap_nonzero_frames": 52,
+    "costmap_multi_eligible_frames": 16,
+    "costmap_multi_represented_frames": 16,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088783288908859e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 45,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 0.4646825462825147,
+    "source_trial": "validation_logs/stage4g3/baseline/crossing_02",
+    "raw_sha256": "e94cf0e51f68ef3e8cf86cf75a4830f121578eb616fb254832a392dff374de88"
+  },
+  {
+    "scenario": "crossing_resolved",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1.5,
+            0
+          ],
+          "velocity": [
+            0.5,
+            0
+          ]
+        },
+        {
+          "start": [
+            0,
+            2.7
+          ],
+          "velocity": [
+            0,
+            -0.5
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 46
+        },
+        "id_switches": 0,
+        "track_fragments": 1,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 46,
+        "matched_frame_fraction": 0.92,
+        "position_error_m": {
+          "mean": 0.16923453463009724,
+          "p95": 0.19581338262334602,
+          "max": 0.21190817691784009
+        },
+        "velocity_error_mps": {
+          "mean": 0.042850178732942855,
+          "p95": 0.18956455268800218,
+          "max": 0.33123166944631965
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16257092107381865,
+          "p95": 0.17422911928210857,
+          "max": 0.17558078227488869
+        },
+        "velocity_error_mps": {
+          "mean": 0.05114418260952257,
+          "p95": 0.2237437181051863,
+          "max": 0.3957153762489021
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 1,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 96,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {
+      "D_insufficient_lidar_returns": 4
+    },
+    "min_resolved_center_separation_m": 0.8495190597519308,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 4,
+    "reacquisitions": [
+      {
+        "id": 1,
+        "missed_scans": 4,
+        "since_last_observation_s": 0.9990000000000006,
+        "t": 6.2219999999999995,
+        "same_id": true
+      }
+    ],
+    "prediction_samples_checked": 600,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 14820.207239999996,
+        "p95": 30676.97845,
+        "max": 30793.386
+      },
+      "cluster_us": {
+        "mean": 35.251659999999994,
+        "p95": 52.32745,
+        "max": 53.53
+      },
+      "deblend_us": {
+        "mean": 98.89529999999999,
+        "p95": 138.39744999999996,
+        "max": 201.629
+      },
+      "association_us": {
+        "mean": 153.96349999999998,
+        "p95": 218.7746,
+        "max": 255.94
+      },
+      "callback_us": {
+        "mean": 16484.04668,
+        "p95": 32844.17505,
+        "max": 33935.301
+      },
+      "clusters": {
+        "mean": 1.92,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "measurements": {
+        "mean": 1.92,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "splits": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 52,
+    "costmap_nonzero_frames": 52,
+    "costmap_multi_eligible_frames": 17,
+    "costmap_multi_represented_frames": 17,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088782283057234e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 45,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 0.8495190597519308,
+    "source_trial": "validation_logs/stage4g3/baseline/crossing_resolved_01",
+    "raw_sha256": "c45c391999fb9561663b61d004a579c0592b558fdf478e6144eed1a5b825ce12"
+  },
+  {
+    "scenario": "crossing_resolved",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1.5,
+            0
+          ],
+          "velocity": [
+            0.5,
+            0
+          ]
+        },
+        {
+          "start": [
+            0,
+            2.7
+          ],
+          "velocity": [
+            0,
+            -0.5
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 45
+        },
+        "id_switches": 0,
+        "track_fragments": 1,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 45,
+        "matched_frame_fraction": 0.9,
+        "position_error_m": {
+          "mean": 0.16615661868428916,
+          "p95": 0.19509612828657993,
+          "max": 0.2101744390016054
+        },
+        "velocity_error_mps": {
+          "mean": 0.053646527653059856,
+          "p95": 0.21750628460393048,
+          "max": 0.4430184363059274
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.1559664100478573,
+          "p95": 0.16773575881865835,
+          "max": 0.1712024773110183
+        },
+        "velocity_error_mps": {
+          "mean": 0.04570235862792679,
+          "p95": 0.16597042109582313,
+          "max": 0.4572703331754849
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 1,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 95,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {
+      "D_insufficient_lidar_returns": 5
+    },
+    "min_resolved_center_separation_m": 0.8510325532194843,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 5,
+    "reacquisitions": [
+      {
+        "id": 1,
+        "missed_scans": 5,
+        "since_last_observation_s": 1.1999999999999993,
+        "t": 6.258,
+        "same_id": true
+      }
+    ],
+    "prediction_samples_checked": 600,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 13009.497580000001,
+        "p95": 30653.08425,
+        "max": 30712.755
+      },
+      "cluster_us": {
+        "mean": 39.2165,
+        "p95": 61.53419999999999,
+        "max": 123.617
+      },
+      "deblend_us": {
+        "mean": 95.23418000000001,
+        "p95": 123.01354999999998,
+        "max": 139.471
+      },
+      "association_us": {
+        "mean": 157.73504,
+        "p95": 222.91039999999998,
+        "max": 234.746
+      },
+      "callback_us": {
+        "mean": 14654.9011,
+        "p95": 32519.04855,
+        "max": 32860.175
+      },
+      "clusters": {
+        "mean": 1.9,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "measurements": {
+        "mean": 1.9,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "splits": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 52,
+    "costmap_nonzero_frames": 52,
+    "costmap_multi_eligible_frames": 17,
+    "costmap_multi_represented_frames": 17,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.0887771479199915e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 44,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 0.8510325532194843,
+    "source_trial": "validation_logs/stage4g3/baseline/crossing_resolved_02",
+    "raw_sha256": "fcc0d5552885c1f8063de9faf914d81f07f9ea01410614acf2a1dec97f2e9d26"
+  },
+  {
+    "scenario": "near_crossing",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1.5,
+            -0.45
+          ],
+          "velocity": [
+            0.3,
+            0
+          ]
+        },
+        {
+          "start": [
+            0,
+            2
+          ],
+          "segments": [
+            [
+              5,
+              0,
+              -0.3
+            ],
+            [
+              5,
+              0.3,
+              0
+            ]
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.1715617991382319,
+          "p95": 0.18660951182174837,
+          "max": 0.20173974429105665
+        },
+        "velocity_error_mps": {
+          "mean": 0.03307892469580633,
+          "p95": 0.0766174801963665,
+          "max": 0.25917710660320553
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16681577018153412,
+          "p95": 0.20097242079433086,
+          "max": 0.21377782603782675
+        },
+        "velocity_error_mps": {
+          "mean": 0.052018663117992636,
+          "p95": 0.24463700536117178,
+          "max": 0.3925070198406108
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 100,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": 1.0444083520154328,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 600,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 12428.96678,
+        "p95": 30646.514349999998,
+        "max": 30726.217
+      },
+      "cluster_us": {
+        "mean": 40.955279999999995,
+        "p95": 64.65425,
+        "max": 71.508
+      },
+      "deblend_us": {
+        "mean": 103.20741999999998,
+        "p95": 141.8066,
+        "max": 155.348
+      },
+      "association_us": {
+        "mean": 182.57526000000001,
+        "p95": 283.23524999999995,
+        "max": 441.663
+      },
+      "callback_us": {
+        "mean": 14111.394040000001,
+        "p95": 32649.34955,
+        "max": 32869.416
+      },
+      "clusters": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "measurements": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "splits": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 52,
+    "costmap_nonzero_frames": 52,
+    "costmap_multi_eligible_frames": 29,
+    "costmap_multi_represented_frames": 29,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.0887760891288075e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 49,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 1.0444083520154328,
+    "source_trial": "validation_logs/stage4g3/baseline/near_crossing_01",
+    "raw_sha256": "5a9b83fbb6b2f3ad60c53939910cc8122d8e3ce4323501a38aad071448a67b60"
+  },
+  {
+    "scenario": "near_crossing",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1.5,
+            -0.45
+          ],
+          "velocity": [
+            0.3,
+            0
+          ]
+        },
+        {
+          "start": [
+            0,
+            2
+          ],
+          "segments": [
+            [
+              5,
+              0,
+              -0.3
+            ],
+            [
+              5,
+              0.3,
+              0
+            ]
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.171291417558043,
+          "p95": 0.18776017392369856,
+          "max": 0.1999638457808273
+        },
+        "velocity_error_mps": {
+          "mean": 0.03271635262471465,
+          "p95": 0.07950389305856702,
+          "max": 0.24089023756496397
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16797236851919972,
+          "p95": 0.20085157480224758,
+          "max": 0.2162376854858193
+        },
+        "velocity_error_mps": {
+          "mean": 0.05122807292708297,
+          "p95": 0.2483517146596188,
+          "max": 0.39483733557962913
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 100,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": 1.0434821841047426,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 600,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 13793.645460000002,
+        "p95": 30601.95895,
+        "max": 30693.636
+      },
+      "cluster_us": {
+        "mean": 34.20126,
+        "p95": 50.29659999999999,
+        "max": 79.037
+      },
+      "deblend_us": {
+        "mean": 91.06286,
+        "p95": 134.18099999999998,
+        "max": 149.424
+      },
+      "association_us": {
+        "mean": 141.59878,
+        "p95": 211.53725,
+        "max": 257.812
+      },
+      "callback_us": {
+        "mean": 15153.7194,
+        "p95": 32114.014499999997,
+        "max": 32554.687
+      },
+      "clusters": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "measurements": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "splits": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 52,
+    "costmap_nonzero_frames": 52,
+    "costmap_multi_eligible_frames": 29,
+    "costmap_multi_represented_frames": 29,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088778259650735e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 49,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 1.0434821841047426,
+    "source_trial": "validation_logs/stage4g3/baseline/near_crossing_02",
+    "raw_sha256": "8946b6ff67a8ce5c987c1239db39c03a63b1ebbe444ede952e1d62d67ac2043b"
+  },
+  {
+    "scenario": "occlusion",
+    "definition": {
+      "duration": 7,
+      "objects": [
+        {
+          "start": [
+            -1,
+            -2
+          ],
+          "velocity": [
+            0,
+            0.6
+          ]
+        },
+        {
+          "start": [
+            0,
+            0
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 35,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 35
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 35,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16953590779040173,
+          "p95": 0.18221772998052646,
+          "max": 0.18294564432836652
+        },
+        "velocity_error_mps": {
+          "mean": 0.06560051118468845,
+          "p95": 0.2786283990277526,
+          "max": 0.40210108977467107
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 32
+        },
+        "id_switches": 0,
+        "track_fragments": 1,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 32,
+        "matched_frame_fraction": 0.9142857142857143,
+        "position_error_m": {
+          "mean": 0.17605034549934107,
+          "p95": 0.1881479502188203,
+          "max": 0.19075020884360322
+        },
+        "velocity_error_mps": {
+          "mean": 0.03235666294606908,
+          "p95": 0.09539685187486432,
+          "max": 0.25163673544669224
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 1,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 67,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {
+      "D_insufficient_lidar_returns": 3
+    },
+    "min_resolved_center_separation_m": 1.419005304873758,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 3,
+    "reacquisitions": [
+      {
+        "id": 2,
+        "missed_scans": 3,
+        "since_last_observation_s": 0.801000000000001,
+        "t": 3.8340000000000005,
+        "same_id": true
+      }
+    ],
+    "prediction_samples_checked": 420,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 13878.153742857145,
+        "p95": 30688.072,
+        "max": 30764.033
+      },
+      "cluster_us": {
+        "mean": 46.43357142857142,
+        "p95": 67.24799999999996,
+        "max": 82.994
+      },
+      "deblend_us": {
+        "mean": 102.70188571428571,
+        "p95": 128.48679999999996,
+        "max": 141.634
+      },
+      "association_us": {
+        "mean": 161.52068571428572,
+        "p95": 243.85259999999994,
+        "max": 261.14
+      },
+      "callback_us": {
+        "mean": 15509.789142857142,
+        "p95": 32402.313599999998,
+        "max": 33056.131
+      },
+      "clusters": {
+        "mean": 1.9142857142857144,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "measurements": {
+        "mean": 1.9142857142857144,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "splits": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 35,
+    "costmap_grid_frames": 36,
+    "costmap_nonzero_frames": 36,
+    "costmap_multi_eligible_frames": 6,
+    "costmap_multi_represented_frames": 6,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088771642205834e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 31,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 1.419005304873758,
+    "source_trial": "validation_logs/stage4g3/baseline/occlusion_01",
+    "raw_sha256": "f45d0f50adfd22d45163388ad705138688f77fc13e9c38916d4cc9108ad20091"
+  },
+  {
+    "scenario": "occlusion",
+    "definition": {
+      "duration": 7,
+      "objects": [
+        {
+          "start": [
+            -1,
+            -2
+          ],
+          "velocity": [
+            0,
+            0.6
+          ]
+        },
+        {
+          "start": [
+            0,
+            0
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 35,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 35
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 35,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.17160651290333884,
+          "p95": 0.18242786323770213,
+          "max": 0.18550006628927063
+        },
+        "velocity_error_mps": {
+          "mean": 0.06370872744910937,
+          "p95": 0.2051347988811021,
+          "max": 0.4427957428177085
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 33
+        },
+        "id_switches": 0,
+        "track_fragments": 1,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 33,
+        "matched_frame_fraction": 0.9428571428571428,
+        "position_error_m": {
+          "mean": 0.1837649733909364,
+          "p95": 0.19749087990590347,
+          "max": 0.20674958820247258
+        },
+        "velocity_error_mps": {
+          "mean": 0.041921518914608574,
+          "p95": 0.16756595098977062,
+          "max": 0.39855481052567426
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 1,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 68,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {
+      "D_insufficient_lidar_returns": 2
+    },
+    "min_resolved_center_separation_m": 1.4175046693501372,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 2,
+    "reacquisitions": [
+      {
+        "id": 2,
+        "missed_scans": 2,
+        "since_last_observation_s": 0.6000000000000005,
+        "t": 3.75,
+        "same_id": true
+      }
+    ],
+    "prediction_samples_checked": 420,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 13571.435257142855,
+        "p95": 30611.4725,
+        "max": 30617.898
+      },
+      "cluster_us": {
+        "mean": 40.89414285714286,
+        "p95": 52.796499999999995,
+        "max": 59.921
+      },
+      "deblend_us": {
+        "mean": 101.31888571428571,
+        "p95": 130.3116,
+        "max": 215.3
+      },
+      "association_us": {
+        "mean": 160.80162857142855,
+        "p95": 203.94299999999987,
+        "max": 288.651
+      },
+      "callback_us": {
+        "mean": 15230.159342857141,
+        "p95": 32320.269200000002,
+        "max": 32780.3
+      },
+      "clusters": {
+        "mean": 1.9428571428571428,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "measurements": {
+        "mean": 1.9428571428571428,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "splits": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 35,
+    "costmap_grid_frames": 36,
+    "costmap_nonzero_frames": 36,
+    "costmap_multi_eligible_frames": 6,
+    "costmap_multi_represented_frames": 6,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.0887710334009036e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 32,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 1.4175046693501372,
+    "source_trial": "validation_logs/stage4g3/baseline/occlusion_02",
+    "raw_sha256": "4e14f953c6b42e563042dcef69646da94c7b9a9c29b72912c41e8120c9099944"
+  },
+  {
+    "scenario": "opposing",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1.5,
+            -0.45
+          ],
+          "velocity": [
+            0.3,
+            0
+          ]
+        },
+        {
+          "start": [
+            1.5,
+            0.45
+          ],
+          "velocity": [
+            -0.3,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16985743587760102,
+          "p95": 0.1847112391309916,
+          "max": 0.19368173980345268
+        },
+        "velocity_error_mps": {
+          "mean": 0.031529430848321424,
+          "p95": 0.06511690466510212,
+          "max": 0.23639424759685085
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16767552382451764,
+          "p95": 0.18097310097836194,
+          "max": 0.18738007193898806
+        },
+        "velocity_error_mps": {
+          "mean": 0.032000629661664684,
+          "p95": 0.07360182409597091,
+          "max": 0.22754608680514748
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 100,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": 0.9000760319928919,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 600,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 12639.54958,
+        "p95": 30625.8916,
+        "max": 30679.815
+      },
+      "cluster_us": {
+        "mean": 42.63258,
+        "p95": 57.21245,
+        "max": 58.074
+      },
+      "deblend_us": {
+        "mean": 108.6771,
+        "p95": 142.97909999999996,
+        "max": 154.92
+      },
+      "association_us": {
+        "mean": 175.65858,
+        "p95": 244.19365,
+        "max": 257.067
+      },
+      "callback_us": {
+        "mean": 14394.68994,
+        "p95": 32366.217849999997,
+        "max": 32944.893
+      },
+      "clusters": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "measurements": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "splits": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 51,
+    "costmap_nonzero_frames": 51,
+    "costmap_multi_eligible_frames": 19,
+    "costmap_multi_represented_frames": 19,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088775665612334e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 49,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 0.9000760319928919,
+    "source_trial": "validation_logs/stage4g3/baseline/opposing_01",
+    "raw_sha256": "2dde97bbafb9726f3541ee4a8e9f58f5caf80336a684fbb40d72ac3f53fbc42d"
+  },
+  {
+    "scenario": "opposing",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1.5,
+            -0.45
+          ],
+          "velocity": [
+            0.3,
+            0
+          ]
+        },
+        {
+          "start": [
+            1.5,
+            0.45
+          ],
+          "velocity": [
+            -0.3,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.17258983495664001,
+          "p95": 0.18703923459476793,
+          "max": 0.1976461806322611
+        },
+        "velocity_error_mps": {
+          "mean": 0.03182137409811066,
+          "p95": 0.06773592286330866,
+          "max": 0.2331451262213849
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.1721103883012723,
+          "p95": 0.1832253380169456,
+          "max": 0.18794869545116882
+        },
+        "velocity_error_mps": {
+          "mean": 0.031005170530003227,
+          "p95": 0.06993291556288764,
+          "max": 0.22185521175831613
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 100,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": 0.9000845501370215,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 600,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 12055.587900000002,
+        "p95": 30690.83925,
+        "max": 30857.007
+      },
+      "cluster_us": {
+        "mean": 43.81578000000001,
+        "p95": 57.50389999999999,
+        "max": 67.191
+      },
+      "deblend_us": {
+        "mean": 113.54225999999998,
+        "p95": 144.10295,
+        "max": 173.555
+      },
+      "association_us": {
+        "mean": 186.27591999999996,
+        "p95": 239.21489999999997,
+        "max": 280.503
+      },
+      "callback_us": {
+        "mean": 13941.38534,
+        "p95": 32643.5658,
+        "max": 33320.222
+      },
+      "clusters": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "measurements": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "splits": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 52,
+    "costmap_nonzero_frames": 52,
+    "costmap_multi_eligible_frames": 19,
+    "costmap_multi_represented_frames": 19,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088775665612334e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 49,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 0.9000845501370215,
+    "source_trial": "validation_logs/stage4g3/baseline/opposing_02",
+    "raw_sha256": "ba5c8ae9e12eac27f7a514be3143d66213238c90a595724f71191a0367772519"
+  },
+  {
+    "scenario": "parallel",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1,
+            -1
+          ],
+          "velocity": [
+            0.3,
+            0
+          ]
+        },
+        {
+          "start": [
+            -1,
+            1
+          ],
+          "velocity": [
+            0.3,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16831543590167072,
+          "p95": 0.1920940218318007,
+          "max": 0.19311940971074676
+        },
+        "velocity_error_mps": {
+          "mean": 0.034062872817287475,
+          "p95": 0.09132389654275058,
+          "max": 0.20598899111436325
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16540572760890154,
+          "p95": 0.17620286084116416,
+          "max": 0.18721828621757597
+        },
+        "velocity_error_mps": {
+          "mean": 0.040018975040029235,
+          "p95": 0.09583377351318711,
+          "max": 0.26586680857028416
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 100,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": 2.000000000004036,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 600,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 13638.867979999999,
+        "p95": 30683.577149999997,
+        "max": 30705.615
+      },
+      "cluster_us": {
+        "mean": 35.8188,
+        "p95": 52.9076,
+        "max": 56.717
+      },
+      "deblend_us": {
+        "mean": 103.04086,
+        "p95": 142.86749999999995,
+        "max": 256.902
+      },
+      "association_us": {
+        "mean": 165.78222000000002,
+        "p95": 265.6622499999998,
+        "max": 340.024
+      },
+      "callback_us": {
+        "mean": 15206.795739999998,
+        "p95": 32268.7619,
+        "max": 32748.472
+      },
+      "clusters": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "measurements": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "splits": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 52,
+    "costmap_nonzero_frames": 52,
+    "costmap_multi_eligible_frames": 20,
+    "costmap_multi_represented_frames": 20,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088778259650735e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 49,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 2.000000000004036,
+    "source_trial": "validation_logs/stage4g3/baseline/parallel_01",
+    "raw_sha256": "b2f007cf0b948e6be6cb4b4543800caed9b079daa84c0ed98e8b00a94227b814"
+  },
+  {
+    "scenario": "parallel",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1,
+            -1
+          ],
+          "velocity": [
+            0.3,
+            0
+          ]
+        },
+        {
+          "start": [
+            -1,
+            1
+          ],
+          "velocity": [
+            0.3,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16306200490858885,
+          "p95": 0.18777654007271197,
+          "max": 0.1910285421172361
+        },
+        "velocity_error_mps": {
+          "mean": 0.03430635429541304,
+          "p95": 0.07638258689066746,
+          "max": 0.2448980671612892
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.15973442124243503,
+          "p95": 0.17174784740494956,
+          "max": 0.17790525942180835
+        },
+        "velocity_error_mps": {
+          "mean": 0.035725610555669834,
+          "p95": 0.073841068125025,
+          "max": 0.2381709007058678
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 100,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": 1.9999999992234136,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 600,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 11640.957520000002,
+        "p95": 30661.90785,
+        "max": 30833.539
+      },
+      "cluster_us": {
+        "mean": 39.287960000000005,
+        "p95": 54.5103,
+        "max": 64.077
+      },
+      "deblend_us": {
+        "mean": 110.79716,
+        "p95": 135.38085,
+        "max": 137.513
+      },
+      "association_us": {
+        "mean": 184.11007999999998,
+        "p95": 234.02044999999998,
+        "max": 250.783
+      },
+      "callback_us": {
+        "mean": 13526.370260000002,
+        "p95": 32090.82135,
+        "max": 33236.088
+      },
+      "clusters": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "measurements": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "splits": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 51,
+    "costmap_nonzero_frames": 51,
+    "costmap_multi_eligible_frames": 19,
+    "costmap_multi_represented_frames": 19,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088775665612334e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 49,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 1.9999999992234136,
+    "source_trial": "validation_logs/stage4g3/baseline/parallel_02",
+    "raw_sha256": "24b1d3449b9c53ba6a80c0cbc62f6f224743db10029c7f6040cf0bcecf0cf5cc"
+  },
+  {
+    "scenario": "single",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1,
+            -1
+          ],
+          "velocity": [
+            0.3,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 1,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 1.0,
+      "p95": 1.0,
+      "max": 1.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.1754601508538813,
+          "p95": 0.19513005417510906,
+          "max": 0.19995851811539211
+        },
+        "velocity_error_mps": {
+          "mean": 0.034858626741917,
+          "p95": 0.0735742002259376,
+          "max": 0.23583908547379356
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 1,
+    "resolvable_cluster_object_frames": 50,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": null,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 300,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 13065.47704,
+        "p95": 30732.83945,
+        "max": 30780.916
+      },
+      "cluster_us": {
+        "mean": 21.9823,
+        "p95": 28.919549999999997,
+        "max": 34.425
+      },
+      "deblend_us": {
+        "mean": 75.86724,
+        "p95": 96.1818,
+        "max": 121.234
+      },
+      "association_us": {
+        "mean": 110.98356000000001,
+        "p95": 152.81894999999997,
+        "max": 167.548
+      },
+      "callback_us": {
+        "mean": 14119.5743,
+        "p95": 31929.78095,
+        "max": 32179.006
+      },
+      "clusters": {
+        "mean": 1.0,
+        "p95": 1.0,
+        "max": 1.0
+      },
+      "measurements": {
+        "mean": 1.0,
+        "p95": 1.0,
+        "max": 1.0
+      },
+      "tracks": {
+        "mean": 1.0,
+        "p95": 1.0,
+        "max": 1.0
+      },
+      "splits": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 52,
+    "costmap_nonzero_frames": 52,
+    "costmap_multi_eligible_frames": 0,
+    "costmap_multi_represented_frames": 0,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.08877391860688e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 0,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0
+    ],
+    "first_ids": [
+      1
+    ],
+    "last_ids": [
+      1
+    ],
+    "gt_min_center_separation_m": null,
+    "source_trial": "validation_logs/stage4g3/baseline/single_01",
+    "raw_sha256": "da1c14f308ac60f97e6804c50634d2cc5e697cfbe92344f2d4aabdbea2301b69"
+  },
+  {
+    "scenario": "single",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1,
+            -1
+          ],
+          "velocity": [
+            0.3,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 1,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 1.0,
+      "p95": 1.0,
+      "max": 1.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.1695708705284511,
+          "p95": 0.18866611783950457,
+          "max": 0.19440378869495747
+        },
+        "velocity_error_mps": {
+          "mean": 0.03593532717160294,
+          "p95": 0.09222223462520646,
+          "max": 0.23024684094708348
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 1,
+    "resolvable_cluster_object_frames": 50,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": null,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 300,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 12642.464199999999,
+        "p95": 30677.8628,
+        "max": 30732.333
+      },
+      "cluster_us": {
+        "mean": 22.41648,
+        "p95": 34.04629999999998,
+        "max": 40.798
+      },
+      "deblend_us": {
+        "mean": 77.8164,
+        "p95": 109.27749999999999,
+        "max": 154.838
+      },
+      "association_us": {
+        "mean": 106.53992,
+        "p95": 140.71755000000002,
+        "max": 150.918
+      },
+      "callback_us": {
+        "mean": 13679.58114,
+        "p95": 31819.485249999998,
+        "max": 31993.882
+      },
+      "clusters": {
+        "mean": 1.0,
+        "p95": 1.0,
+        "max": 1.0
+      },
+      "measurements": {
+        "mean": 1.0,
+        "p95": 1.0,
+        "max": 1.0
+      },
+      "tracks": {
+        "mean": 1.0,
+        "p95": 1.0,
+        "max": 1.0
+      },
+      "splits": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 52,
+    "costmap_nonzero_frames": 52,
+    "costmap_multi_eligible_frames": 0,
+    "costmap_multi_represented_frames": 0,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088775083277183e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 0,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0
+    ],
+    "first_ids": [
+      1
+    ],
+    "last_ids": [
+      1
+    ],
+    "gt_min_center_separation_m": null,
+    "source_trial": "validation_logs/stage4g3/baseline/single_02",
+    "raw_sha256": "2cd81768b32967fb720245275d6e4b0e5fa4f8d6510ca659bc3f1384f9c53f43"
+  },
+  {
+    "scenario": "navigation",
+    "definition": {
+      "duration": 22,
+      "navigate": true,
+      "objects": [
+        {
+          "start": [
+            -1,
+            -1.5
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        },
+        {
+          "start": [
+            -1,
+            1.5
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 110,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 110
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 110,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.12104679441715031,
+          "p95": 0.18398739254039095,
+          "max": 0.18961187538166066
+        },
+        "velocity_error_mps": {
+          "mean": 0.028147377969494177,
+          "p95": 0.06019609338004338,
+          "max": 0.11235385452075532
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 110
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 110,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.18189273527496513,
+          "p95": 0.22185486842934143,
+          "max": 0.23183199068667534
+        },
+        "velocity_error_mps": {
+          "mean": 0.029826688169957007,
+          "p95": 0.07563254476034939,
+          "max": 0.10196830904583022
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 220,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": 3.0000000000001914,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 1320,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 13232.402100000001,
+        "p95": 30620.259599999998,
+        "max": 30751.568
+      },
+      "cluster_us": {
+        "mean": 63.11345454545455,
+        "p95": 97.231,
+        "max": 118.503
+      },
+      "deblend_us": {
+        "mean": 101.95260909090909,
+        "p95": 143.0811,
+        "max": 227.277
+      },
+      "association_us": {
+        "mean": 163.62117272727275,
+        "p95": 236.12275,
+        "max": 281.888
+      },
+      "callback_us": {
+        "mean": 14877.458799999999,
+        "p95": 32333.10065,
+        "max": 33202.886
+      },
+      "clusters": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "measurements": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "splits": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 110,
+    "costmap_grid_frames": 112,
+    "costmap_nonzero_frames": 112,
+    "costmap_multi_eligible_frames": 112,
+    "costmap_multi_represented_frames": 112,
+    "nav": {
+      "requested": true,
+      "lifecycle_end": 3,
+      "status": 4,
+      "robot_distance": 5.903256431887537
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 109,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 3.0000000000001914,
+    "source_trial": "validation_logs/stage4g3/regressions/navigation_01",
+    "raw_sha256": "6a5d6d290e3760836cdcdbca0abb57a0ea10fc5a58e69730bfe67153f8e4141c"
+  },
+  {
+    "scenario": "occlusion_long",
+    "definition": {
+      "duration": 12,
+      "objects": [
+        {
+          "start": [
+            -1,
+            -0.8
+          ],
+          "velocity": [
+            0,
+            0.15
+          ]
+        },
+        {
+          "start": [
+            0,
+            0
+          ],
+          "velocity": [
+            0.05,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 60,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 1.8666666666666667,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 60
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 60,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16689770051543504,
+          "p95": 0.17427697961824168,
+          "max": 0.1784288785418049
+        },
+        "velocity_error_mps": {
+          "mean": 0.022714328208971013,
+          "p95": 0.0450346455335602,
+          "max": 0.10531406170510693
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 25,
+          "3": 22
+        },
+        "id_switches": 1,
+        "track_fragments": 1,
+        "identity_fragments": 1,
+        "purity": 0.5319148936170213,
+        "matched_frames": 47,
+        "matched_frame_fraction": 0.7833333333333333,
+        "position_error_m": {
+          "mean": 0.16957153234509953,
+          "p95": 0.19428553966592707,
+          "max": 0.19874212378816972
+        },
+        "velocity_error_mps": {
+          "mean": 0.03165648475750705,
+          "p95": 0.11744053780019474,
+          "max": 0.16376159216752706
+        }
+      }
+    ],
+    "id_switches": 1,
+    "track_fragments": 1,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 3,
+    "resolvable_cluster_object_frames": 109,
+    "resolvable_cluster_matched_fraction": 0.981651376146789,
+    "categories": {
+      "D_insufficient_lidar_returns": 11,
+      "B_or_C_resolved_cluster_without_fresh_track": 2
+    },
+    "min_resolved_center_separation_m": 1.160647851105334,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 5,
+    "reacquisitions": [],
+    "prediction_samples_checked": 672,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 12096.026066666669,
+        "p95": 30604.96675,
+        "max": 30708.449
+      },
+      "cluster_us": {
+        "mean": 46.112700000000004,
+        "p95": 63.90009999999998,
+        "max": 76.785
+      },
+      "deblend_us": {
+        "mean": 102.73426666666667,
+        "p95": 132.33674999999997,
+        "max": 196.254
+      },
+      "association_us": {
+        "mean": 157.98431666666661,
+        "p95": 252.091,
+        "max": 264.172
+      },
+      "callback_us": {
+        "mean": 13680.718150000002,
+        "p95": 31966.790050000003,
+        "max": 32691.483
+      },
+      "clusters": {
+        "mean": 1.8166666666666667,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "measurements": {
+        "mean": 1.8166666666666667,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 1.9,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "splits": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 60,
+    "costmap_grid_frames": 62,
+    "costmap_nonzero_frames": 62,
+    "costmap_multi_eligible_frames": 32,
+    "costmap_multi_represented_frames": 31,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088786994678003e-15
+    },
+    "disappearances": [
+      {
+        "id": 2,
+        "t": 6.048,
+        "since_last_observation_s": 1.200000000000001,
+        "previous_missed": 5
+      }
+    ],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 45,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      0.8666666666666667
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      3
+    ],
+    "gt_min_center_separation_m": 1.160647851105334,
+    "source_trial": "validation_logs/stage4g3/regressions/occlusion_long_01",
+    "raw_sha256": "60e501fdb0bc8cb51cf13435206948435be73f5df13f5c5e66bc8fc699a5e3c9"
+  },
+  {
+    "scenario": "resolution_105",
+    "definition": {
+      "duration": 6,
+      "objects": [
+        {
+          "start": [
+            0,
+            -0.525
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        },
+        {
+          "start": [
+            0,
+            0.525
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 30,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 30
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 30,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.17962225621642988,
+          "p95": 0.20482138182560625,
+          "max": 0.20705597734104336
+        },
+        "velocity_error_mps": {
+          "mean": 0.03255013804995264,
+          "p95": 0.0699068104253476,
+          "max": 0.11519442728702076
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 30
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 30,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16893326821077867,
+          "p95": 0.1835791416117607,
+          "max": 0.1875099568651418
+        },
+        "velocity_error_mps": {
+          "mean": 0.03377144894752926,
+          "p95": 0.06537921604794758,
+          "max": 0.110839547954927
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 60,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": 1.050000000000039,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 360,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 14070.847800000001,
+        "p95": 30601.4088,
+        "max": 30649.394
+      },
+      "cluster_us": {
+        "mean": 32.59823333333333,
+        "p95": 43.437749999999994,
+        "max": 56.342
+      },
+      "deblend_us": {
+        "mean": 95.34503333333332,
+        "p95": 126.77499999999999,
+        "max": 143.751
+      },
+      "association_us": {
+        "mean": 149.59333333333333,
+        "p95": 208.78504999999998,
+        "max": 216.328
+      },
+      "callback_us": {
+        "mean": 15564.018866666667,
+        "p95": 32399.8085,
+        "max": 32683.015
+      },
+      "clusters": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "measurements": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "splits": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 30,
+    "costmap_grid_frames": 31,
+    "costmap_nonzero_frames": 31,
+    "costmap_multi_eligible_frames": 5,
+    "costmap_multi_represented_frames": 5,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088772674527239e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 29,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 1.050000000000039,
+    "source_trial": "validation_logs/stage4g3/regressions/resolution_105_01",
+    "raw_sha256": "2ef43f312318575d313466db12bd9737b27612a27d2344806c80937aec774e7b"
+  },
+  {
+    "scenario": "resolution_55",
+    "definition": {
+      "duration": 6,
+      "objects": [
+        {
+          "start": [
+            0,
+            -0.275
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        },
+        {
+          "start": [
+            0,
+            0.275
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 30,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 1.0,
+      "p95": 1.0,
+      "max": 1.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 20
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 20,
+        "matched_frame_fraction": 0.6666666666666666,
+        "position_error_m": {
+          "mean": 0.2936501758480721,
+          "p95": 0.3055707303933126,
+          "max": 0.3068084075476237
+        },
+        "velocity_error_mps": {
+          "mean": 0.018480383603607292,
+          "p95": 0.0689900797817283,
+          "max": 0.10726335992741676
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "1": 10
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 10,
+        "matched_frame_fraction": 0.3333333333333333,
+        "position_error_m": {
+          "mean": 0.31326716173295976,
+          "p95": 0.31684157732567503,
+          "max": 0.31712271710751155
+        },
+        "velocity_error_mps": {
+          "mean": 0.016662685765136073,
+          "p95": 0.04609955631470033,
+          "max": 0.05097826686307327
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 1,
+    "resolvable_cluster_object_frames": 0,
+    "resolvable_cluster_matched_fraction": null,
+    "categories": {
+      "A_cluster_merge": 30
+    },
+    "min_resolved_center_separation_m": null,
+    "merge_center_separation_m": {
+      "mean": 0.5500000826486446,
+      "p95": 0.5500003461905385,
+      "max": 0.5500006508455212
+    },
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 180,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 13089.320066666667,
+        "p95": 30592.0205,
+        "max": 30726.259
+      },
+      "cluster_us": {
+        "mean": 32.3234,
+        "p95": 39.488599999999984,
+        "max": 49.304
+      },
+      "deblend_us": {
+        "mean": 69.9427,
+        "p95": 86.14155,
+        "max": 88.587
+      },
+      "association_us": {
+        "mean": 107.96273333333335,
+        "p95": 165.83949999999984,
+        "max": 205.906
+      },
+      "callback_us": {
+        "mean": 14113.371166666666,
+        "p95": 31538.7317,
+        "max": 31939.985
+      },
+      "clusters": {
+        "mean": 1.0,
+        "p95": 1.0,
+        "max": 1.0
+      },
+      "measurements": {
+        "mean": 1.0,
+        "p95": 1.0,
+        "max": 1.0
+      },
+      "tracks": {
+        "mean": 1.0,
+        "p95": 1.0,
+        "max": 1.0
+      },
+      "splits": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 30,
+    "costmap_grid_frames": 31,
+    "costmap_nonzero_frames": 31,
+    "costmap_multi_eligible_frames": 0,
+    "costmap_multi_represented_frames": 0,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088767565859776e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 0,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      0.6666666666666666,
+      0.3333333333333333
+    ],
+    "first_ids": [
+      1,
+      null
+    ],
+    "last_ids": [
+      null,
+      1
+    ],
+    "gt_min_center_separation_m": 0.5500000000008631,
+    "source_trial": "validation_logs/stage4g3/regressions/resolution_55_01",
+    "raw_sha256": "f7655821ad0b33d66fa4d2b7d753d08425c65562b736874e494115e85cdd5bc5"
+  },
+  {
+    "scenario": "resolution_65",
+    "definition": {
+      "duration": 6,
+      "objects": [
+        {
+          "start": [
+            0,
+            -0.325
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        },
+        {
+          "start": [
+            0,
+            0.325
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 30,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 1.0,
+      "p95": 1.0,
+      "max": 1.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 30
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 30,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.34603986657760627,
+          "p95": 0.356518622205102,
+          "max": 0.3581234458558247
+        },
+        "velocity_error_mps": {
+          "mean": 0.016430610864433433,
+          "p95": 0.06989562287736047,
+          "max": 0.10062159014228886
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {},
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 0,
+        "matched_frames": 0,
+        "matched_frame_fraction": 0.0,
+        "position_error_m": null,
+        "velocity_error_mps": null
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 1,
+    "resolvable_cluster_object_frames": 0,
+    "resolvable_cluster_matched_fraction": null,
+    "categories": {
+      "A_cluster_merge": 30
+    },
+    "min_resolved_center_separation_m": null,
+    "merge_center_separation_m": {
+      "mean": 0.6500000847081536,
+      "p95": 0.6500003384421399,
+      "max": 0.6500003626551407
+    },
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 180,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 12097.236166666667,
+        "p95": 30698.95105,
+        "max": 30729.914
+      },
+      "cluster_us": {
+        "mean": 33.66996666666667,
+        "p95": 50.447599999999994,
+        "max": 52.209
+      },
+      "deblend_us": {
+        "mean": 68.58220000000001,
+        "p95": 86.65775000000001,
+        "max": 99.17
+      },
+      "association_us": {
+        "mean": 98.16096666666665,
+        "p95": 130.93804999999995,
+        "max": 142.283
+      },
+      "callback_us": {
+        "mean": 13090.0554,
+        "p95": 31775.271,
+        "max": 31818.059
+      },
+      "clusters": {
+        "mean": 1.0,
+        "p95": 1.0,
+        "max": 1.0
+      },
+      "measurements": {
+        "mean": 1.0,
+        "p95": 1.0,
+        "max": 1.0
+      },
+      "tracks": {
+        "mean": 1.0,
+        "p95": 1.0,
+        "max": 1.0
+      },
+      "splits": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 30,
+    "costmap_grid_frames": 32,
+    "costmap_nonzero_frames": 32,
+    "costmap_multi_eligible_frames": 0,
+    "costmap_multi_represented_frames": 0,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088767989376249e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 0,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      0.0
+    ],
+    "first_ids": [
+      1,
+      null
+    ],
+    "last_ids": [
+      1,
+      null
+    ],
+    "gt_min_center_separation_m": 0.6500000000005247,
+    "source_trial": "validation_logs/stage4g3/regressions/resolution_65_01",
+    "raw_sha256": "3104813749cc237b40d73dd92327c2787959e42abc33bbb3d61192c8625d6321"
+  },
+  {
+    "scenario": "resolution_75",
+    "definition": {
+      "duration": 6,
+      "objects": [
+        {
+          "start": [
+            0,
+            -0.375
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        },
+        {
+          "start": [
+            0,
+            0.375
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 30,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 30
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 30,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16215893253270725,
+          "p95": 0.17879831726631454,
+          "max": 0.18051132339864412
+        },
+        "velocity_error_mps": {
+          "mean": 0.02839270572434569,
+          "p95": 0.06940085846851565,
+          "max": 0.10969879914875855
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 30
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 30,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16527803799334342,
+          "p95": 0.1768604300110379,
+          "max": 0.179791563390867
+        },
+        "velocity_error_mps": {
+          "mean": 0.027703766146794605,
+          "p95": 0.07305883782375998,
+          "max": 0.10885130013155916
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 56,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {
+      "A_cluster_merge": 2
+    },
+    "min_resolved_center_separation_m": 0.7500000000001248,
+    "merge_center_separation_m": {
+      "mean": 0.7500000613657967,
+      "p95": 0.7500001117171339,
+      "max": 0.7500001173117269
+    },
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 360,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 12742.5703,
+        "p95": 30654.29295,
+        "max": 30712.965
+      },
+      "cluster_us": {
+        "mean": 33.92889999999999,
+        "p95": 48.26334999999999,
+        "max": 50.721
+      },
+      "deblend_us": {
+        "mean": 104.12383333333335,
+        "p95": 155.47949999999994,
+        "max": 230.162
+      },
+      "association_us": {
+        "mean": 162.9853666666667,
+        "p95": 263.94429999999994,
+        "max": 306.812
+      },
+      "callback_us": {
+        "mean": 14278.139799999999,
+        "p95": 32429.92495,
+        "max": 33092.966
+      },
+      "clusters": {
+        "mean": 1.9333333333333333,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "measurements": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "splits": {
+        "mean": 0.06666666666666667,
+        "p95": 0.5499999999999972,
+        "max": 1.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 30,
+    "costmap_grid_frames": 31,
+    "costmap_nonzero_frames": 31,
+    "costmap_multi_eligible_frames": 6,
+    "costmap_multi_represented_frames": 6,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 1.1887825829198702e-14
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 29,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 0.7500000000001248,
+    "source_trial": "validation_logs/stage4g3/regressions/resolution_75_01",
+    "raw_sha256": "1a944556ad727d5ed93c8efb4e350f53fec0fab40afc51720d438b88956e0c20"
+  },
+  {
+    "scenario": "resolution_85",
+    "definition": {
+      "duration": 6,
+      "objects": [
+        {
+          "start": [
+            0,
+            -0.425
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        },
+        {
+          "start": [
+            0,
+            0.425
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 30,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 30
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 30,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.15856928490033786,
+          "p95": 0.17473728827240786,
+          "max": 0.17772035231929315
+        },
+        "velocity_error_mps": {
+          "mean": 0.02844723644506194,
+          "p95": 0.06473538891907234,
+          "max": 0.11074700189945508
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 30
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 30,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.15639642516477437,
+          "p95": 0.16969169449034793,
+          "max": 0.17167664623191523
+        },
+        "velocity_error_mps": {
+          "mean": 0.029577964213210208,
+          "p95": 0.07226519014632694,
+          "max": 0.10913811369040058
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 60,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": 0.850000000005069,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 360,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 12109.670799999998,
+        "p95": 30661.37965,
+        "max": 30696.886
+      },
+      "cluster_us": {
+        "mean": 36.283366666666666,
+        "p95": 55.55025,
+        "max": 55.663
+      },
+      "deblend_us": {
+        "mean": 103.73156666666667,
+        "p95": 131.45404999999997,
+        "max": 162.889
+      },
+      "association_us": {
+        "mean": 162.53523333333334,
+        "p95": 224.72584999999992,
+        "max": 278.591
+      },
+      "callback_us": {
+        "mean": 13759.081466666667,
+        "p95": 32250.409,
+        "max": 32325.596
+      },
+      "clusters": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "measurements": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "splits": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 30,
+    "costmap_grid_frames": 32,
+    "costmap_nonzero_frames": 32,
+    "costmap_multi_eligible_frames": 6,
+    "costmap_multi_represented_frames": 6,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088772674527239e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 29,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 0.850000000005069,
+    "source_trial": "validation_logs/stage4g3/regressions/resolution_85_01",
+    "raw_sha256": "e5a3ebee2ab615f98e90b35bfbc26bdd05f6b5354a0f831ff4369364cec23342"
+  },
+  {
+    "scenario": "resolution_95",
+    "definition": {
+      "duration": 6,
+      "objects": [
+        {
+          "start": [
+            0,
+            -0.475
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        },
+        {
+          "start": [
+            0,
+            0.475
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 30,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 30
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 30,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.1725741058269527,
+          "p95": 0.1903789630540599,
+          "max": 0.19519024832111906
+        },
+        "velocity_error_mps": {
+          "mean": 0.030758304168313134,
+          "p95": 0.07671688827676038,
+          "max": 0.12020255354111792
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 30
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 30,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.1692398233569974,
+          "p95": 0.18459632490473385,
+          "max": 0.1867062050346339
+        },
+        "velocity_error_mps": {
+          "mean": 0.030622146615275837,
+          "p95": 0.07430163677043898,
+          "max": 0.12027695670107101
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 60,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": 0.9500000000019689,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 360,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 13417.616866666665,
+        "p95": 30651.623099999997,
+        "max": 30718.537
+      },
+      "cluster_us": {
+        "mean": 34.2209,
+        "p95": 46.939399999999985,
+        "max": 50.21
+      },
+      "deblend_us": {
+        "mean": 98.86126666666664,
+        "p95": 131.5971,
+        "max": 135.961
+      },
+      "association_us": {
+        "mean": 160.8154666666667,
+        "p95": 232.38094999999998,
+        "max": 236.88
+      },
+      "callback_us": {
+        "mean": 15059.028466666665,
+        "p95": 32289.144,
+        "max": 33162.195
+      },
+      "clusters": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "measurements": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "splits": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 30,
+    "costmap_grid_frames": 31,
+    "costmap_nonzero_frames": 31,
+    "costmap_multi_eligible_frames": 5,
+    "costmap_multi_represented_frames": 5,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088768995227874e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 29,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 0.9500000000019689,
+    "source_trial": "validation_logs/stage4g3/regressions/resolution_95_01",
+    "raw_sha256": "d73790ba1e92fa86b9d4f42f2aed8059107810531caacb0235a02d42a4ad31db"
+  },
+  {
+    "scenario": "static_navigation",
+    "definition": {
+      "duration": 19,
+      "navigate": true,
+      "objects": []
+    },
+    "frames": 95,
+    "gt_objects": 0,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 0.0,
+      "p95": 0.0,
+      "max": 0.0
+    },
+    "per_gt": [],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 0,
+    "resolvable_cluster_object_frames": 0,
+    "resolvable_cluster_matched_fraction": null,
+    "categories": {},
+    "min_resolved_center_separation_m": null,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 0,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 12002.694305263161,
+        "p95": 30655.2307,
+        "max": 30934.138
+      },
+      "cluster_us": {
+        "mean": 2.557821052631579,
+        "p95": 3.3004,
+        "max": 14.604
+      },
+      "deblend_us": {
+        "mean": 3.706105263157895,
+        "p95": 5.326499999999999,
+        "max": 12.839
+      },
+      "association_us": {
+        "mean": 4.322936842105263,
+        "p95": 5.2456,
+        "max": 37.883
+      },
+      "callback_us": {
+        "mean": 12155.752305263155,
+        "p95": 30829.1724,
+        "max": 31128.568
+      },
+      "clusters": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "measurements": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "tracks": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "splits": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 95,
+    "costmap_grid_frames": 97,
+    "costmap_nonzero_frames": 0,
+    "costmap_multi_eligible_frames": 0,
+    "costmap_multi_represented_frames": 0,
+    "nav": {
+      "requested": true,
+      "lifecycle_end": 3,
+      "status": 4,
+      "robot_distance": 5.870716945279379
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 0,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [],
+    "first_ids": [],
+    "last_ids": [],
+    "gt_min_center_separation_m": null,
+    "source_trial": "validation_logs/stage4g3/regressions/static_navigation_01",
+    "raw_sha256": "bca7d7beb541ee20dbee5ece04c7c3b3c085a1f69955b5e36ce8e2371d2d0d74"
+  },
+  {
+    "scenario": "triple",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1,
+            -1.5
+          ],
+          "velocity": [
+            0.25,
+            0
+          ]
+        },
+        {
+          "start": [
+            -1,
+            0
+          ],
+          "velocity": [
+            0.2,
+            0
+          ]
+        },
+        {
+          "start": [
+            -1,
+            1.5
+          ],
+          "velocity": [
+            0.3,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 3,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 3.0,
+      "p95": 3.0,
+      "max": 3.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.17082493870944332,
+          "p95": 0.1868630354434923,
+          "max": 0.19455917635317949
+        },
+        "velocity_error_mps": {
+          "mean": 0.033166919310026716,
+          "p95": 0.07239710061205452,
+          "max": 0.20551349356179863
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.17199600901363585,
+          "p95": 0.1891562708524801,
+          "max": 0.1905556878160853
+        },
+        "velocity_error_mps": {
+          "mean": 0.01921192997119373,
+          "p95": 0.05864911039137341,
+          "max": 0.16054672681113655
+        }
+      },
+      {
+        "object": 2,
+        "id_counts": {
+          "3": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.17392948813178807,
+          "p95": 0.1908617177342327,
+          "max": 0.19632913140785616
+        },
+        "velocity_error_mps": {
+          "mean": 0.035998564722650464,
+          "p95": 0.07419168614609636,
+          "max": 0.2624318681203415
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 3,
+    "resolvable_cluster_object_frames": 150,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": 1.50000329359392,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 900,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 13010.784599999999,
+        "p95": 30626.3543,
+        "max": 30695.03
+      },
+      "cluster_us": {
+        "mean": 60.96473999999999,
+        "p95": 95.22854999999997,
+        "max": 108.669
+      },
+      "deblend_us": {
+        "mean": 123.18512000000001,
+        "p95": 150.8338,
+        "max": 174.826
+      },
+      "association_us": {
+        "mean": 216.66564,
+        "p95": 284.68985,
+        "max": 368.528
+      },
+      "callback_us": {
+        "mean": 15242.665620000002,
+        "p95": 33086.8441,
+        "max": 34087.47
+      },
+      "clusters": {
+        "mean": 3.0,
+        "p95": 3.0,
+        "max": 3.0
+      },
+      "measurements": {
+        "mean": 3.0,
+        "p95": 3.0,
+        "max": 3.0
+      },
+      "tracks": {
+        "mean": 3.0,
+        "p95": 3.0,
+        "max": 3.0
+      },
+      "splits": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "ambiguous": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 51,
+    "costmap_nonzero_frames": 51,
+    "costmap_multi_eligible_frames": 23,
+    "costmap_multi_represented_frames": 23,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088779530200156e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 0,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2,
+      3
+    ],
+    "last_ids": [
+      1,
+      2,
+      3
+    ],
+    "gt_min_center_separation_m": 1.50000329359392,
+    "source_trial": "validation_logs/stage4g3/regressions/triple_01",
+    "raw_sha256": "afc515a80820c47c5de4f698ae934e21ed2287e95d68feabde62a5a0553c2660"
+  }
+]

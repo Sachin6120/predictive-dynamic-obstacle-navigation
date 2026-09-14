@@ -1,0 +1,76 @@
+{
+ "test": "Stage-4F large arena, no dynamic obstacle, predictive layer enabled; Stage-4G3 track-aware deblending ENABLED",
+ "n_runs": 6,
+ "persistent_false_tracks_max": 0,
+ "false_predictive_cells_max": 0,
+ "frames_tracked_total": 0,
+ "all_succeeded": true,
+ "stage4g1_reference": {
+  "n_runs": 6,
+  "persistent_false_tracks_max": 0,
+  "false_predictive_cells_max": 0,
+  "frames_tracked_total": 0
+ },
+ "runs": [
+  {
+   "trial_id": "nominal_predictive_01",
+   "nav_time": 13.301,
+   "max_tracks": 0,
+   "frames_tracked": 0,
+   "frames_with_pred_cost": 0,
+   "max_pred_cells": 0,
+   "nav_status": "SUCCEEDED",
+   "error": null
+  },
+  {
+   "trial_id": "nominal_predictive_02",
+   "nav_time": 13.451,
+   "max_tracks": 0,
+   "frames_tracked": 0,
+   "frames_with_pred_cost": 0,
+   "max_pred_cells": 0,
+   "nav_status": "SUCCEEDED",
+   "error": null
+  },
+  {
+   "trial_id": "nominal_predictive_03",
+   "nav_time": 13.413,
+   "max_tracks": 0,
+   "frames_tracked": 0,
+   "frames_with_pred_cost": 0,
+   "max_pred_cells": 0,
+   "nav_status": "SUCCEEDED",
+   "error": null
+  },
+  {
+   "trial_id": "nominal_predictive_04",
+   "nav_time": 13.412,
+   "max_tracks": 0,
+   "frames_tracked": 0,
+   "frames_with_pred_cost": 0,
+   "max_pred_cells": 0,
+   "nav_status": "SUCCEEDED",
+   "error": null
+  },
+  {
+   "trial_id": "nominal_predictive_05",
+   "nav_time": 13.35,
+   "max_tracks": 0,
+   "frames_tracked": 0,
+   "frames_with_pred_cost": 0,
+   "max_pred_cells": 0,
+   "nav_status": "SUCCEEDED",
+   "error": null
+  },
+  {
+   "trial_id": "nominal_predictive_06",
+   "nav_time": 13.352,
+   "max_tracks": 0,
+   "frames_tracked": 0,
+   "frames_with_pred_cost": 0,
+   "max_pred_cells": 0,
+   "nav_status": "SUCCEEDED",
+   "error": null
+  }
+ ]
+}

@@ -69,6 +69,19 @@ struct Observation
 
 // One future state sample produced by peeking a track's Kalman filter
 // forward; never derived from a mutated live filter.
+/// One accepted connected component, with the member points retained so that
+/// Stage-4G3 deblending can re-examine the raw geometry.
+struct Cluster
+{
+  std::vector<Point2D> points;
+  Point2D centroid;
+  double diameter{0.0};
+  /// True when the cluster was large enough to suspect two merged objects and
+  /// at least two confirmed tracks claimed it, but the scan showed no evidence
+  /// to split on. Diagnostic only: it never changes how the centroid is used.
+  bool ambiguous_merge{false};
+};
+
 struct PredictionSample
 {
   double time_from_now{0.0};
@@ -183,6 +196,24 @@ private:
     this->declare_parameter<int>("cluster_max_points", 200);
     this->declare_parameter<double>("cluster_max_diameter", 1.2);
 
+    // --- Stage-4G3: track-aware cluster deblending -----------------------
+    // A single connected cluster can contain the returns of two objects that
+    // pass close to each other. The defaults below are derived from the
+    // Stage-4G2 recordings (1,197 frames, 22 Gazebo runs), NOT from the
+    // simulator's cylinder dimensions: accepted clusters carrying returns from
+    // exactly one object never exceeded 0.468 m across, while every cluster
+    // carrying returns from two objects was at least 0.785 m across. They are
+    // parameters, not constants, so a deployment with differently sized
+    // obstacles can rescale them.
+    this->declare_parameter<bool>("deblend_enabled", true);
+    this->declare_parameter<double>("merge_min_cluster_diameter", 0.55);
+    this->declare_parameter<double>("merge_track_radius", 0.35);
+    this->declare_parameter<int>("deblend_min_points", 3);
+    this->declare_parameter<double>("deblend_max_child_diameter", 0.50);
+    this->declare_parameter<double>("deblend_min_child_separation", 0.30);
+    this->declare_parameter<double>("deblend_min_gap", 0.16);
+    this->declare_parameter<bool>("deblend_use_mahalanobis", true);
+
     this->declare_parameter<double>("association_gate", 0.6);
     this->declare_parameter<double>("track_timeout", 1.0);
     this->declare_parameter<int>("max_missed_scans", 5);
@@ -252,6 +283,19 @@ private:
     cluster_min_points_ = static_cast<size_t>(this->get_parameter("cluster_min_points").as_int());
     cluster_max_points_ = static_cast<size_t>(this->get_parameter("cluster_max_points").as_int());
     cluster_max_diameter_ = this->get_parameter("cluster_max_diameter").as_double();
+
+    deblend_enabled_ = this->get_parameter("deblend_enabled").as_bool();
+    merge_min_cluster_diameter_ =
+      this->get_parameter("merge_min_cluster_diameter").as_double();
+    merge_track_radius_ = this->get_parameter("merge_track_radius").as_double();
+    deblend_min_points_ =
+      static_cast<size_t>(this->get_parameter("deblend_min_points").as_int());
+    deblend_max_child_diameter_ =
+      this->get_parameter("deblend_max_child_diameter").as_double();
+    deblend_min_child_separation_ =
+      this->get_parameter("deblend_min_child_separation").as_double();
+    deblend_min_gap_ = this->get_parameter("deblend_min_gap").as_double();
+    deblend_use_mahalanobis_ = this->get_parameter("deblend_use_mahalanobis").as_bool();
 
     association_gate_ = this->get_parameter("association_gate").as_double();
     track_timeout_ = this->get_parameter("track_timeout").as_double();
@@ -471,12 +515,19 @@ private:
 
     const std::vector<Point2D> dynamic_points = extract_dynamic_points(*msg, transform);
     const auto cluster_start = std::chrono::steady_clock::now();
-    const std::vector<Point2D> centroids = cluster_points(dynamic_points);
+    std::vector<Cluster> clusters = build_clusters(dynamic_points);
     const auto cluster_end = std::chrono::steady_clock::now();
 
     log_static_rejection_stats(msg->header.stamp);
 
     const rclcpp::Time stamp(msg->header.stamp);
+    // Stage-4G3: merge detection + track-aware deblending sit between
+    // clustering and the unchanged association stage, so association always
+    // sees one measurement per believed object.
+    const auto deblend_start = std::chrono::steady_clock::now();
+    const size_t splits_before = deblend_split_count_;
+    const std::vector<Point2D> centroids = measurements_from_clusters(clusters, stamp);
+    const auto deblend_end = std::chrono::steady_clock::now();
     const auto association_start = std::chrono::steady_clock::now();
     associate_and_update(centroids, stamp);
     const auto association_end = std::chrono::steady_clock::now();
@@ -489,10 +540,13 @@ private:
           return std::chrono::duration<double, std::micro>(b - a).count();
         };
       RCLCPP_INFO(get_logger(),
-        "G2_PERF %.9f scan_us=%.3f cluster_us=%.3f association_us=%.3f callback_us=%.3f clusters=%zu tracks=%zu",
+        "G2_PERF %.9f scan_us=%.3f cluster_us=%.3f deblend_us=%.3f association_us=%.3f "
+        "callback_us=%.3f clusters=%zu measurements=%zu tracks=%zu splits=%zu ambiguous=%zu",
         stamp.seconds(), us(callback_start, cluster_start), us(cluster_start, cluster_end),
+        us(deblend_start, deblend_end),
         us(association_start, association_end), us(callback_start, callback_end),
-        centroids.size(), tracks_.size());
+        clusters.size(), centroids.size(), tracks_.size(),
+        deblend_split_count_ - splits_before, ambiguous_merge_count_);
     }
   }
 
@@ -570,9 +624,11 @@ private:
     return dynamic_points;
   }
 
-  std::vector<Point2D> cluster_points(const std::vector<Point2D> & points) const
+  /// Single-link connected components with the frozen Stage-4B filters. The
+  /// only change from the checkpoint is that member points are retained.
+  std::vector<Cluster> build_clusters(const std::vector<Point2D> & points) const
   {
-    std::vector<Point2D> centroids;
+    std::vector<Cluster> clusters;
     const size_t n = points.size();
     std::vector<bool> visited(n, false);
 
@@ -623,11 +679,265 @@ private:
         continue;
       }
 
-      centroids.push_back(
-        {sum_x / static_cast<double>(cluster_indices.size()),
-          sum_y / static_cast<double>(cluster_indices.size())});
+      Cluster cluster;
+      cluster.points.reserve(cluster_indices.size());
+      for (const auto idx : cluster_indices) {
+        cluster.points.push_back(points[idx]);
+      }
+      cluster.centroid = {sum_x / static_cast<double>(cluster_indices.size()),
+        sum_y / static_cast<double>(cluster_indices.size())};
+      cluster.diameter = diameter;
+      clusters.push_back(std::move(cluster));
     }
-    return centroids;
+    return clusters;
+  }
+
+  static Point2D centroid_of(const std::vector<Point2D> & pts)
+  {
+    double sx = 0.0;
+    double sy = 0.0;
+    for (const auto & p : pts) {
+      sx += p.x;
+      sy += p.y;
+    }
+    const double inv = 1.0 / static_cast<double>(pts.size());
+    return {sx * inv, sy * inv};
+  }
+
+  static double diameter_of(const std::vector<Point2D> & pts)
+  {
+    double min_x = pts.front().x;
+    double max_x = min_x;
+    double min_y = pts.front().y;
+    double max_y = min_y;
+    for (const auto & p : pts) {
+      min_x = std::min(min_x, p.x);
+      max_x = std::max(max_x, p.x);
+      min_y = std::min(min_y, p.y);
+      max_y = std::max(max_y, p.y);
+    }
+    return std::hypot(max_x - min_x, max_y - min_y);
+  }
+
+  // ---------------------------------------------------------------------
+  // Stage-4G3: track-aware cluster deblending
+  // ---------------------------------------------------------------------
+  //
+  // WHY this exists (measured, Stage-4G2 close perpendicular crossing): when
+  // two objects pass within roughly 0.46-0.67 m of each other, their returns
+  // fall into ONE 0.35 m-connected component for 4-5 consecutive scans. The
+  // blended centroid was then handed to whichever track was nearer, the other
+  // track received nothing, and after five misses it expired -- 2 ID switches
+  // per trial. Greedy association was never the limiting factor: with only one
+  // measurement there is nothing for any assignment rule, global or greedy, to
+  // distribute.
+  //
+  // WHAT it does: for a cluster that is too large to be one object AND that at
+  // least two already-confirmed tracks predict into, the member points are
+  // partitioned by nearest predicted track and the partition is accepted only
+  // if the SCAN ITSELF supports it. No ground truth is used; the seeds are the
+  // tracker's own Kalman predictions, which are runtime state.
+  //
+  // WHAT it deliberately does not do: it never manufactures a measurement for
+  // an object that is not visible. If one object physically occludes the other
+  // the hidden object contributes no returns, no gap appears, the split is
+  // refused, and the unobserved track coasts on prediction as before. It also
+  // cannot create an identity that never existed: two seeds are required, so
+  // objects that were merged from the moment they appeared stay one cluster.
+
+  struct DeblendSeed
+  {
+    double x{0.0};
+    double y{0.0};
+    /// Inverse of the predicted position covariance + R, for Mahalanobis
+    /// ownership. Falls back to identity if that matrix is not invertible.
+    Eigen::Matrix2d information{Eigen::Matrix2d::Identity()};
+  };
+
+  /// Predicted positions/covariances of the CONFIRMED tracks, at scan time.
+  /// Tentative tracks are excluded: an unconfirmed track is not yet evidence
+  /// that an object exists, so it must not be able to carve up a cluster.
+  std::vector<DeblendSeed> deblend_seeds(const rclcpp::Time & stamp) const
+  {
+    std::vector<DeblendSeed> seeds;
+    for (const auto & track : tracks_) {
+      if (track.observations < min_observations_to_publish_) {
+        continue;
+      }
+      const double dt = clamp_dt((stamp - track.last_update).seconds());
+      const Eigen::Matrix4d F = ConstantVelocityKalmanFilter2D::stateTransition(dt);
+      const Eigen::Vector4d x = F * track.kf_x;
+      const Eigen::Matrix4d P = F * track.kf_P * F.transpose() +
+        ConstantVelocityKalmanFilter2D::processNoise(dt, kf_accel_noise_);
+
+      DeblendSeed seed;
+      seed.x = x(0);
+      seed.y = x(1);
+      Eigen::Matrix2d S = P.topLeftCorner<2, 2>();
+      S(0, 0) += kf_measurement_noise_ * kf_measurement_noise_;
+      S(1, 1) += kf_measurement_noise_ * kf_measurement_noise_;
+      const double det = S.determinant();
+      if (std::isfinite(det) && std::abs(det) > 1e-12) {
+        seed.information = S.inverse();
+      }
+      seeds.push_back(seed);
+    }
+    return seeds;
+  }
+
+  /// Squared distance from a point to a seed, in whichever metric is enabled.
+  static double seed_cost(
+    const Point2D & p, const DeblendSeed & s, bool mahalanobis)
+  {
+    const Eigen::Vector2d d(p.x - s.x, p.y - s.y);
+    return mahalanobis ? d.dot(s.information * d) : d.squaredNorm();
+  }
+
+  /// Attempts to split one cluster. Returns true and fills `children` when the
+  /// scan supports two objects; returns false and leaves the cluster intact
+  /// otherwise. `ambiguous` reports the "suspicious and claimed, but refused"
+  /// case, which is a real merged observation of an unknown owner.
+  bool try_deblend(
+    const Cluster & cluster, const std::vector<DeblendSeed> & seeds,
+    std::vector<Point2D> & children, bool & ambiguous) const
+  {
+    ambiguous = false;
+    if (cluster.diameter <= merge_min_cluster_diameter_) {
+      return false;   // Consistent with a single object; nothing to explain.
+    }
+    if (seeds.size() < 2) {
+      return false;
+    }
+
+    // A seed only claims this cluster if some member point is close to it.
+    // Distance to the NEAREST POINT, not to the centroid: during a merge the
+    // blended centroid sits between the two objects and would otherwise look
+    // equally near to both, which is exactly the ambiguity to be avoided.
+    std::vector<size_t> claiming;
+    for (size_t i = 0; i < seeds.size(); ++i) {
+      double nearest = std::numeric_limits<double>::infinity();
+      for (const auto & p : cluster.points) {
+        nearest = std::min(nearest, std::hypot(p.x - seeds[i].x, p.y - seeds[i].y));
+      }
+      if (nearest <= merge_track_radius_) {
+        claiming.push_back(i);
+      }
+    }
+    if (claiming.size() < 2) {
+      return false;
+    }
+
+    // With more than two claimants, split only along the two furthest-apart
+    // seeds -- the pair the cluster's elongation is actual evidence for. The
+    // result is always a TWO-way split; any further claimant receives no
+    // measurement this scan and coasts. Recursive or k-way splitting is
+    // deliberately not attempted, because the single gap test below is
+    // evidence for one dividing surface, not for several.
+    size_t a = claiming[0];
+    size_t b = claiming[1];
+    double widest = -1.0;
+    for (size_t i = 0; i < claiming.size(); ++i) {
+      for (size_t j = i + 1; j < claiming.size(); ++j) {
+        const double d = std::hypot(
+          seeds[claiming[i]].x - seeds[claiming[j]].x,
+          seeds[claiming[i]].y - seeds[claiming[j]].y);
+        if (d > widest) {
+          widest = d;
+          a = claiming[i];
+          b = claiming[j];
+        }
+      }
+    }
+
+    std::vector<Point2D> part_a;
+    std::vector<Point2D> part_b;
+    for (const auto & p : cluster.points) {
+      if (seed_cost(p, seeds[a], deblend_use_mahalanobis_) <=
+        seed_cost(p, seeds[b], deblend_use_mahalanobis_))
+      {
+        part_a.push_back(p);
+      } else {
+        part_b.push_back(p);
+      }
+    }
+
+    ambiguous = true;   // Suspicious and claimed; downgraded below only on success.
+
+    // Each side must be an acceptable measurement in its own right.
+    if (part_a.size() < deblend_min_points_ || part_b.size() < deblend_min_points_) {
+      return false;
+    }
+    if (diameter_of(part_a) > deblend_max_child_diameter_ ||
+      diameter_of(part_b) > deblend_max_child_diameter_)
+    {
+      return false;
+    }
+    const Point2D ca = centroid_of(part_a);
+    const Point2D cb = centroid_of(part_b);
+    if (!std::isfinite(ca.x) || !std::isfinite(ca.y) ||
+      !std::isfinite(cb.x) || !std::isfinite(cb.y))
+    {
+      return false;
+    }
+    if (std::hypot(ca.x - cb.x, ca.y - cb.y) < deblend_min_child_separation_) {
+      return false;
+    }
+
+    // The decisive anti-fabrication guard: the returns themselves must show a
+    // gap at the split surface, wider than the spacing seen between returns on
+    // one object (measured p95 0.147 m, max 0.161 m). Without this, nearest-seed
+    // partitioning would happily slice any solid blob in two.
+    double gap = std::numeric_limits<double>::infinity();
+    for (const auto & pa : part_a) {
+      for (const auto & pb : part_b) {
+        gap = std::min(gap, std::hypot(pa.x - pb.x, pa.y - pb.y));
+      }
+    }
+    if (!(gap >= deblend_min_gap_)) {
+      return false;
+    }
+
+    children.clear();
+    children.push_back(ca);
+    children.push_back(cb);
+    ambiguous = false;
+    return true;
+  }
+
+  /// Cluster centroids after deblending. With deblending disabled this is
+  /// exactly the checkpoint's list of one centroid per accepted cluster.
+  std::vector<Point2D> measurements_from_clusters(
+    std::vector<Cluster> & clusters, const rclcpp::Time & stamp)
+  {
+    std::vector<Point2D> measurements;
+    measurements.reserve(clusters.size() + 1);
+    if (!deblend_enabled_) {
+      for (const auto & c : clusters) {
+        measurements.push_back(c.centroid);
+      }
+      return measurements;
+    }
+
+    const std::vector<DeblendSeed> seeds = deblend_seeds(stamp);
+    std::vector<Point2D> children;
+    for (auto & c : clusters) {
+      bool ambiguous = false;
+      if (try_deblend(c, seeds, children, ambiguous)) {
+        measurements.insert(measurements.end(), children.begin(), children.end());
+        ++deblend_split_count_;
+      } else {
+        // Unsplit merged clusters keep their single blended centroid, which
+        // greedy association gives to exactly ONE track (its assignment is
+        // one-to-one). The other track receives nothing and coasts. No centroid
+        // is ever used to update two filters.
+        measurements.push_back(c.centroid);
+        c.ambiguous_merge = ambiguous;
+        if (ambiguous) {
+          ++ambiguous_merge_count_;
+        }
+      }
+    }
+    return measurements;
   }
 
   // ---------------------------------------------------------------------
@@ -1179,6 +1489,18 @@ private:
   size_t cluster_min_points_{3};
   size_t cluster_max_points_{200};
   double cluster_max_diameter_{1.2};
+
+  // --- Stage-4G3: track-aware cluster deblending ---
+  bool deblend_enabled_{true};
+  double merge_min_cluster_diameter_{0.55};
+  double merge_track_radius_{0.35};
+  size_t deblend_min_points_{3};
+  double deblend_max_child_diameter_{0.50};
+  double deblend_min_child_separation_{0.30};
+  double deblend_min_gap_{0.16};
+  bool deblend_use_mahalanobis_{true};
+  size_t deblend_split_count_{0};
+  size_t ambiguous_merge_count_{0};
 
   double association_gate_{0.6};
   double track_timeout_{1.0};

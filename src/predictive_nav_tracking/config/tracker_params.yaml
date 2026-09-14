@@ -50,6 +50,45 @@ lidar_obstacle_tracker:
     cluster_max_points: 200
     cluster_max_diameter: 1.2
 
+    # --- Stage-4G3: track-aware cluster deblending ---------------------
+    # Two obstacles passing close together fall into ONE 0.35 m-connected
+    # cluster. The blended centroid can then only feed one track (greedy
+    # association is one-to-one), the other track starves and expires, and
+    # the identity is lost. Measured at Stage-4G2: 4-5 merged scans per close
+    # crossing, 2 ID switches per trial.
+    #
+    # The fix splits such a cluster using the tracker's OWN Kalman predictions
+    # as seeds -- runtime state, never simulator ground truth -- and only when
+    # the raw returns show a gap to split on. If one object is physically
+    # occluded it contributes no returns, no gap exists, the split is refused
+    # and the unobserved track coasts on prediction exactly as before.
+    #
+    # The thresholds are measured from the 1,197 recorded Stage-4G2 frames,
+    # not derived from the simulator's cylinder size:
+    #   accepted clusters holding ONE object's returns : max diameter 0.468 m
+    #   accepted clusters holding TWO objects' returns : min diameter 0.785 m
+    #   largest gap between returns ON one object      : p95 0.147 m, max 0.161 m
+    #   smallest gap BETWEEN two merged objects        : 0.123 m (median 0.235 m)
+    # Point count is deliberately NOT used as merge evidence: the single-object
+    # (max 16) and merged (min 12) distributions overlap, so it does not
+    # discriminate. Diameter does, with a 0.32 m margin on either side.
+    #
+    # Scale merge_min_cluster_diameter / deblend_max_child_diameter with the
+    # expected obstacle size if the obstacles are not ~0.4 m across; the rule
+    # is "clearly bigger than one tracked object", not a fixed cylinder.
+    deblend_enabled: true
+    merge_min_cluster_diameter: 0.55   # m: above every observed single object
+    merge_track_radius: 0.35           # m: seed-to-nearest-cluster-point claim
+    deblend_min_points: 3              # == cluster_min_points; a child must be
+                                       # an acceptable measurement on its own
+    deblend_max_child_diameter: 0.50   # m: a child must look like one object
+    deblend_min_child_separation: 0.30 # m: between the two child centroids
+    deblend_min_gap: 0.16              # m: REQUIRED empty space between the two
+                                       # point sets; above the 0.161 m worst
+                                       # within-object spacing, so a solid blob
+                                       # can never be sliced in two
+    deblend_use_mahalanobis: true      # ownership uses predicted covariance + R
+
     # Gated nearest-neighbour association + track lifecycle.
     association_gate: 0.6
     track_timeout: 1.0

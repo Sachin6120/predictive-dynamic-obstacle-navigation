@@ -1,0 +1,10 @@
+{
+    "pass": true,
+    "synthetic_unit_test": true,
+    "missed_scans_survived": 5,
+    "expiry_after_last_observation_s": 1.2,
+    "reacquisition_same_id_after_misses": 4,
+    "new_id_after_expiry": true,
+    "observation_stamp_and_count_preserved_on_misses": true,
+    "prediction_state_independent": true
+}

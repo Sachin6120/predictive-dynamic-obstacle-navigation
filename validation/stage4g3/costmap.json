@@ -1,0 +1,10 @@
+{
+    "pass": true,
+    "overlap_cells": 432,
+    "unique_a_cells": 327,
+    "unique_b_cells": 336,
+    "max_composition_exact": true,
+    "independent_expiry_exact": true,
+    "independent_removal_exact": true,
+    "empty_master_ghost_cells": 0
+}

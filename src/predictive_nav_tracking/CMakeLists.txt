@@ -60,6 +60,15 @@ if(BUILD_TESTING)
     tf2 tf2_ros tf2_geometry_msgs visualization_msgs predictive_nav_msgs)
   add_test(NAME stage4g2_lifecycle COMMAND stage4g2_lifecycle)
   set_tests_properties(stage4g2_lifecycle PROPERTIES ENVIRONMENT "ROS_DOMAIN_ID=94" TIMEOUT 20)
+
+  # Stage-4G3: deblending against recorded Gazebo merge/occlusion geometry.
+  add_executable(stage4g3_deblend test/stage4g3_deblend.cpp)
+  target_compile_options(stage4g3_deblend PRIVATE -fno-access-control)
+  target_include_directories(stage4g3_deblend PRIVATE include ${EIGEN3_INCLUDE_DIR})
+  ament_target_dependencies(stage4g3_deblend rclcpp sensor_msgs nav_msgs geometry_msgs
+    tf2 tf2_ros tf2_geometry_msgs visualization_msgs predictive_nav_msgs)
+  add_test(NAME stage4g3_deblend COMMAND stage4g3_deblend)
+  set_tests_properties(stage4g3_deblend PROPERTIES ENVIRONMENT "ROS_DOMAIN_ID=95" TIMEOUT 20)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
   # comment the line when a copyright and license is added to all source files

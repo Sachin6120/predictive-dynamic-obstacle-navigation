@@ -1,0 +1,27 @@
+{
+  "checkpoint": "45bf1a0",
+  "stage4f_reference": "68b2bf2ee1efb774ba563438a4c621b0052f61d5",
+  "protected_files": {
+    "src/predictive_nav_costmap/src/predicted_obstacle_layer.cpp": "d19890a30300891b5f2f6b6cf5565bfa07065c3fa25da81f9d71810611a5bde1",
+    "src/predictive_nav_tracking/include/predictive_nav_tracking/kalman_filter.hpp": "a7588026ebba8bad83c45e0b9cc4d5bf8651d6724d19a3d0b65d84ff78e214db",
+    "src/predictive_nav_bringup/config/nav2_stage4f_params.yaml": "471a5b38b874a01d11db56b5d0701c9f6d2e51689d5d929f047e7493fbc1b4e5"
+  },
+  "protected_files_unchanged": true,
+  "frozen_tracker_parameters_unchanged": {
+    "static_reject_radius": true,
+    "cluster_distance": true,
+    "cluster_min_points": true,
+    "cluster_max_points": true,
+    "cluster_max_diameter": true,
+    "association_gate": true,
+    "track_timeout": true,
+    "max_missed_scans": true,
+    "min_observations_to_publish": true,
+    "kf_process_accel_noise": true,
+    "kf_measurement_noise": true,
+    "prediction_horizon": true,
+    "prediction_time_step": true
+  },
+  "tracker_source_sha256_at_curation": "792cfc88b8fb9279f1d5a6b71032ad1dccb4c1cd60a167145b6b0b5a8f3183c7",
+  "note": "Stage-4G3 adds track-aware cluster deblending between clustering and the unchanged greedy association. Static rejection, association, Kalman update, lifecycle and prediction are otherwise identical to 45bf1a0. Raw data hashes are recorded per trial."
+}

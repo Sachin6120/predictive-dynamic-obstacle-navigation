@@ -338,6 +338,56 @@
       }
     ]
   },
+  "resolution_95": {
+    "duration": 6,
+    "objects": [
+      {
+        "start": [
+          0,
+          -0.475
+        ],
+        "velocity": [
+          0.15,
+          0
+        ]
+      },
+      {
+        "start": [
+          0,
+          0.475
+        ],
+        "velocity": [
+          0.15,
+          0
+        ]
+      }
+    ]
+  },
+  "resolution_105": {
+    "duration": 6,
+    "objects": [
+      {
+        "start": [
+          0,
+          -0.525
+        ],
+        "velocity": [
+          0.15,
+          0
+        ]
+      },
+      {
+        "start": [
+          0,
+          0.525
+        ],
+        "velocity": [
+          0.15,
+          0
+        ]
+      }
+    ]
+  },
   "occlusion_long": {
     "duration": 12,
     "objects": [
