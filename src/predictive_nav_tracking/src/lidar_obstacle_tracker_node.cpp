@@ -22,8 +22,10 @@
 
 #include <algorithm>
 #include <array>
+#include <chrono>
 #include <cmath>
 #include <deque>
+#include <limits>
 #include <memory>
 #include <optional>
 #include <unordered_set>
@@ -155,7 +157,24 @@ private:
     this->declare_parameter<std::string>("map_topic", "/map");
     this->declare_parameter<std::string>("map_frame", "map");
 
+    // --- Stage-4G1: range-aware static rejection -------------------------
+    // `static_reject_radius` keeps its name and its Stage-4B default so no
+    // existing YAML breaks. Its MEANING is now: the fixed radius when
+    // range_aware_static_rejection is false (exact Stage-4B behaviour), and
+    // the MINIMUM radius when it is true.
     this->declare_parameter<double>("static_reject_radius", 0.15);
+    this->declare_parameter<bool>("range_aware_static_rejection", true);
+    // Map discretisation + LiDAR range noise. One 0.05 m map cell plus ~3 sigma
+    // of the simulated 0.01 m range noise. [m]
+    this->declare_parameter<double>("base_static_margin", 0.06);
+    // Translation component of the map->sensor pose error. [m]
+    this->declare_parameter<double>("localization_margin", 0.06);
+    // Angular uncertainty of the beam endpoint: half the beam angular spacing
+    // plus the pose YAW uncertainty. Multiplied by beam range, this is the
+    // range-dependent term the fixed radius was missing. [rad]
+    this->declare_parameter<double>("angular_sampling_scale", 0.030);
+    // Hard ceiling, so an anomalously long return can never blank a region. [m]
+    this->declare_parameter<double>("max_static_reject_radius", 0.40);
     this->declare_parameter<int>("occupied_threshold", 65);
     this->declare_parameter<bool>("unknown_cells_are_static", false);
 
@@ -218,6 +237,13 @@ private:
     map_frame_ = this->get_parameter("map_frame").as_string();
 
     static_reject_radius_ = this->get_parameter("static_reject_radius").as_double();
+    range_aware_static_rejection_ =
+      this->get_parameter("range_aware_static_rejection").as_bool();
+    base_static_margin_ = this->get_parameter("base_static_margin").as_double();
+    localization_margin_ = this->get_parameter("localization_margin").as_double();
+    angular_sampling_scale_ = this->get_parameter("angular_sampling_scale").as_double();
+    max_static_reject_radius_ =
+      this->get_parameter("max_static_reject_radius").as_double();
     occupied_threshold_ = static_cast<int8_t>(this->get_parameter("occupied_threshold").as_int());
     unknown_cells_are_static_ = this->get_parameter("unknown_cells_are_static").as_bool();
 
@@ -257,56 +283,164 @@ private:
   // ---------------------------------------------------------------------
   // Map handling (unchanged)
   // ---------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  // Stage-4G1: exact Euclidean distance transform of the static map.
+  //
+  // Felzenszwalb & Huttenlocher's O(n) squared-distance transform, one pass
+  // down the columns and one across the rows. Exact, ~50 lines, no new
+  // dependency. Computed once per map message; the per-scan-point query then
+  // becomes a single array lookup instead of a neighbourhood search, which is
+  // what makes a range-DEPENDENT radius affordable at all (a 0.40 m radius
+  // would otherwise mean scanning 17x17 = 289 cells per point).
+  // -------------------------------------------------------------------
+  static void dt_1d(const std::vector<float> & f, std::vector<float> & d, int n)
+  {
+    static constexpr float kInf = std::numeric_limits<float>::max();
+    std::vector<int> v(static_cast<size_t>(n), 0);
+    std::vector<float> z(static_cast<size_t>(n) + 1, 0.0f);
+    int k = 0;
+    v[0] = 0;
+    z[0] = -kInf;
+    z[1] = kInf;
+    for (int q = 1; q < n; ++q) {
+      float s = ((f[q] + static_cast<float>(q) * q) -
+        (f[v[k]] + static_cast<float>(v[k]) * v[k])) / static_cast<float>(2 * q - 2 * v[k]);
+      while (s <= z[k]) {
+        --k;
+        s = ((f[q] + static_cast<float>(q) * q) -
+          (f[v[k]] + static_cast<float>(v[k]) * v[k])) /
+          static_cast<float>(2 * q - 2 * v[k]);
+      }
+      ++k;
+      v[k] = q;
+      z[k] = s;
+      z[k + 1] = kInf;
+    }
+    k = 0;
+    for (int q = 0; q < n; ++q) {
+      while (z[k + 1] < static_cast<float>(q)) {
+        ++k;
+      }
+      const float dq = static_cast<float>(q - v[k]);
+      d[q] = dq * dq + f[v[k]];
+    }
+  }
+
+  void build_static_distance_field()
+  {
+    static constexpr float kInf = std::numeric_limits<float>::max();
+    const auto & info = map_->info;
+    const int w = static_cast<int>(info.width);
+    const int h = static_cast<int>(info.height);
+    if (w <= 0 || h <= 0) {
+      map_distance_.clear();
+      return;
+    }
+
+    // Seed set: cells the tracker considers STATIC. Unknown cells are included
+    // only when unknown_cells_are_static is set, which reproduces the Stage-4B
+    // semantics exactly rather than approximating them.
+    std::vector<float> grid(static_cast<size_t>(w) * h, kInf);
+    size_t n_static = 0;
+    for (size_t i = 0; i < grid.size(); ++i) {
+      const int8_t value = map_->data[i];
+      const bool is_static = (value < 0) ? unknown_cells_are_static_ :
+        (value >= occupied_threshold_);
+      if (is_static) {
+        grid[i] = 0.0f;
+        ++n_static;
+      }
+    }
+    if (n_static == 0) {
+      map_distance_.assign(grid.size(), std::numeric_limits<float>::max());
+      RCLCPP_WARN(get_logger(), "Static map has no occupied cells; nothing will be rejected");
+      return;
+    }
+
+    std::vector<float> f(static_cast<size_t>(std::max(w, h)));
+    std::vector<float> d(static_cast<size_t>(std::max(w, h)));
+
+    for (int x = 0; x < w; ++x) {                       // columns
+      for (int y = 0; y < h; ++y) {
+        f[y] = grid[static_cast<size_t>(y) * w + x];
+      }
+      dt_1d(f, d, h);
+      for (int y = 0; y < h; ++y) {
+        grid[static_cast<size_t>(y) * w + x] = d[y];
+      }
+    }
+    for (int y = 0; y < h; ++y) {                       // rows
+      for (int x = 0; x < w; ++x) {
+        f[x] = grid[static_cast<size_t>(y) * w + x];
+      }
+      dt_1d(f, d, w);
+      for (int x = 0; x < w; ++x) {
+        grid[static_cast<size_t>(y) * w + x] = d[x];
+      }
+    }
+
+    map_distance_.resize(grid.size());
+    const float res = static_cast<float>(info.resolution);
+    for (size_t i = 0; i < grid.size(); ++i) {
+      map_distance_[i] = std::sqrt(grid[i]) * res;      // cells -> metres
+    }
+    RCLCPP_INFO(
+      get_logger(), "Static distance field built: %d x %d, %zu static cells",
+      w, h, n_static);
+  }
+
+  /// Rejection tolerance for a return observed at `range` metres.
+  ///
+  /// r_reject(range) = clamp(base + localization + angular * range,
+  ///                         static_reject_radius, max_static_reject_radius)
+  ///
+  /// The angular term is the one Stage-4B lacked. A pose yaw error of dtheta
+  /// displaces a beam endpoint laterally by range * dtheta, so the mismatch
+  /// between a wall return and the mapped wall grows with range while a fixed
+  /// radius does not. Measured in the Stage-4F arena while driving: pose yaw
+  /// error p95 = 0.0262 rad and beam half-spacing = 0.0087 rad, hence the
+  /// 0.030 rad default.
+  double static_reject_radius_for(double range) const
+  {
+    if (!range_aware_static_rejection_) {
+      return static_reject_radius_;
+    }
+    const double r = base_static_margin_ + localization_margin_ +
+      angular_sampling_scale_ * std::max(0.0, range);
+    return std::clamp(r, static_reject_radius_, max_static_reject_radius_);
+  }
+
   void map_callback(const nav_msgs::msg::OccupancyGrid::SharedPtr msg)
   {
     map_ = msg;
+    build_static_distance_field();
     RCLCPP_INFO(
       get_logger(), "Received static map: %ux%u @ %.3fm/cell", msg->info.width,
       msg->info.height, msg->info.resolution);
   }
 
-  bool is_static_point(double x, double y) const
+  /// True if the point is explained by the static map, given the range at
+  /// which it was observed.
+  bool is_static_point(double x, double y, double range) const
   {
-    if (!map_) {
+    if (!map_ || map_distance_.empty()) {
       return true;
     }
 
     const auto & info = map_->info;
     const double res = info.resolution;
-    const double ox = info.origin.position.x;
-    const double oy = info.origin.position.y;
-
-    const int mx = static_cast<int>(std::floor((x - ox) / res));
-    const int my = static_cast<int>(std::floor((y - oy) / res));
-
-    const int radius_cells = static_cast<int>(std::ceil(static_reject_radius_ / res));
-
-    for (int dy = -radius_cells; dy <= radius_cells; ++dy) {
-      for (int dx = -radius_cells; dx <= radius_cells; ++dx) {
-        const double cell_dist = std::hypot(dx * res, dy * res);
-        if (cell_dist > static_reject_radius_) {
-          continue;
-        }
-        const int cx = mx + dx;
-        const int cy = my + dy;
-        if (cx < 0 || cy < 0 || cx >= static_cast<int>(info.width) ||
-          cy >= static_cast<int>(info.height))
-        {
-          continue;
-        }
-        const int8_t value = map_->data[static_cast<size_t>(cy) * info.width + cx];
-        if (value < 0) {
-          if (unknown_cells_are_static_) {
-            return true;
-          }
-          continue;
-        }
-        if (value >= occupied_threshold_) {
-          return true;
-        }
-      }
+    const int mx = static_cast<int>(std::floor((x - info.origin.position.x) / res));
+    const int my = static_cast<int>(std::floor((y - info.origin.position.y) / res));
+    if (mx < 0 || my < 0 || mx >= static_cast<int>(info.width) ||
+      my >= static_cast<int>(info.height))
+    {
+      // Outside the mapped area: unchanged from Stage-4B, nothing to explain
+      // the return, so it is treated as a candidate dynamic point.
+      return false;
     }
-    return false;
+
+    const float dist = map_distance_[static_cast<size_t>(my) * info.width + mx];
+    return static_cast<double>(dist) <= static_reject_radius_for(range);
   }
 
   // ---------------------------------------------------------------------
@@ -336,11 +470,42 @@ private:
     const std::vector<Point2D> dynamic_points = extract_dynamic_points(*msg, transform);
     const std::vector<Point2D> centroids = cluster_points(dynamic_points);
 
+    log_static_rejection_stats(msg->header.stamp);
+
     const rclcpp::Time stamp(msg->header.stamp);
     associate_and_update(centroids, stamp);
     prune_stale_tracks(stamp);
     publish_tracks(stamp);
     publish_markers(stamp, centroids);
+  }
+
+  /// Throttled runtime accounting for the static-rejection stage (Stage-4G1).
+  void log_static_rejection_stats(const builtin_interfaces::msg::Time & stamp)
+  {
+    const rclcpp::Time now(stamp);
+    if (last_reject_stats_log_.nanoseconds() == 0) {
+      last_reject_stats_log_ = now;
+      return;
+    }
+    if ((now - last_reject_stats_log_).seconds() < 5.0) {
+      return;
+    }
+    last_reject_stats_log_ = now;
+    if (reject_calls_ == 0) {
+      return;
+    }
+    RCLCPP_INFO(
+      get_logger(),
+      "static rejection: scans=%lu mean=%.1fus max=%.1fus points_in=%lu "
+      "rejected=%lu (%.2f%%) retained_last=%lu radius=[%.2f..%.2f]m",
+      static_cast<unsigned long>(reject_calls_),
+      reject_total_us_ / static_cast<double>(reject_calls_), reject_max_us_,
+      static_cast<unsigned long>(points_in_total_),
+      static_cast<unsigned long>(points_rejected_total_),
+      points_in_total_ ? 100.0 * static_cast<double>(points_rejected_total_) /
+      static_cast<double>(points_in_total_) : 0.0,
+      static_cast<unsigned long>(points_retained_last_),
+      static_reject_radius_for(0.0), static_reject_radius_for(20.0));
   }
 
   std::vector<Point2D> extract_dynamic_points(
@@ -349,6 +514,9 @@ private:
   {
     std::vector<Point2D> dynamic_points;
     dynamic_points.reserve(scan.ranges.size());
+
+    const auto t_start = std::chrono::steady_clock::now();
+    uint64_t considered = 0;
 
     for (size_t i = 0; i < scan.ranges.size(); ++i) {
       const float range = scan.ranges[i];
@@ -366,10 +534,22 @@ private:
       geometry_msgs::msg::PointStamped map_pt;
       tf2::doTransform(laser_pt, map_pt, transform);
 
-      if (!is_static_point(map_pt.point.x, map_pt.point.y)) {
+      ++considered;
+      if (!is_static_point(map_pt.point.x, map_pt.point.y, range)) {
         dynamic_points.push_back({map_pt.point.x, map_pt.point.y});
       }
     }
+
+    const double elapsed_us =
+      std::chrono::duration<double, std::micro>(
+      std::chrono::steady_clock::now() - t_start).count();
+    reject_total_us_ += elapsed_us;
+    reject_max_us_ = std::max(reject_max_us_, elapsed_us);
+    ++reject_calls_;
+    points_in_total_ += considered;
+    points_rejected_total_ += considered - dynamic_points.size();
+    points_retained_last_ = dynamic_points.size();
+
     return dynamic_points;
   }
 
@@ -969,6 +1149,12 @@ private:
   std::string map_frame_;
 
   double static_reject_radius_{0.15};
+  // Stage-4G1 range-aware static rejection.
+  bool range_aware_static_rejection_{true};
+  double base_static_margin_{0.06};
+  double localization_margin_{0.06};
+  double angular_sampling_scale_{0.030};
+  double max_static_reject_radius_{0.40};
   int8_t occupied_threshold_{65};
   bool unknown_cells_are_static_{false};
 
@@ -1001,6 +1187,18 @@ private:
   size_t num_prediction_samples_{6};
 
   nav_msgs::msg::OccupancyGrid::SharedPtr map_;
+  /// Metres from each map cell to the nearest STATIC cell (Stage-4G1).
+  std::vector<float> map_distance_;
+
+  // Static-rejection runtime accounting (reported via a throttled log line).
+  mutable double reject_total_us_{0.0};
+  mutable double reject_max_us_{0.0};
+  mutable uint64_t reject_calls_{0};
+  mutable uint64_t points_in_total_{0};
+  mutable uint64_t points_rejected_total_{0};
+  mutable uint64_t points_retained_last_{0};
+  rclcpp::Time last_reject_stats_log_;
+
   std::vector<Track> tracks_;
   uint32_t next_track_id_{1};
   std::unordered_set<uint32_t> previous_marker_ids_;

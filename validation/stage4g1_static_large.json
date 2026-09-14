@@ -1,0 +1,64 @@
+{
+ "test": "Stage-4F large arena, no dynamic obstacle, predictive layer enabled",
+ "n_runs": 6,
+ "persistent_false_tracks_max": 0,
+ "false_predictive_cells_max": 0,
+ "frames_tracked_total": 0,
+ "before_fix_stage4f": "6/10 runs had spurious predictive cells (1,29,152,180,377,441); max_tracks up to 3",
+ "runs": [
+  {
+   "trial_id": "nominal_predictive_01",
+   "nav_time": 13.3,
+   "max_tracks": 0,
+   "frames_tracked": 0,
+   "frames_with_pred_cost": 0,
+   "max_pred_cells": 0,
+   "nav_status": "SUCCEEDED"
+  },
+  {
+   "trial_id": "nominal_predictive_02",
+   "nav_time": 13.301,
+   "max_tracks": 0,
+   "frames_tracked": 0,
+   "frames_with_pred_cost": 0,
+   "max_pred_cells": 0,
+   "nav_status": "SUCCEEDED"
+  },
+  {
+   "trial_id": "nominal_predictive_03",
+   "nav_time": 13.352,
+   "max_tracks": 0,
+   "frames_tracked": 0,
+   "frames_with_pred_cost": 0,
+   "max_pred_cells": 0,
+   "nav_status": "SUCCEEDED"
+  },
+  {
+   "trial_id": "nominal_predictive_04",
+   "nav_time": 13.301,
+   "max_tracks": 0,
+   "frames_tracked": 0,
+   "frames_with_pred_cost": 0,
+   "max_pred_cells": 0,
+   "nav_status": "SUCCEEDED"
+  },
+  {
+   "trial_id": "nominal_predictive_05",
+   "nav_time": 13.411,
+   "max_tracks": 0,
+   "frames_tracked": 0,
+   "frames_with_pred_cost": 0,
+   "max_pred_cells": 0,
+   "nav_status": "SUCCEEDED"
+  },
+  {
+   "trial_id": "nominal_predictive_06",
+   "nav_time": 13.301,
+   "max_tracks": 0,
+   "frames_tracked": 0,
+   "frames_with_pred_cost": 0,
+   "max_pred_cells": 0,
+   "nav_status": "SUCCEEDED"
+  }
+ ]
+}

@@ -1,0 +1,11 @@
+{
+  "mode": "dynamic",
+  "frames_observed": 300,
+  "distinct_track_ids_seen": 1,
+  "matched_frames": 300,
+  "id_switches": 0,
+  "dominant_track_id": 1,
+  "dominant_track_id_fraction": 1.0,
+  "mean_position_error_m": 0.13729901095678984,
+  "mean_velocity_error_mps": 0.02983330328075007
+}

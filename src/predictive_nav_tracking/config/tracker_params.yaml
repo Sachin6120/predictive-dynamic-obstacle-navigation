@@ -4,9 +4,43 @@ lidar_obstacle_tracker:
     map_topic: "/map"
     map_frame: "map"
 
-    # Static-rejection: reject a transformed scan point if it falls within
-    # this radius of a map cell whose occupancy >= occupied_threshold.
-    static_reject_radius: 0.15
+    # --- Static rejection (Stage-4G1: range aware) ---------------------
+    # A transformed scan point is rejected as STATIC when its distance to the
+    # nearest static map cell is <= r_reject(range), where
+    #
+    #   r_reject(range) = clamp(base_static_margin
+    #                           + localization_margin
+    #                           + angular_sampling_scale * range,
+    #                           static_reject_radius,
+    #                           max_static_reject_radius)
+    #
+    # The distance itself comes from an exact Euclidean distance transform of
+    # the map, rebuilt once per map message, so the query is a single lookup.
+    #
+    # WHY the range term exists (measured, Stage-4G1 section 2): a pose yaw
+    # error of dtheta displaces a beam endpoint laterally by range * dtheta, so
+    # the mismatch between a wall return and the mapped wall GROWS WITH RANGE
+    # while a fixed radius does not. In the 10 x 8 m Stage-4F arena, with the
+    # robot driving, the measured residual-retention rate under the old fixed
+    # 0.15 m rule rose from 0.00% at 1-2 m to 2.48% at 5-6 m, which is what
+    # produced false dynamic tracks there. Stationary, the rate is 0% at every
+    # range -- the error is motion-induced, not sensor-intrinsic.
+    static_reject_radius: 0.15      # m: MINIMUM radius (and the only radius if
+                                    # range_aware_static_rejection is false).
+                                    # Unchanged from Stage-4B, so close-range
+                                    # behaviour is bit-for-bit the old one.
+    range_aware_static_rejection: true
+    base_static_margin: 0.06        # m: one 0.05 m map cell of discretisation
+                                    # plus ~3 sigma of the 0.01 m range noise.
+    localization_margin: 0.06       # m: translation component of the
+                                    # map->sensor pose error (measured p95
+                                    # 0.118 m while driving; only the part
+                                    # normal to a surface displaces a point
+                                    # off it).
+    angular_sampling_scale: 0.030   # rad: beam half-spacing (0.0087) + pose
+                                    # yaw uncertainty (measured p95 0.0262).
+    max_static_reject_radius: 0.40  # m: ceiling, so an anomalously long return
+                                    # can never blank out a region.
     occupied_threshold: 65
     unknown_cells_are_static: false
 

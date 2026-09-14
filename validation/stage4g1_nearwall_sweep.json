@@ -1,0 +1,68 @@
+{
+ "n_samples": 197,
+ "clearance_bins": [
+  {
+   "clearance_bin_m": "0.0-0.1",
+   "n_frames": 50,
+   "n_detected": 50,
+   "detection_rate": 1.0,
+   "mean_position_error_m": 0.1845,
+   "distinct_track_ids": 1
+  },
+  {
+   "clearance_bin_m": "0.1-0.2",
+   "n_frames": 4,
+   "n_detected": 4,
+   "detection_rate": 1.0,
+   "mean_position_error_m": 0.165,
+   "distinct_track_ids": 1
+  },
+  {
+   "clearance_bin_m": "0.2-0.3",
+   "n_frames": 5,
+   "n_detected": 5,
+   "detection_rate": 1.0,
+   "mean_position_error_m": 0.1686,
+   "distinct_track_ids": 1
+  },
+  {
+   "clearance_bin_m": "0.3-0.4",
+   "n_frames": 5,
+   "n_detected": 5,
+   "detection_rate": 1.0,
+   "mean_position_error_m": 0.1665,
+   "distinct_track_ids": 1
+  },
+  {
+   "clearance_bin_m": "0.4-0.6",
+   "n_frames": 9,
+   "n_detected": 9,
+   "detection_rate": 1.0,
+   "mean_position_error_m": 0.1727,
+   "distinct_track_ids": 1
+  },
+  {
+   "clearance_bin_m": "0.6-1.0",
+   "n_frames": 19,
+   "n_detected": 19,
+   "detection_rate": 1.0,
+   "mean_position_error_m": 0.173,
+   "distinct_track_ids": 1
+  },
+  {
+   "clearance_bin_m": "1.0-99.0",
+   "n_frames": 105,
+   "n_detected": 105,
+   "detection_rate": 1.0,
+   "mean_position_error_m": 0.1658,
+   "distinct_track_ids": 1
+  }
+ ],
+ "overall": {
+  "n_frames": 197,
+  "n_detected": 197,
+  "detection_rate": 1.0,
+  "distinct_track_ids": 1
+ },
+ "smallest_reliable_clearance_bin_m": "0.0-0.1"
+}

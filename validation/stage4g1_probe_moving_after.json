@@ -1,0 +1,123 @@
+{
+ "n_scans": 73,
+ "n_points": 26280,
+ "angle_increment_rad": 0.01749303564429283,
+ "legacy_static_reject_radius": 0.15,
+ "new_rule": {
+  "base_static_margin": 0.06,
+  "localization_margin": 0.06,
+  "angular_sampling_scale": 0.03,
+  "max_static_reject_radius": 0.4,
+  "min_static_reject_radius": 0.15
+ },
+ "range_bins": [
+  {
+   "range_bin_m": "2-3",
+   "n_points": 2697,
+   "dist_to_occupied_mean_m": 0.0231,
+   "dist_to_occupied_p50_m": 0.0,
+   "dist_to_occupied_p95_m": 0.1,
+   "dist_to_occupied_p99_m": 0.1,
+   "dist_to_occupied_max_m": 0.1118,
+   "reject_radius_at_bin_mid_m": 0.195,
+   "legacy_retained": 0,
+   "legacy_residual_rate": 0.0,
+   "new_retained": 0,
+   "new_residual_rate": 0.0,
+   "predicted_p95_from_yaw_m": 0.1275
+  },
+  {
+   "range_bin_m": "3-4",
+   "n_points": 5781,
+   "dist_to_occupied_mean_m": 0.0125,
+   "dist_to_occupied_p50_m": 0.0,
+   "dist_to_occupied_p95_m": 0.05,
+   "dist_to_occupied_p99_m": 0.15,
+   "dist_to_occupied_max_m": 0.3536,
+   "reject_radius_at_bin_mid_m": 0.225,
+   "legacy_retained": 94,
+   "legacy_residual_rate": 0.01626,
+   "new_retained": 7,
+   "new_residual_rate": 0.001211,
+   "predicted_p95_from_yaw_m": 0.1785
+  },
+  {
+   "range_bin_m": "4-5",
+   "n_points": 9059,
+   "dist_to_occupied_mean_m": 0.0207,
+   "dist_to_occupied_p50_m": 0.0,
+   "dist_to_occupied_p95_m": 0.1,
+   "dist_to_occupied_p99_m": 0.15,
+   "dist_to_occupied_max_m": 0.2915,
+   "reject_radius_at_bin_mid_m": 0.255,
+   "legacy_retained": 135,
+   "legacy_residual_rate": 0.014902,
+   "new_retained": 3,
+   "new_residual_rate": 0.000331,
+   "predicted_p95_from_yaw_m": 0.2295
+  },
+  {
+   "range_bin_m": "5-6",
+   "n_points": 4337,
+   "dist_to_occupied_mean_m": 0.039,
+   "dist_to_occupied_p50_m": 0.05,
+   "dist_to_occupied_p95_m": 0.1431,
+   "dist_to_occupied_p99_m": 0.1581,
+   "dist_to_occupied_max_m": 0.3,
+   "reject_radius_at_bin_mid_m": 0.285,
+   "legacy_retained": 217,
+   "legacy_residual_rate": 0.050035,
+   "new_retained": 2,
+   "new_residual_rate": 0.000461,
+   "predicted_p95_from_yaw_m": 0.2804
+  },
+  {
+   "range_bin_m": "6-8",
+   "n_points": 3854,
+   "dist_to_occupied_mean_m": 0.0509,
+   "dist_to_occupied_p50_m": 0.05,
+   "dist_to_occupied_p95_m": 0.15,
+   "dist_to_occupied_p99_m": 0.25,
+   "dist_to_occupied_max_m": 0.35,
+   "reject_radius_at_bin_mid_m": 0.33,
+   "legacy_retained": 463,
+   "legacy_residual_rate": 0.120135,
+   "new_retained": 4,
+   "new_residual_rate": 0.001038,
+   "predicted_p95_from_yaw_m": 0.3569
+  },
+  {
+   "range_bin_m": "8-99",
+   "n_points": 552,
+   "dist_to_occupied_mean_m": 0.0372,
+   "dist_to_occupied_p50_m": 0.0,
+   "dist_to_occupied_p95_m": 0.15,
+   "dist_to_occupied_p99_m": 0.2,
+   "dist_to_occupied_max_m": 0.25,
+   "reject_radius_at_bin_mid_m": 0.39,
+   "legacy_retained": 66,
+   "legacy_residual_rate": 0.119565,
+   "new_retained": 0,
+   "new_residual_rate": 0.0,
+   "predicted_p95_from_yaw_m": 2.728
+  }
+ ],
+ "overall": {
+  "dist_to_occupied_mean_m": 0.0269,
+  "dist_to_occupied_p99_m": 0.1581,
+  "dist_to_occupied_max_m": 0.3536,
+  "legacy_retained": 975,
+  "legacy_residual_rate": 0.0371,
+  "new_retained": 16,
+  "new_residual_rate": 0.000609
+ },
+ "localisation_error": {
+  "n": 73,
+  "trans_mean_m": 0.0823,
+  "trans_p95_m": 0.12,
+  "trans_max_m": 0.1286,
+  "yaw_mean_rad": 0.02317,
+  "yaw_p95_rad": 0.05099,
+  "yaw_max_rad": 0.0693
+ }
+}
