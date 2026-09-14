@@ -1,0 +1,3603 @@
+[
+  {
+    "scenario": "crossing",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1.5,
+            0
+          ],
+          "velocity": [
+            0.5,
+            0
+          ]
+        },
+        {
+          "start": [
+            0,
+            2.15
+          ],
+          "velocity": [
+            0,
+            -0.5
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 1.86,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 17,
+          "3": 24
+        },
+        "id_switches": 1,
+        "track_fragments": 1,
+        "identity_fragments": 1,
+        "purity": 0.5853658536585366,
+        "matched_frames": 41,
+        "matched_frame_fraction": 0.82,
+        "position_error_m": {
+          "mean": 0.18424926149022608,
+          "p95": 0.21734977775778447,
+          "max": 0.3024635281427269
+        },
+        "velocity_error_mps": {
+          "mean": 0.05943259175759021,
+          "p95": 0.3685416021166323,
+          "max": 0.42810208681535855
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 15,
+          "1": 33
+        },
+        "id_switches": 1,
+        "track_fragments": 1,
+        "identity_fragments": 1,
+        "purity": 0.6875,
+        "matched_frames": 48,
+        "matched_frame_fraction": 0.96,
+        "position_error_m": {
+          "mean": 0.1711914812491673,
+          "p95": 0.19151789006523198,
+          "max": 0.24183850634476545
+        },
+        "velocity_error_mps": {
+          "mean": 0.11474210070882261,
+          "p95": 0.46620207737133995,
+          "max": 0.8117210972503102
+        }
+      }
+    ],
+    "id_switches": 2,
+    "track_fragments": 2,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 3,
+    "resolvable_cluster_object_frames": 86,
+    "resolvable_cluster_matched_fraction": 0.9767441860465116,
+    "categories": {
+      "A_cluster_merge": 5,
+      "B_or_C_resolved_cluster_without_fresh_track": 2,
+      "D_insufficient_lidar_returns": 4
+    },
+    "min_resolved_center_separation_m": 0.49927159305162205,
+    "merge_center_separation_m": {
+      "mean": 0.5363391893546716,
+      "p95": 0.6504114831848423,
+      "max": 0.6688261961345832
+    },
+    "max_missed_scans_retained": 4,
+    "reacquisitions": [],
+    "prediction_samples_checked": 558,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 13218.3489,
+        "p95": 30622.31355,
+        "max": 30665.064
+      },
+      "cluster_us": {
+        "mean": 31.7602,
+        "p95": 51.8657,
+        "max": 73.783
+      },
+      "association_us": {
+        "mean": 191.00816000000003,
+        "p95": 277.9971999999999,
+        "max": 392.399
+      },
+      "callback_us": {
+        "mean": 14616.484119999997,
+        "p95": 32080.90455,
+        "max": 32326.701
+      },
+      "clusters": {
+        "mean": 1.82,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 1.98,
+        "p95": 2.0,
+        "max": 2.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 51,
+    "costmap_nonzero_frames": 51,
+    "costmap_multi_eligible_frames": 15,
+    "costmap_multi_represented_frames": 15,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088783288908859e-15
+    },
+    "disappearances": [
+      {
+        "id": 2,
+        "t": 3.879,
+        "since_last_observation_s": 1.0020000000000007,
+        "previous_missed": 4
+      }
+    ],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 37,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      0.86,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      3,
+      1
+    ],
+    "gt_min_center_separation_m": 0.463184533127847,
+    "source_trial": "validation_logs/stage4g2/baseline_v2/crossing_01",
+    "raw_sha256": "c81cdb068923e646edea0c20c2dfd34d37081be0cbd683431c240b2ce11defb6"
+  },
+  {
+    "scenario": "crossing",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1.5,
+            0
+          ],
+          "velocity": [
+            0.5,
+            0
+          ]
+        },
+        {
+          "start": [
+            0,
+            2.15
+          ],
+          "velocity": [
+            0,
+            -0.5
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 43
+        },
+        "id_switches": 0,
+        "track_fragments": 2,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 43,
+        "matched_frame_fraction": 0.86,
+        "position_error_m": {
+          "mean": 0.1783231593544757,
+          "p95": 0.2204212675980267,
+          "max": 0.25618933389268433
+        },
+        "velocity_error_mps": {
+          "mean": 0.05984839888695959,
+          "p95": 0.3247035491199521,
+          "max": 0.34197316409505246
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 46,
+          "1": 3
+        },
+        "id_switches": 2,
+        "track_fragments": 1,
+        "identity_fragments": 1,
+        "purity": 0.9387755102040817,
+        "matched_frames": 49,
+        "matched_frame_fraction": 0.98,
+        "position_error_m": {
+          "mean": 0.1673184508821824,
+          "p95": 0.18305329101415244,
+          "max": 0.2741450998439232
+        },
+        "velocity_error_mps": {
+          "mean": 0.09566028556934225,
+          "p95": 0.49593117769974987,
+          "max": 0.9290264336708157
+        }
+      }
+    ],
+    "id_switches": 2,
+    "track_fragments": 3,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 88,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {
+      "A_cluster_merge": 4,
+      "D_insufficient_lidar_returns": 4
+    },
+    "min_resolved_center_separation_m": 0.48608255027416425,
+    "merge_center_separation_m": {
+      "mean": 0.5144087572276119,
+      "p95": 0.5892183249046214,
+      "max": 0.6008329218159674
+    },
+    "max_missed_scans_retained": 4,
+    "reacquisitions": [
+      {
+        "id": 2,
+        "missed_scans": 4,
+        "since_last_observation_s": 0.9990000000000006,
+        "t": 4.023,
+        "same_id": true
+      },
+      {
+        "id": 1,
+        "missed_scans": 4,
+        "since_last_observation_s": 0.9990000000000006,
+        "t": 5.022,
+        "same_id": true
+      }
+    ],
+    "prediction_samples_checked": 600,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 15206.8516,
+        "p95": 30629.5799,
+        "max": 30693.735
+      },
+      "cluster_us": {
+        "mean": 28.302740000000004,
+        "p95": 41.72359999999999,
+        "max": 45.55
+      },
+      "association_us": {
+        "mean": 170.58897999999996,
+        "p95": 263.65964999999994,
+        "max": 301.301
+      },
+      "callback_us": {
+        "mean": 16525.63256,
+        "p95": 32424.609249999998,
+        "max": 33246.928
+      },
+      "clusters": {
+        "mean": 1.84,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 52,
+    "costmap_nonzero_frames": 52,
+    "costmap_multi_eligible_frames": 16,
+    "costmap_multi_represented_frames": 16,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088782283057234e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 41,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 0.4600445998076708,
+    "source_trial": "validation_logs/stage4g2/baseline_v2/crossing_02",
+    "raw_sha256": "268b2c6aa8a6b30d9c5e680f9d3a4037004e067a19a7a79bcf0c6e68e6a61fbb"
+  },
+  {
+    "scenario": "crossing_resolved",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1.5,
+            0
+          ],
+          "velocity": [
+            0.5,
+            0
+          ]
+        },
+        {
+          "start": [
+            0,
+            2.7
+          ],
+          "velocity": [
+            0,
+            -0.5
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 46
+        },
+        "id_switches": 0,
+        "track_fragments": 1,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 46,
+        "matched_frame_fraction": 0.92,
+        "position_error_m": {
+          "mean": 0.16930004006791194,
+          "p95": 0.1985314702047073,
+          "max": 0.21411771222105497
+        },
+        "velocity_error_mps": {
+          "mean": 0.0417004458356438,
+          "p95": 0.17070750932809417,
+          "max": 0.33842896940212314
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.1635962143054172,
+          "p95": 0.176876331586996,
+          "max": 0.18271801702046228
+        },
+        "velocity_error_mps": {
+          "mean": 0.05095412269881267,
+          "p95": 0.2249341206617446,
+          "max": 0.401084169805318
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 1,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 96,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {
+      "D_insufficient_lidar_returns": 4
+    },
+    "min_resolved_center_separation_m": 0.8494682465640974,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 4,
+    "reacquisitions": [
+      {
+        "id": 1,
+        "missed_scans": 4,
+        "since_last_observation_s": 0.9990000000000006,
+        "t": 6.215999999999999,
+        "same_id": true
+      }
+    ],
+    "prediction_samples_checked": 600,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 14617.25034,
+        "p95": 30636.95475,
+        "max": 30676.951
+      },
+      "cluster_us": {
+        "mean": 30.457780000000003,
+        "p95": 44.65874999999999,
+        "max": 62.739
+      },
+      "association_us": {
+        "mean": 186.62518,
+        "p95": 262.76694999999995,
+        "max": 356.771
+      },
+      "callback_us": {
+        "mean": 16089.210759999998,
+        "p95": 32635.2213,
+        "max": 32872.476
+      },
+      "clusters": {
+        "mean": 1.92,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 52,
+    "costmap_nonzero_frames": 52,
+    "costmap_multi_eligible_frames": 16,
+    "costmap_multi_represented_frames": 16,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088782283057234e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 45,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 0.8494682465640974,
+    "source_trial": "validation_logs/stage4g2/baseline_v2/crossing_resolved_01",
+    "raw_sha256": "864c31f5d592fe6a15ae246c02bd286e1db5721829d93699981d78011c77de05"
+  },
+  {
+    "scenario": "crossing_resolved",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1.5,
+            0
+          ],
+          "velocity": [
+            0.5,
+            0
+          ]
+        },
+        {
+          "start": [
+            0,
+            2.7
+          ],
+          "velocity": [
+            0,
+            -0.5
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 45
+        },
+        "id_switches": 0,
+        "track_fragments": 1,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 45,
+        "matched_frame_fraction": 0.9,
+        "position_error_m": {
+          "mean": 0.1743072666408515,
+          "p95": 0.19902366959512963,
+          "max": 0.21668999074939635
+        },
+        "velocity_error_mps": {
+          "mean": 0.05286614849350462,
+          "p95": 0.22882567015408553,
+          "max": 0.4378219105626582
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.1612321898133424,
+          "p95": 0.1723091618551834,
+          "max": 0.1764362869269458
+        },
+        "velocity_error_mps": {
+          "mean": 0.04474150389895203,
+          "p95": 0.17438359003833995,
+          "max": 0.42742398293764405
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 1,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 95,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {
+      "D_insufficient_lidar_returns": 5
+    },
+    "min_resolved_center_separation_m": 0.8508909630402758,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 5,
+    "reacquisitions": [
+      {
+        "id": 1,
+        "missed_scans": 5,
+        "since_last_observation_s": 1.1999999999999993,
+        "t": 6.266999999999999,
+        "same_id": true
+      }
+    ],
+    "prediction_samples_checked": 600,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 14406.84504,
+        "p95": 30642.53855,
+        "max": 30677.834
+      },
+      "cluster_us": {
+        "mean": 30.169919999999998,
+        "p95": 48.60834999999999,
+        "max": 55.213
+      },
+      "association_us": {
+        "mean": 176.291,
+        "p95": 250.94965,
+        "max": 264.96
+      },
+      "callback_us": {
+        "mean": 15790.446440000002,
+        "p95": 32404.72845,
+        "max": 32510.188
+      },
+      "clusters": {
+        "mean": 1.9,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 52,
+    "costmap_nonzero_frames": 52,
+    "costmap_multi_eligible_frames": 16,
+    "costmap_multi_represented_frames": 16,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088783288908859e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 44,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 0.8508909630402758,
+    "source_trial": "validation_logs/stage4g2/baseline_v2/crossing_resolved_02",
+    "raw_sha256": "06f205409238bd906419031711b9fa75341367d045b1236500f8753f3f588b09"
+  },
+  {
+    "scenario": "near_crossing",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1.5,
+            -0.45
+          ],
+          "velocity": [
+            0.3,
+            0
+          ]
+        },
+        {
+          "start": [
+            0,
+            2
+          ],
+          "segments": [
+            [
+              5,
+              0,
+              -0.3
+            ],
+            [
+              5,
+              0.3,
+              0
+            ]
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.17533401856740025,
+          "p95": 0.19441861150852258,
+          "max": 0.20364575849836844
+        },
+        "velocity_error_mps": {
+          "mean": 0.0337387629178784,
+          "p95": 0.08377617551936735,
+          "max": 0.25512080225261835
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16980172703063892,
+          "p95": 0.20367753329915866,
+          "max": 0.213566222267035
+        },
+        "velocity_error_mps": {
+          "mean": 0.051380312944098575,
+          "p95": 0.24676569807722198,
+          "max": 0.3824933241263924
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 100,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": 1.0439810506492226,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 600,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 14441.309099999999,
+        "p95": 30681.92925,
+        "max": 30717.916
+      },
+      "cluster_us": {
+        "mean": 33.324619999999996,
+        "p95": 49.69265,
+        "max": 54.025
+      },
+      "association_us": {
+        "mean": 198.39746,
+        "p95": 241.92589999999998,
+        "max": 270.629
+      },
+      "callback_us": {
+        "mean": 15970.170799999998,
+        "p95": 32346.14695,
+        "max": 32601.607
+      },
+      "clusters": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 51,
+    "costmap_nonzero_frames": 51,
+    "costmap_multi_eligible_frames": 28,
+    "costmap_multi_represented_frames": 28,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088781753661642e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 49,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 1.0439810506492226,
+    "source_trial": "validation_logs/stage4g2/baseline_v2/near_crossing_01",
+    "raw_sha256": "140348b12ca8398847e6079dc94f54c3be389655db915e0128973263cfefb9e6"
+  },
+  {
+    "scenario": "near_crossing",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1.5,
+            -0.45
+          ],
+          "velocity": [
+            0.3,
+            0
+          ]
+        },
+        {
+          "start": [
+            0,
+            2
+          ],
+          "segments": [
+            [
+              5,
+              0,
+              -0.3
+            ],
+            [
+              5,
+              0.3,
+              0
+            ]
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.17394101674119145,
+          "p95": 0.1906587619280773,
+          "max": 0.20145030704029931
+        },
+        "velocity_error_mps": {
+          "mean": 0.030244618295473372,
+          "p95": 0.062364885381755227,
+          "max": 0.24560816738021857
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.17050452936949287,
+          "p95": 0.20079441945501922,
+          "max": 0.21346834848648705
+        },
+        "velocity_error_mps": {
+          "mean": 0.044224994935525,
+          "p95": 0.19158214304402305,
+          "max": 0.3324378720151862
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 100,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": 1.0443921982358184,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 600,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 13660.5174,
+        "p95": 30689.5656,
+        "max": 30819.698
+      },
+      "cluster_us": {
+        "mean": 36.345639999999996,
+        "p95": 53.7497,
+        "max": 64.717
+      },
+      "association_us": {
+        "mean": 232.61917999999997,
+        "p95": 299.94975,
+        "max": 405.06
+      },
+      "callback_us": {
+        "mean": 15485.388439999999,
+        "p95": 32868.6403,
+        "max": 33278.426
+      },
+      "clusters": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 52,
+    "costmap_nonzero_frames": 52,
+    "costmap_multi_eligible_frames": 28,
+    "costmap_multi_represented_frames": 28,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088775665612334e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 49,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 1.0443921982358184,
+    "source_trial": "validation_logs/stage4g2/baseline_v2/near_crossing_02",
+    "raw_sha256": "78faa830d7aff37fcd6a718b467571fbb7ac1a9860beb6c4dd8f8ac35265c211"
+  },
+  {
+    "scenario": "occlusion",
+    "definition": {
+      "duration": 7,
+      "objects": [
+        {
+          "start": [
+            -1,
+            -2
+          ],
+          "velocity": [
+            0,
+            0.6
+          ]
+        },
+        {
+          "start": [
+            0,
+            0
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 35,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 35
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 35,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16024143131597782,
+          "p95": 0.17110630810421784,
+          "max": 0.17395271978103263
+        },
+        "velocity_error_mps": {
+          "mean": 0.06591118435390833,
+          "p95": 0.24332759920466834,
+          "max": 0.5144008402807451
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 32
+        },
+        "id_switches": 0,
+        "track_fragments": 1,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 32,
+        "matched_frame_fraction": 0.9142857142857143,
+        "position_error_m": {
+          "mean": 0.16662837324044055,
+          "p95": 0.176937515544636,
+          "max": 0.17878129534428314
+        },
+        "velocity_error_mps": {
+          "mean": 0.03831364464429447,
+          "p95": 0.14978142311953327,
+          "max": 0.2876620580401502
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 1,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 67,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {
+      "D_insufficient_lidar_returns": 3
+    },
+    "min_resolved_center_separation_m": 1.417566913972128,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 3,
+    "reacquisitions": [
+      {
+        "id": 2,
+        "missed_scans": 3,
+        "since_last_observation_s": 0.8010000000000002,
+        "t": 3.873,
+        "same_id": true
+      }
+    ],
+    "prediction_samples_checked": 420,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 14731.325028571428,
+        "p95": 30665.1899,
+        "max": 30731.823
+      },
+      "cluster_us": {
+        "mean": 39.649628571428565,
+        "p95": 56.4938,
+        "max": 60.302
+      },
+      "association_us": {
+        "mean": 201.5390285714286,
+        "p95": 272.8074,
+        "max": 317.944
+      },
+      "callback_us": {
+        "mean": 16361.934971428573,
+        "p95": 32335.3564,
+        "max": 32770.174
+      },
+      "clusters": {
+        "mean": 1.9142857142857144,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      }
+    },
+    "performance_frames": 35,
+    "costmap_grid_frames": 37,
+    "costmap_nonzero_frames": 37,
+    "costmap_multi_eligible_frames": 7,
+    "costmap_multi_represented_frames": 7,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088772118661867e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 31,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 1.417566913972128,
+    "source_trial": "validation_logs/stage4g2/baseline_v2/occlusion_01",
+    "raw_sha256": "92b9318636e2c10691f18943bc2624044229c71d26ef31d1d8b476a53f350659"
+  },
+  {
+    "scenario": "occlusion",
+    "definition": {
+      "duration": 7,
+      "objects": [
+        {
+          "start": [
+            -1,
+            -2
+          ],
+          "velocity": [
+            0,
+            0.6
+          ]
+        },
+        {
+          "start": [
+            0,
+            0
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 35,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 35
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 35,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.17106325409406264,
+          "p95": 0.18061045955133037,
+          "max": 0.1852539606731968
+        },
+        "velocity_error_mps": {
+          "mean": 0.06705326901984518,
+          "p95": 0.24481838644123588,
+          "max": 0.5108425232977415
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 32
+        },
+        "id_switches": 0,
+        "track_fragments": 1,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 32,
+        "matched_frame_fraction": 0.9142857142857143,
+        "position_error_m": {
+          "mean": 0.17824012537114567,
+          "p95": 0.19015695608763133,
+          "max": 0.19324039743724933
+        },
+        "velocity_error_mps": {
+          "mean": 0.038741684668135434,
+          "p95": 0.15085288417170145,
+          "max": 0.29212396590505796
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 1,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 67,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {
+      "D_insufficient_lidar_returns": 3
+    },
+    "min_resolved_center_separation_m": 1.417367877383866,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 3,
+    "reacquisitions": [
+      {
+        "id": 2,
+        "missed_scans": 3,
+        "since_last_observation_s": 0.8010000000000002,
+        "t": 3.873,
+        "same_id": true
+      }
+    ],
+    "prediction_samples_checked": 420,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 16135.787514285714,
+        "p95": 30716.863100000002,
+        "max": 30783.448
+      },
+      "cluster_us": {
+        "mean": 36.07208571428572,
+        "p95": 51.091,
+        "max": 54.363
+      },
+      "association_us": {
+        "mean": 183.73742857142858,
+        "p95": 264.0804,
+        "max": 283.432
+      },
+      "callback_us": {
+        "mean": 17640.24117142857,
+        "p95": 32841.7709,
+        "max": 33121.639
+      },
+      "clusters": {
+        "mean": 1.9142857142857144,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      }
+    },
+    "performance_frames": 35,
+    "costmap_grid_frames": 37,
+    "costmap_nonzero_frames": 37,
+    "costmap_multi_eligible_frames": 7,
+    "costmap_multi_represented_frames": 7,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088772118661867e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 31,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 1.417367877383866,
+    "source_trial": "validation_logs/stage4g2/baseline_v2/occlusion_02",
+    "raw_sha256": "55e61b7ca8bce11e7889a6cc8d204af6de6f3ebdbffd684125751e0082a71cee"
+  },
+  {
+    "scenario": "opposing",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1.5,
+            -0.45
+          ],
+          "velocity": [
+            0.3,
+            0
+          ]
+        },
+        {
+          "start": [
+            1.5,
+            0.45
+          ],
+          "velocity": [
+            -0.3,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.1644910469018408,
+          "p95": 0.1816821967568464,
+          "max": 0.191895647206604
+        },
+        "velocity_error_mps": {
+          "mean": 0.03217547135149458,
+          "p95": 0.08728831284740637,
+          "max": 0.2383262714927332
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.15822733400849412,
+          "p95": 0.1714141628204414,
+          "max": 0.1786832099369009
+        },
+        "velocity_error_mps": {
+          "mean": 0.034632390990197666,
+          "p95": 0.10491800982589454,
+          "max": 0.263749539045934
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 100,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": 0.9012841059916985,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 600,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 17123.574399999998,
+        "p95": 30479.2458,
+        "max": 30601.167
+      },
+      "cluster_us": {
+        "mean": 21.465700000000002,
+        "p95": 41.222799999999985,
+        "max": 54.079
+      },
+      "association_us": {
+        "mean": 118.4297,
+        "p95": 208.54014999999998,
+        "max": 249.308
+      },
+      "callback_us": {
+        "mean": 18033.09298,
+        "p95": 31487.4306,
+        "max": 32441.94
+      },
+      "clusters": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 51,
+    "costmap_nonzero_frames": 51,
+    "costmap_multi_eligible_frames": 20,
+    "costmap_multi_represented_frames": 20,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088782283057234e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 49,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 0.9012841059916985,
+    "source_trial": "validation_logs/stage4g2/baseline_v2/opposing_01",
+    "raw_sha256": "92449544c9e82c38147cd0f46b2b847daa1c82833be85d80ed88c720f33083b1"
+  },
+  {
+    "scenario": "opposing",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1.5,
+            -0.45
+          ],
+          "velocity": [
+            0.3,
+            0
+          ]
+        },
+        {
+          "start": [
+            1.5,
+            0.45
+          ],
+          "velocity": [
+            -0.3,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16403663610253666,
+          "p95": 0.1805669401468122,
+          "max": 0.19485243213959097
+        },
+        "velocity_error_mps": {
+          "mean": 0.03191692693179486,
+          "p95": 0.07393377627515318,
+          "max": 0.25190306109944804
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16256984122383972,
+          "p95": 0.17523480797693652,
+          "max": 0.17934901675555595
+        },
+        "velocity_error_mps": {
+          "mean": 0.03344421194479637,
+          "p95": 0.10098198623617981,
+          "max": 0.2538514570491148
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 100,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": 0.9003853820206675,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 600,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 13235.3372,
+        "p95": 30668.15405,
+        "max": 30702.969
+      },
+      "cluster_us": {
+        "mean": 38.036919999999995,
+        "p95": 52.03374999999999,
+        "max": 60.505
+      },
+      "association_us": {
+        "mean": 217.66500000000005,
+        "p95": 266.79254999999995,
+        "max": 285.741
+      },
+      "callback_us": {
+        "mean": 14958.224339999997,
+        "p95": 32489.4465,
+        "max": 32711.49
+      },
+      "clusters": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 52,
+    "costmap_nonzero_frames": 52,
+    "costmap_multi_eligible_frames": 21,
+    "costmap_multi_represented_frames": 21,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088777200859551e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 49,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 0.9003853820206675,
+    "source_trial": "validation_logs/stage4g2/baseline_v2/opposing_02",
+    "raw_sha256": "8727d05412d6895dc2e02973ed1280af7d5c498075e2bf233bce7a907d77eed8"
+  },
+  {
+    "scenario": "parallel",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1,
+            -1
+          ],
+          "velocity": [
+            0.3,
+            0
+          ]
+        },
+        {
+          "start": [
+            -1,
+            1
+          ],
+          "velocity": [
+            0.3,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.17516316491148923,
+          "p95": 0.19918929943180227,
+          "max": 0.2009879638051892
+        },
+        "velocity_error_mps": {
+          "mean": 0.03362434535364453,
+          "p95": 0.0682446120811899,
+          "max": 0.246001674288288
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16978070159365147,
+          "p95": 0.18317899461393422,
+          "max": 0.18885127004296814
+        },
+        "velocity_error_mps": {
+          "mean": 0.03607063200299408,
+          "p95": 0.07004258872642846,
+          "max": 0.24029839812134915
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 100,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": 1.9999999936353172,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 600,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 13231.733119999999,
+        "p95": 30657.32145,
+        "max": 30795.646
+      },
+      "cluster_us": {
+        "mean": 30.447979999999998,
+        "p95": 44.145149999999994,
+        "max": 48.683
+      },
+      "association_us": {
+        "mean": 201.56183999999996,
+        "p95": 263.1859999999999,
+        "max": 298.987
+      },
+      "callback_us": {
+        "mean": 14799.72694,
+        "p95": 32448.9467,
+        "max": 32921.871
+      },
+      "clusters": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 51,
+    "costmap_nonzero_frames": 51,
+    "costmap_multi_eligible_frames": 19,
+    "costmap_multi_represented_frames": 19,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088775665612334e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 49,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 1.9999999936353172,
+    "source_trial": "validation_logs/stage4g2/baseline_v2/parallel_01",
+    "raw_sha256": "5be4e90d6b593c6b805501d87d1d5eed5d7c219b7bac05b31436a5a11d3624ce"
+  },
+  {
+    "scenario": "parallel",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1,
+            -1
+          ],
+          "velocity": [
+            0.3,
+            0
+          ]
+        },
+        {
+          "start": [
+            -1,
+            1
+          ],
+          "velocity": [
+            0.3,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.17777841278331397,
+          "p95": 0.19735962684679748,
+          "max": 0.20558626571340793
+        },
+        "velocity_error_mps": {
+          "mean": 0.03706953620253828,
+          "p95": 0.08401500572718149,
+          "max": 0.24482425978481484
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.1755577182698577,
+          "p95": 0.18939442824703706,
+          "max": 0.19657984191453973
+        },
+        "velocity_error_mps": {
+          "mean": 0.03698439187508223,
+          "p95": 0.07950278824323126,
+          "max": 0.2507732715655036
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 100,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": 1.9999999931622228,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 600,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 13222.554820000001,
+        "p95": 30591.37805,
+        "max": 30634.387
+      },
+      "cluster_us": {
+        "mean": 30.53434,
+        "p95": 50.885999999999996,
+        "max": 53.998
+      },
+      "association_us": {
+        "mean": 201.46523999999997,
+        "p95": 296.97344999999996,
+        "max": 311.019
+      },
+      "callback_us": {
+        "mean": 14750.34398,
+        "p95": 31936.127650000002,
+        "max": 32257.754
+      },
+      "clusters": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 51,
+    "costmap_nonzero_frames": 51,
+    "costmap_multi_eligible_frames": 19,
+    "costmap_multi_represented_frames": 19,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088783288908859e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 49,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 1.9999999931622228,
+    "source_trial": "validation_logs/stage4g2/baseline_v2/parallel_02",
+    "raw_sha256": "f548bab0a8bbec768adbac54b29a0e9f8198de55f84a737f2c1311d61b8c3ee7"
+  },
+  {
+    "scenario": "single",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1,
+            -1
+          ],
+          "velocity": [
+            0.3,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 1,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 1.0,
+      "p95": 1.0,
+      "max": 1.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.17772619862464484,
+          "p95": 0.20357043615943643,
+          "max": 0.20980662057678726
+        },
+        "velocity_error_mps": {
+          "mean": 0.035990822077667024,
+          "p95": 0.09472636230516067,
+          "max": 0.2556357774946109
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 1,
+    "resolvable_cluster_object_frames": 50,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": null,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 300,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 13453.328820000002,
+        "p95": 30688.26725,
+        "max": 30813.448
+      },
+      "cluster_us": {
+        "mean": 17.53868,
+        "p95": 22.9329,
+        "max": 24.354
+      },
+      "association_us": {
+        "mean": 141.827,
+        "p95": 186.88094999999996,
+        "max": 233.806
+      },
+      "callback_us": {
+        "mean": 14473.198000000002,
+        "p95": 31907.2637,
+        "max": 32326.921
+      },
+      "clusters": {
+        "mean": 1.0,
+        "p95": 1.0,
+        "max": 1.0
+      },
+      "tracks": {
+        "mean": 1.0,
+        "p95": 1.0,
+        "max": 1.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 52,
+    "costmap_nonzero_frames": 52,
+    "costmap_multi_eligible_frames": 0,
+    "costmap_multi_represented_frames": 0,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 2.080249295694311e-14
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 0,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0
+    ],
+    "first_ids": [
+      1
+    ],
+    "last_ids": [
+      1
+    ],
+    "gt_min_center_separation_m": null,
+    "source_trial": "validation_logs/stage4g2/baseline_v2/single_01",
+    "raw_sha256": "e88c5dd40d2ae6bab2b01bc612e519d9d2424dc5c3ad5615fb02741136c7b3a4"
+  },
+  {
+    "scenario": "single",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1,
+            -1
+          ],
+          "velocity": [
+            0.3,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 1,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 1.0,
+      "p95": 1.0,
+      "max": 1.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.17725551133438483,
+          "p95": 0.19630279901770942,
+          "max": 0.2012114389599188
+        },
+        "velocity_error_mps": {
+          "mean": 0.03548535462270717,
+          "p95": 0.08053048348420346,
+          "max": 0.23590674297500322
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 1,
+    "resolvable_cluster_object_frames": 50,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": null,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 300,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 12841.560019999999,
+        "p95": 30626.462900000002,
+        "max": 30715.283
+      },
+      "cluster_us": {
+        "mean": 17.72852,
+        "p95": 23.133149999999997,
+        "max": 26.544
+      },
+      "association_us": {
+        "mean": 145.51672,
+        "p95": 176.30375,
+        "max": 211.165
+      },
+      "callback_us": {
+        "mean": 13879.591880000004,
+        "p95": 31699.7973,
+        "max": 32074.621
+      },
+      "clusters": {
+        "mean": 1.0,
+        "p95": 1.0,
+        "max": 1.0
+      },
+      "tracks": {
+        "mean": 1.0,
+        "p95": 1.0,
+        "max": 1.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 51,
+    "costmap_nonzero_frames": 51,
+    "costmap_multi_eligible_frames": 0,
+    "costmap_multi_represented_frames": 0,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.08877391860688e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 0,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0
+    ],
+    "first_ids": [
+      1
+    ],
+    "last_ids": [
+      1
+    ],
+    "gt_min_center_separation_m": null,
+    "source_trial": "validation_logs/stage4g2/baseline_v2/single_02",
+    "raw_sha256": "f820363f5ae9ae38813a4c4316d57ffd47895303238895443f3a069878567fe2"
+  },
+  {
+    "scenario": "navigation",
+    "definition": {
+      "duration": 22,
+      "navigate": true,
+      "objects": [
+        {
+          "start": [
+            -1,
+            -1.5
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        },
+        {
+          "start": [
+            -1,
+            1.5
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 110,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 110
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 110,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.1469892448738797,
+          "p95": 0.20162483126153777,
+          "max": 0.2070422333301509
+        },
+        "velocity_error_mps": {
+          "mean": 0.030683211424501946,
+          "p95": 0.06653671094338064,
+          "max": 0.11837153165011924
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 110
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 110,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.17085131016436744,
+          "p95": 0.23028475665530995,
+          "max": 0.23885843521055397
+        },
+        "velocity_error_mps": {
+          "mean": 0.0290829462427982,
+          "p95": 0.06685074108613817,
+          "max": 0.1122658670187072
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 220,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": 3.000000000000347,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 1320,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 14674.6765,
+        "p95": 30630.0159,
+        "max": 30688.93
+      },
+      "cluster_us": {
+        "mean": 54.65951818181819,
+        "p95": 89.115,
+        "max": 152.9
+      },
+      "association_us": {
+        "mean": 182.74525454545454,
+        "p95": 267.94015,
+        "max": 321.191
+      },
+      "callback_us": {
+        "mean": 16101.241781818178,
+        "p95": 32322.62455,
+        "max": 32698.491
+      },
+      "clusters": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      }
+    },
+    "performance_frames": 110,
+    "costmap_grid_frames": 111,
+    "costmap_nonzero_frames": 111,
+    "costmap_multi_eligible_frames": 111,
+    "costmap_multi_represented_frames": 111,
+    "nav": {
+      "requested": true,
+      "lifecycle_end": 3,
+      "status": 4,
+      "robot_distance": 5.872139652789821
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 109,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 3.000000000000347,
+    "source_trial": "validation_logs/stage4g2/regressions/navigation_01",
+    "raw_sha256": "d7a698a2cd8f7e15923dfb8f92e4f9061ace323ddcd923d3962210bbc20e0caf"
+  },
+  {
+    "scenario": "occlusion_long",
+    "definition": {
+      "duration": 12,
+      "objects": [
+        {
+          "start": [
+            -1,
+            -0.8
+          ],
+          "velocity": [
+            0,
+            0.15
+          ]
+        },
+        {
+          "start": [
+            0,
+            0
+          ],
+          "velocity": [
+            0.05,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 60,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 1.8666666666666667,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 60
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 60,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.1712167658803618,
+          "p95": 0.17858764387691964,
+          "max": 0.18099468986142203
+        },
+        "velocity_error_mps": {
+          "mean": 0.023949253643350002,
+          "p95": 0.04500877790129882,
+          "max": 0.10072789121755713
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 25,
+          "3": 22
+        },
+        "id_switches": 1,
+        "track_fragments": 1,
+        "identity_fragments": 1,
+        "purity": 0.5319148936170213,
+        "matched_frames": 47,
+        "matched_frame_fraction": 0.7833333333333333,
+        "position_error_m": {
+          "mean": 0.174589940437854,
+          "p95": 0.19172957135805568,
+          "max": 0.19911068780628546
+        },
+        "velocity_error_mps": {
+          "mean": 0.026327132689307413,
+          "p95": 0.09325392104552334,
+          "max": 0.13540642332744518
+        }
+      }
+    ],
+    "id_switches": 1,
+    "track_fragments": 1,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 3,
+    "resolvable_cluster_object_frames": 109,
+    "resolvable_cluster_matched_fraction": 0.981651376146789,
+    "categories": {
+      "D_insufficient_lidar_returns": 11,
+      "B_or_C_resolved_cluster_without_fresh_track": 2
+    },
+    "min_resolved_center_separation_m": 1.1604913161103223,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 5,
+    "reacquisitions": [],
+    "prediction_samples_checked": 672,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 12764.1451,
+        "p95": 30634.24295,
+        "max": 30708.768
+      },
+      "cluster_us": {
+        "mean": 41.21483333333333,
+        "p95": 63.10379999999999,
+        "max": 68.124
+      },
+      "association_us": {
+        "mean": 195.63946666666664,
+        "p95": 309.6132999999999,
+        "max": 328.202
+      },
+      "callback_us": {
+        "mean": 14350.916383333331,
+        "p95": 32636.287099999998,
+        "max": 33244.394
+      },
+      "clusters": {
+        "mean": 1.8166666666666667,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 1.9,
+        "p95": 2.0,
+        "max": 2.0
+      }
+    },
+    "performance_frames": 60,
+    "costmap_grid_frames": 61,
+    "costmap_nonzero_frames": 61,
+    "costmap_multi_eligible_frames": 30,
+    "costmap_multi_represented_frames": 29,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088790621037809e-15
+    },
+    "disappearances": [
+      {
+        "id": 2,
+        "t": 6.078,
+        "since_last_observation_s": 1.200000000000001,
+        "previous_missed": 5
+      }
+    ],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 45,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      0.8666666666666667
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      3
+    ],
+    "gt_min_center_separation_m": 1.1604913161103223,
+    "source_trial": "validation_logs/stage4g2/regressions/occlusion_long_01",
+    "raw_sha256": "65c8e5c3d62294344eaa7f51a53ada7577995f43a1968ad198e38dbed19e1b1c"
+  },
+  {
+    "scenario": "resolution_55",
+    "definition": {
+      "duration": 6,
+      "objects": [
+        {
+          "start": [
+            0,
+            -0.275
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        },
+        {
+          "start": [
+            0,
+            0.275
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 30,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 1.0,
+      "p95": 1.0,
+      "max": 1.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 20
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 20,
+        "matched_frame_fraction": 0.6666666666666666,
+        "position_error_m": {
+          "mean": 0.3118985385480296,
+          "p95": 0.32467991144416636,
+          "max": 0.32470939141727784
+        },
+        "velocity_error_mps": {
+          "mean": 0.018521877980033914,
+          "p95": 0.07344499093770548,
+          "max": 0.09639309361622157
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "1": 10
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 10,
+        "matched_frame_fraction": 0.3333333333333333,
+        "position_error_m": {
+          "mean": 0.3017700203192529,
+          "p95": 0.309255587204864,
+          "max": 0.3143486848232566
+        },
+        "velocity_error_mps": {
+          "mean": 0.01905465993612149,
+          "p95": 0.04759505216373916,
+          "max": 0.0505568759940126
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 1,
+    "resolvable_cluster_object_frames": 0,
+    "resolvable_cluster_matched_fraction": null,
+    "categories": {
+      "A_cluster_merge": 30
+    },
+    "min_resolved_center_separation_m": null,
+    "merge_center_separation_m": {
+      "mean": 0.5500001245941584,
+      "p95": 0.5500004130517367,
+      "max": 0.5500004249052627
+    },
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 180,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 15130.000633333335,
+        "p95": 30652.69425,
+        "max": 30728.596
+      },
+      "cluster_us": {
+        "mean": 31.67763333333334,
+        "p95": 41.721849999999996,
+        "max": 47.942
+      },
+      "association_us": {
+        "mean": 148.46949999999998,
+        "p95": 196.56579999999997,
+        "max": 275.817
+      },
+      "callback_us": {
+        "mean": 16182.461500000001,
+        "p95": 31881.819399999997,
+        "max": 32204.204
+      },
+      "clusters": {
+        "mean": 1.0,
+        "p95": 1.0,
+        "max": 1.0
+      },
+      "tracks": {
+        "mean": 1.0,
+        "p95": 1.0,
+        "max": 1.0
+      }
+    },
+    "performance_frames": 30,
+    "costmap_grid_frames": 32,
+    "costmap_nonzero_frames": 32,
+    "costmap_multi_eligible_frames": 0,
+    "costmap_multi_represented_frames": 0,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088771642205834e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 0,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      0.6666666666666666,
+      0.3333333333333333
+    ],
+    "first_ids": [
+      1,
+      null
+    ],
+    "last_ids": [
+      null,
+      1
+    ],
+    "gt_min_center_separation_m": 0.549999999999797,
+    "source_trial": "validation_logs/stage4g2/regressions/resolution_55_01",
+    "raw_sha256": "51ab10416332fe94255e2e74ef9e797519d92f1150c080c1c2e8bde987194adb"
+  },
+  {
+    "scenario": "resolution_65",
+    "definition": {
+      "duration": 6,
+      "objects": [
+        {
+          "start": [
+            0,
+            -0.325
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        },
+        {
+          "start": [
+            0,
+            0.325
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 30,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 1.0,
+      "p95": 1.0,
+      "max": 1.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {},
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 0,
+        "matched_frames": 0,
+        "matched_frame_fraction": 0.0,
+        "position_error_m": null,
+        "velocity_error_mps": null
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "1": 30
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 30,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.36281261526147723,
+          "p95": 0.3691282138434712,
+          "max": 0.37074657683088674
+        },
+        "velocity_error_mps": {
+          "mean": 0.01572983907768577,
+          "p95": 0.0672938237841414,
+          "max": 0.1184515329152018
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 1,
+    "resolvable_cluster_object_frames": 0,
+    "resolvable_cluster_matched_fraction": null,
+    "categories": {
+      "A_cluster_merge": 30
+    },
+    "min_resolved_center_separation_m": null,
+    "merge_center_separation_m": {
+      "mean": 0.6500000764185948,
+      "p95": 0.6500002608609713,
+      "max": 0.650000330954183
+    },
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 180,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 13436.743699999999,
+        "p95": 30650.4145,
+        "max": 30669.43
+      },
+      "cluster_us": {
+        "mean": 31.654766666666667,
+        "p95": 43.054799999999986,
+        "max": 48.51
+      },
+      "association_us": {
+        "mean": 142.14233333333334,
+        "p95": 171.60189999999997,
+        "max": 181.677
+      },
+      "callback_us": {
+        "mean": 14456.777100000001,
+        "p95": 31651.305399999997,
+        "max": 31992.18
+      },
+      "clusters": {
+        "mean": 1.0,
+        "p95": 1.0,
+        "max": 1.0
+      },
+      "tracks": {
+        "mean": 1.0,
+        "p95": 1.0,
+        "max": 1.0
+      }
+    },
+    "performance_frames": 30,
+    "costmap_grid_frames": 31,
+    "costmap_nonzero_frames": 31,
+    "costmap_multi_eligible_frames": 0,
+    "costmap_multi_represented_frames": 0,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088773045104153e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 0,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      0.0,
+      1.0
+    ],
+    "first_ids": [
+      null,
+      1
+    ],
+    "last_ids": [
+      null,
+      1
+    ],
+    "gt_min_center_separation_m": 0.6500000000163518,
+    "source_trial": "validation_logs/stage4g2/regressions/resolution_65_01",
+    "raw_sha256": "2f5173ea921f58e73ff4863545d19d66fae4779bcafad3b9ba62b1a3db40de70"
+  },
+  {
+    "scenario": "resolution_75",
+    "definition": {
+      "duration": 6,
+      "objects": [
+        {
+          "start": [
+            0,
+            -0.375
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        },
+        {
+          "start": [
+            0,
+            0.375
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 30,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 30
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 30,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.17158198690427678,
+          "p95": 0.25159508851110396,
+          "max": 0.3675700849914091
+        },
+        "velocity_error_mps": {
+          "mean": 0.08662369304765022,
+          "p95": 0.37695589714265765,
+          "max": 0.5558882656981314
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 28
+        },
+        "id_switches": 0,
+        "track_fragments": 1,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 28,
+        "matched_frame_fraction": 0.9333333333333333,
+        "position_error_m": {
+          "mean": 0.1615304933287623,
+          "p95": 0.1732826293236411,
+          "max": 0.17471452870169224
+        },
+        "velocity_error_mps": {
+          "mean": 0.028553521391637887,
+          "p95": 0.08155329256906252,
+          "max": 0.09125332927207318
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 1,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 56,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {
+      "A_cluster_merge": 2
+    },
+    "min_resolved_center_separation_m": 0.7500000000048163,
+    "merge_center_separation_m": {
+      "mean": 0.7500001310380037,
+      "p95": 0.7500001641676045,
+      "max": 0.7500001678486713
+    },
+    "max_missed_scans_retained": 2,
+    "reacquisitions": [
+      {
+        "id": 2,
+        "missed_scans": 2,
+        "since_last_observation_s": 0.5999999999999996,
+        "t": 1.6109999999999998,
+        "same_id": true
+      }
+    ],
+    "prediction_samples_checked": 360,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 14064.763700000001,
+        "p95": 30576.708000000002,
+        "max": 30751.465
+      },
+      "cluster_us": {
+        "mean": 27.491566666666657,
+        "p95": 35.39685,
+        "max": 35.629
+      },
+      "association_us": {
+        "mean": 184.11663333333337,
+        "p95": 240.18545,
+        "max": 246.012
+      },
+      "callback_us": {
+        "mean": 15486.512266666663,
+        "p95": 32059.69025,
+        "max": 32577.735
+      },
+      "clusters": {
+        "mean": 1.9333333333333333,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      }
+    },
+    "performance_frames": 30,
+    "costmap_grid_frames": 32,
+    "costmap_nonzero_frames": 32,
+    "costmap_multi_eligible_frames": 6,
+    "costmap_multi_represented_frames": 6,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088771642205834e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 27,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 0.7500000000048163,
+    "source_trial": "validation_logs/stage4g2/regressions/resolution_75_01",
+    "raw_sha256": "5fcb8957952aa0cfe0a4a0e1e283ba6a462a2fdd3c384cae8d55fc44567c8630"
+  },
+  {
+    "scenario": "resolution_85",
+    "definition": {
+      "duration": 6,
+      "objects": [
+        {
+          "start": [
+            0,
+            -0.425
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        },
+        {
+          "start": [
+            0,
+            0.425
+          ],
+          "velocity": [
+            0.15,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 30,
+    "gt_objects": 2,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 2.0,
+      "p95": 2.0,
+      "max": 2.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 30
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 30,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16343182459169073,
+          "p95": 0.18276403090689414,
+          "max": 0.18657483768073568
+        },
+        "velocity_error_mps": {
+          "mean": 0.029250181374517167,
+          "p95": 0.065505771477968,
+          "max": 0.10707281503817406
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 30
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 30,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16224538475533393,
+          "p95": 0.17921995027451487,
+          "max": 0.18098809886868628
+        },
+        "velocity_error_mps": {
+          "mean": 0.029732081501904074,
+          "p95": 0.06656500308704659,
+          "max": 0.10504769345538327
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 2,
+    "resolvable_cluster_object_frames": 60,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": 0.850000000008361,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 360,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 15337.068533333335,
+        "p95": 30559.954049999997,
+        "max": 30601.728
+      },
+      "cluster_us": {
+        "mean": 21.378366666666672,
+        "p95": 28.737949999999984,
+        "max": 100.276
+      },
+      "association_us": {
+        "mean": 140.99089999999998,
+        "p95": 226.83644999999996,
+        "max": 339.546
+      },
+      "callback_us": {
+        "mean": 16351.414866666664,
+        "p95": 31706.8343,
+        "max": 32572.675
+      },
+      "clusters": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      },
+      "tracks": {
+        "mean": 2.0,
+        "p95": 2.0,
+        "max": 2.0
+      }
+    },
+    "performance_frames": 30,
+    "costmap_grid_frames": 32,
+    "costmap_nonzero_frames": 32,
+    "costmap_multi_eligible_frames": 6,
+    "costmap_multi_represented_frames": 6,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088771880433851e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 29,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2
+    ],
+    "last_ids": [
+      1,
+      2
+    ],
+    "gt_min_center_separation_m": 0.850000000008361,
+    "source_trial": "validation_logs/stage4g2/regressions/resolution_85_01",
+    "raw_sha256": "bacdec4c4fce62849fed456e635ebfff52c9ff9822123393e5f0b86a410b4206"
+  },
+  {
+    "scenario": "static_navigation",
+    "definition": {
+      "duration": 19,
+      "navigate": true,
+      "objects": []
+    },
+    "frames": 95,
+    "gt_objects": 0,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 0.0,
+      "p95": 0.0,
+      "max": 0.0
+    },
+    "per_gt": [],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 0,
+    "resolvable_cluster_object_frames": 0,
+    "resolvable_cluster_matched_fraction": null,
+    "categories": {},
+    "min_resolved_center_separation_m": null,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 0,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 13064.504515789476,
+        "p95": 30619.4031,
+        "max": 30761.129
+      },
+      "cluster_us": {
+        "mean": 2.8553157894736834,
+        "p95": 3.3532999999999995,
+        "max": 30.052
+      },
+      "association_us": {
+        "mean": 3.7379999999999995,
+        "p95": 5.709499999999999,
+        "max": 15.065
+      },
+      "callback_us": {
+        "mean": 13213.162621052632,
+        "p95": 30800.839900000003,
+        "max": 30975.232
+      },
+      "clusters": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "tracks": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      }
+    },
+    "performance_frames": 95,
+    "costmap_grid_frames": 97,
+    "costmap_nonzero_frames": 0,
+    "costmap_multi_eligible_frames": 0,
+    "costmap_multi_represented_frames": 0,
+    "nav": {
+      "requested": true,
+      "lifecycle_end": 3,
+      "status": 4,
+      "robot_distance": 5.873615111452782
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 0,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [],
+    "first_ids": [],
+    "last_ids": [],
+    "gt_min_center_separation_m": null,
+    "source_trial": "validation_logs/stage4g2/regressions/static_navigation_01",
+    "raw_sha256": "4d3791c98e60ea02aa27b73d8e3468dd185dcf75a8ffc456b1f68d5c3e61f47e"
+  },
+  {
+    "scenario": "triple",
+    "definition": {
+      "duration": 10,
+      "objects": [
+        {
+          "start": [
+            -1,
+            -1.5
+          ],
+          "velocity": [
+            0.25,
+            0
+          ]
+        },
+        {
+          "start": [
+            -1,
+            0
+          ],
+          "velocity": [
+            0.2,
+            0
+          ]
+        },
+        {
+          "start": [
+            -1,
+            1.5
+          ],
+          "velocity": [
+            0.3,
+            0
+          ]
+        }
+      ]
+    },
+    "frames": 50,
+    "gt_objects": 3,
+    "evaluation_gate_m": 0.45,
+    "algorithm": "unchanged KF-predicted Euclidean gated greedy",
+    "confirmed_tracks": {
+      "mean": 3.0,
+      "p95": 3.0,
+      "max": 3.0
+    },
+    "per_gt": [
+      {
+        "object": 0,
+        "id_counts": {
+          "1": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16188045955339375,
+          "p95": 0.17577861702390105,
+          "max": 0.18900449180797688
+        },
+        "velocity_error_mps": {
+          "mean": 0.03443785004345999,
+          "p95": 0.061736756941312115,
+          "max": 0.21238654182413677
+        }
+      },
+      {
+        "object": 1,
+        "id_counts": {
+          "2": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16306375920415467,
+          "p95": 0.1772605717156784,
+          "max": 0.181800562750518
+        },
+        "velocity_error_mps": {
+          "mean": 0.019175083693021785,
+          "p95": 0.04876475218979669,
+          "max": 0.15597357513883092
+        }
+      },
+      {
+        "object": 2,
+        "id_counts": {
+          "3": 50
+        },
+        "id_switches": 0,
+        "track_fragments": 0,
+        "identity_fragments": 0,
+        "purity": 1.0,
+        "matched_frames": 50,
+        "matched_frame_fraction": 1.0,
+        "position_error_m": {
+          "mean": 0.16349681017401874,
+          "p95": 0.1843500770738103,
+          "max": 0.1868994524772812
+        },
+        "velocity_error_mps": {
+          "mean": 0.03759701987264148,
+          "p95": 0.07281586955893367,
+          "max": 0.2585622746196499
+        }
+      }
+    ],
+    "id_switches": 0,
+    "track_fragments": 0,
+    "false_confirmed_ids": {},
+    "false_fresh_frames": 0,
+    "false_persistent_ids": [],
+    "duplicate_frames": 0,
+    "distinct_confirmed_ids": 3,
+    "resolvable_cluster_object_frames": 150,
+    "resolvable_cluster_matched_fraction": 1.0,
+    "categories": {},
+    "min_resolved_center_separation_m": 1.5000048246266326,
+    "merge_center_separation_m": null,
+    "max_missed_scans_retained": 0,
+    "reacquisitions": [],
+    "prediction_samples_checked": 900,
+    "prediction_math_failures": 0,
+    "performance_us": {
+      "scan_us": {
+        "mean": 12828.574879999998,
+        "p95": 30600.98865,
+        "max": 30723.677
+      },
+      "cluster_us": {
+        "mean": 60.43047999999999,
+        "p95": 94.95154999999997,
+        "max": 131.046
+      },
+      "association_us": {
+        "mean": 273.83646,
+        "p95": 361.79204999999996,
+        "max": 418.699
+      },
+      "callback_us": {
+        "mean": 15074.66454,
+        "p95": 32654.413999999997,
+        "max": 34287.325
+      },
+      "clusters": {
+        "mean": 3.0,
+        "p95": 3.0,
+        "max": 3.0
+      },
+      "tracks": {
+        "mean": 3.0,
+        "p95": 3.0,
+        "max": 3.0
+      }
+    },
+    "performance_frames": 50,
+    "costmap_grid_frames": 52,
+    "costmap_nonzero_frames": 52,
+    "costmap_multi_eligible_frames": 24,
+    "costmap_multi_represented_frames": 24,
+    "nav": {
+      "requested": false,
+      "lifecycle_end": 3,
+      "status": null,
+      "robot_distance": 6.088781594842965e-15
+    },
+    "disappearances": [],
+    "decision_comparison": {
+      "comparable_two_track_two_centroid_frames": 0,
+      "greedy_vs_global_differences": [],
+      "scope": "same recorded pre-decision states; diagnostic, not a counterfactual full replay"
+    },
+    "retained_frame_fraction_per_gt": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "first_ids": [
+      1,
+      2,
+      3
+    ],
+    "last_ids": [
+      1,
+      2,
+      3
+    ],
+    "gt_min_center_separation_m": 1.5000048246266326,
+    "source_trial": "validation_logs/stage4g2/regressions/triple_01",
+    "raw_sha256": "965928c3262c35e744180d8802d93e158bd7fac9a9f1a4baf3b9e8f7f81313ba"
+  }
+]

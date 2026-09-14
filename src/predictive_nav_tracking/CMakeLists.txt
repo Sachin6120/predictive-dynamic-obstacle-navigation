@@ -52,6 +52,14 @@ install(PROGRAMS
 )
 
 if(BUILD_TESTING)
+  # Include production TU without changing its encapsulation/API for tests.
+  add_executable(stage4g2_lifecycle test/stage4g2_lifecycle.cpp)
+  target_compile_options(stage4g2_lifecycle PRIVATE -fno-access-control)
+  target_include_directories(stage4g2_lifecycle PRIVATE include ${EIGEN3_INCLUDE_DIR})
+  ament_target_dependencies(stage4g2_lifecycle rclcpp sensor_msgs nav_msgs geometry_msgs
+    tf2 tf2_ros tf2_geometry_msgs visualization_msgs predictive_nav_msgs)
+  add_test(NAME stage4g2_lifecycle COMMAND stage4g2_lifecycle)
+  set_tests_properties(stage4g2_lifecycle PROPERTIES ENVIRONMENT "ROS_DOMAIN_ID=94" TIMEOUT 20)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
   # comment the line when a copyright and license is added to all source files

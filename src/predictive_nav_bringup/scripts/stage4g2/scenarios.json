@@ -1,0 +1,366 @@
+{
+  "single": {
+    "duration": 10,
+    "objects": [
+      {
+        "start": [
+          -1,
+          -1
+        ],
+        "velocity": [
+          0.3,
+          0
+        ]
+      }
+    ]
+  },
+  "parallel": {
+    "duration": 10,
+    "objects": [
+      {
+        "start": [
+          -1,
+          -1
+        ],
+        "velocity": [
+          0.3,
+          0
+        ]
+      },
+      {
+        "start": [
+          -1,
+          1
+        ],
+        "velocity": [
+          0.3,
+          0
+        ]
+      }
+    ]
+  },
+  "opposing": {
+    "duration": 10,
+    "objects": [
+      {
+        "start": [
+          -1.5,
+          -0.45
+        ],
+        "velocity": [
+          0.3,
+          0
+        ]
+      },
+      {
+        "start": [
+          1.5,
+          0.45
+        ],
+        "velocity": [
+          -0.3,
+          0
+        ]
+      }
+    ]
+  },
+  "crossing": {
+    "duration": 10,
+    "objects": [
+      {
+        "start": [
+          -1.5,
+          0
+        ],
+        "velocity": [
+          0.5,
+          0
+        ]
+      },
+      {
+        "start": [
+          0,
+          2.15
+        ],
+        "velocity": [
+          0,
+          -0.5
+        ]
+      }
+    ]
+  },
+  "crossing_resolved": {
+    "duration": 10,
+    "objects": [
+      {
+        "start": [
+          -1.5,
+          0
+        ],
+        "velocity": [
+          0.5,
+          0
+        ]
+      },
+      {
+        "start": [
+          0,
+          2.7
+        ],
+        "velocity": [
+          0,
+          -0.5
+        ]
+      }
+    ]
+  },
+  "near_crossing": {
+    "duration": 10,
+    "objects": [
+      {
+        "start": [
+          -1.5,
+          -0.45
+        ],
+        "velocity": [
+          0.3,
+          0
+        ]
+      },
+      {
+        "start": [
+          0,
+          2
+        ],
+        "segments": [
+          [
+            5,
+            0,
+            -0.3
+          ],
+          [
+            5,
+            0.3,
+            0
+          ]
+        ]
+      }
+    ]
+  },
+  "occlusion": {
+    "duration": 7,
+    "objects": [
+      {
+        "start": [
+          -1,
+          -2
+        ],
+        "velocity": [
+          0,
+          0.6
+        ]
+      },
+      {
+        "start": [
+          0,
+          0
+        ],
+        "velocity": [
+          0.15,
+          0
+        ]
+      }
+    ]
+  },
+  "triple": {
+    "duration": 10,
+    "objects": [
+      {
+        "start": [
+          -1,
+          -1.5
+        ],
+        "velocity": [
+          0.25,
+          0
+        ]
+      },
+      {
+        "start": [
+          -1,
+          0
+        ],
+        "velocity": [
+          0.2,
+          0
+        ]
+      },
+      {
+        "start": [
+          -1,
+          1.5
+        ],
+        "velocity": [
+          0.3,
+          0
+        ]
+      }
+    ]
+  },
+  "navigation": {
+    "duration": 22,
+    "navigate": true,
+    "objects": [
+      {
+        "start": [
+          -1,
+          -1.5
+        ],
+        "velocity": [
+          0.15,
+          0
+        ]
+      },
+      {
+        "start": [
+          -1,
+          1.5
+        ],
+        "velocity": [
+          0.15,
+          0
+        ]
+      }
+    ]
+  },
+  "static_navigation": {
+    "duration": 19,
+    "navigate": true,
+    "objects": []
+  },
+  "resolution_55": {
+    "duration": 6,
+    "objects": [
+      {
+        "start": [
+          0,
+          -0.275
+        ],
+        "velocity": [
+          0.15,
+          0
+        ]
+      },
+      {
+        "start": [
+          0,
+          0.275
+        ],
+        "velocity": [
+          0.15,
+          0
+        ]
+      }
+    ]
+  },
+  "resolution_65": {
+    "duration": 6,
+    "objects": [
+      {
+        "start": [
+          0,
+          -0.325
+        ],
+        "velocity": [
+          0.15,
+          0
+        ]
+      },
+      {
+        "start": [
+          0,
+          0.325
+        ],
+        "velocity": [
+          0.15,
+          0
+        ]
+      }
+    ]
+  },
+  "resolution_75": {
+    "duration": 6,
+    "objects": [
+      {
+        "start": [
+          0,
+          -0.375
+        ],
+        "velocity": [
+          0.15,
+          0
+        ]
+      },
+      {
+        "start": [
+          0,
+          0.375
+        ],
+        "velocity": [
+          0.15,
+          0
+        ]
+      }
+    ]
+  },
+  "resolution_85": {
+    "duration": 6,
+    "objects": [
+      {
+        "start": [
+          0,
+          -0.425
+        ],
+        "velocity": [
+          0.15,
+          0
+        ]
+      },
+      {
+        "start": [
+          0,
+          0.425
+        ],
+        "velocity": [
+          0.15,
+          0
+        ]
+      }
+    ]
+  },
+  "occlusion_long": {
+    "duration": 12,
+    "objects": [
+      {
+        "start": [
+          -1,
+          -0.8
+        ],
+        "velocity": [
+          0,
+          0.15
+        ]
+      },
+      {
+        "start": [
+          0,
+          0
+        ],
+        "velocity": [
+          0.05,
+          0
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "checkpoint": "eab2218765a19474d15daa26ab7cf7ac64631ba4",
+  "stage4f_reference": "68b2bf2ee1efb774ba563438a4c621b0052f61d5",
+  "protected_files": {
+    "src/predictive_nav_costmap/src/predicted_obstacle_layer.cpp": "d19890a30300891b5f2f6b6cf5565bfa07065c3fa25da81f9d71810611a5bde1",
+    "src/predictive_nav_tracking/config/tracker_params.yaml": "5a036fc2f6cf9cc54adbbfe7b30e07f0fcae0fddfa32a10300c741bbcb9069a5",
+    "src/predictive_nav_tracking/include/predictive_nav_tracking/kalman_filter.hpp": "a7588026ebba8bad83c45e0b9cc4d5bf8651d6724d19a3d0b65d84ff78e214db",
+    "src/predictive_nav_bringup/config/nav2_stage4f_params.yaml": "471a5b38b874a01d11db56b5d0701c9f6d2e51689d5d929f047e7493fbc1b4e5"
+  },
+  "protected_files_unchanged": true,
+  "tracker_source_sha256_at_curation": "3c4da1d77743065f731d5fe302cb0ab2e247acdd714b66317d1ba71f0297efb7",
+  "note": "Tracking functions unchanged; only opt-in callback timing instrumentation added. Raw data hashes are recorded per trial."
+}

@@ -192,6 +192,7 @@ private:
     this->declare_parameter<bool>("publish_candidate_markers", true);
     this->declare_parameter<double>("velocity_marker_scale", 1.0);
     this->declare_parameter<double>("tf_lookup_timeout", 0.1);
+    this->declare_parameter<bool>("profile_scans", false);  // Measurement only.
 
     // --- Stage-4C: constant-velocity Kalman filter -----------------------
     // 1-sigma unmodeled-acceleration noise (m/s^2) driving Q(dt); see
@@ -448,6 +449,7 @@ private:
   // ---------------------------------------------------------------------
   void scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg)
   {
+    const auto callback_start = std::chrono::steady_clock::now();
     if (!map_) {
       RCLCPP_WARN_THROTTLE(
         get_logger(), *get_clock(), 5000, "Waiting for static map on '%s' before tracking...",
@@ -468,15 +470,30 @@ private:
     }
 
     const std::vector<Point2D> dynamic_points = extract_dynamic_points(*msg, transform);
+    const auto cluster_start = std::chrono::steady_clock::now();
     const std::vector<Point2D> centroids = cluster_points(dynamic_points);
+    const auto cluster_end = std::chrono::steady_clock::now();
 
     log_static_rejection_stats(msg->header.stamp);
 
     const rclcpp::Time stamp(msg->header.stamp);
+    const auto association_start = std::chrono::steady_clock::now();
     associate_and_update(centroids, stamp);
+    const auto association_end = std::chrono::steady_clock::now();
     prune_stale_tracks(stamp);
     publish_tracks(stamp);
     publish_markers(stamp, centroids);
+    const auto callback_end = std::chrono::steady_clock::now();
+    if (get_parameter("profile_scans").as_bool()) {
+      const auto us = [](auto a, auto b) {
+          return std::chrono::duration<double, std::micro>(b - a).count();
+        };
+      RCLCPP_INFO(get_logger(),
+        "G2_PERF %.9f scan_us=%.3f cluster_us=%.3f association_us=%.3f callback_us=%.3f clusters=%zu tracks=%zu",
+        stamp.seconds(), us(callback_start, cluster_start), us(cluster_start, cluster_end),
+        us(association_start, association_end), us(callback_start, callback_end),
+        centroids.size(), tracks_.size());
+    }
   }
 
   /// Throttled runtime accounting for the static-rejection stage (Stage-4G1).

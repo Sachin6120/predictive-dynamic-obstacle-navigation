@@ -58,6 +58,11 @@ install(DIRECTORY include/
 pluginlib_export_plugin_description_file(nav2_costmap_2d predictive_nav_costmap_plugins.xml)
 
 if(BUILD_TESTING)
+  add_executable(stage4g2_multi_layer test/stage4g2_multi_layer.cpp)
+  target_link_libraries(stage4g2_multi_layer predictive_nav_costmap_layers)
+  ament_target_dependencies(stage4g2_multi_layer ${dependencies})
+  add_test(NAME stage4g2_multi_layer COMMAND stage4g2_multi_layer)
+  set_tests_properties(stage4g2_multi_layer PROPERTIES ENVIRONMENT "ROS_DOMAIN_ID=93" TIMEOUT 20)
   find_package(ament_lint_auto REQUIRED)
   set(ament_cmake_copyright_FOUND TRUE)
   set(ament_cmake_cpplint_FOUND TRUE)
