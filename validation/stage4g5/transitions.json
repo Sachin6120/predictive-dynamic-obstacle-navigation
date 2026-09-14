@@ -1,0 +1,376 @@
+{
+ "note": "Per-track hybrid policy timeline and the discontinuity at each switch. costmap_cells is the whole-grid count on the nearest costmap cycle, so it is attributable to one track only where concurrent_tracks == 1.",
+ "fresh_threshold_s": 0.1,
+ "horizon_analysed_s": 0.5,
+ "episodes_total": 29,
+ "reacquired": 9,
+ "expired": 20,
+ "mixed_state_frames": 124,
+ "cv_to_reachability": {
+  "centroid_jump_m": {
+   "n": 29,
+   "mean": 0.0279851724137931,
+   "min": 0.00491,
+   "max": 0.09815
+  },
+  "area_ratio": {
+   "n": 29,
+   "mean": 3.9159724137931042,
+   "min": 3.0862,
+   "max": 4.2042
+  },
+  "extent_ratio": {
+   "n": 29,
+   "mean": 1.9750379310344828,
+   "min": 1.7567,
+   "max": 2.0504
+  },
+  "costmap_cell_delta": {
+   "n": 29,
+   "mean": 78.65517241379311,
+   "min": -80.0,
+   "max": 323.0
+  }
+ },
+ "reachability_to_cv": {
+  "centroid_jump_m": {
+   "n": 9,
+   "mean": 0.4247533333333333,
+   "min": 0.23696,
+   "max": 0.63876
+  },
+  "area_ratio": {
+   "n": 9,
+   "mean": 0.04463333333333333,
+   "min": 0.0236,
+   "max": 0.0766
+  },
+  "extent_ratio": {
+   "n": 9,
+   "mean": 0.20717777777777777,
+   "min": 0.1536,
+   "max": 0.2768
+  },
+  "costmap_cell_delta": {
+   "n": 9,
+   "mean": 33.666666666666664,
+   "min": -400.0,
+   "max": 563.0
+  }
+ },
+ "representative_episodes": [
+  {
+   "trial": "nav_occlusion_maneuver_01",
+   "scenario": "nav_occlusion_maneuver",
+   "track_id": 1,
+   "missed_scans": 5,
+   "start_t": 19.158,
+   "end_t": 19.956,
+   "reacquired": false,
+   "expired": true,
+   "frame_before_switch": {
+    "t": 18.957,
+    "id": 1,
+    "observation_age": 0.0,
+    "missed": 0,
+    "policy": "cv",
+    "center": [
+     0.3902,
+     3.2508
+    ],
+    "area_m2": 0.16425,
+    "max_extent_m": 0.22865,
+    "costmap_cells": 667,
+    "concurrent_tracks": 2
+   },
+   "coasting_frames": [
+    {
+     "t": 19.158,
+     "id": 1,
+     "observation_age": 0.201,
+     "missed": 1,
+     "policy": "reachability",
+     "center": [
+      0.4076,
+      3.2576
+     ],
+     "area_m2": 0.68967,
+     "max_extent_m": 0.46854,
+     "costmap_cells": 623,
+     "concurrent_tracks": 2
+    },
+    {
+     "t": 19.356,
+     "id": 1,
+     "observation_age": 0.399,
+     "missed": 2,
+     "policy": "reachability",
+     "center": [
+      0.4247,
+      3.2642
+     ],
+     "area_m2": 1.54944,
+     "max_extent_m": 0.70228,
+     "costmap_cells": 597,
+     "concurrent_tracks": 2
+    },
+    {
+     "t": 19.557,
+     "id": 1,
+     "observation_age": 0.6,
+     "missed": 3,
+     "policy": "reachability",
+     "center": [
+      0.442,
+      3.2709
+     ],
+     "area_m2": 3.14355,
+     "max_extent_m": 1.00031,
+     "costmap_cells": 628,
+     "concurrent_tracks": 2
+    },
+    {
+     "t": 19.758,
+     "id": 1,
+     "observation_age": 0.801,
+     "missed": 4,
+     "policy": "reachability",
+     "center": [
+      0.4594,
+      3.2776
+     ],
+     "area_m2": 5.80715,
+     "max_extent_m": 1.35959,
+     "costmap_cells": 581,
+     "concurrent_tracks": 2
+    },
+    {
+     "t": 19.956,
+     "id": 1,
+     "observation_age": 0.999,
+     "missed": 5,
+     "policy": "reachability",
+     "center": [
+      0.4765,
+      3.2842
+     ],
+     "area_m2": 9.87872,
+     "max_extent_m": 1.77327,
+     "costmap_cells": 580,
+     "concurrent_tracks": 2
+    }
+   ],
+   "frame_after_reacquisition": null,
+   "cv_to_reachability": {
+    "centroid_jump_m": 0.01868,
+    "area_ratio": 4.1989,
+    "extent_ratio": 2.0492,
+    "cell_delta": -44
+   },
+   "reachability_to_cv": null
+  },
+  {
+   "trial": "nav_occlusion_maneuver_01",
+   "scenario": "nav_occlusion_maneuver",
+   "track_id": 2,
+   "missed_scans": 5,
+   "start_t": 4.956,
+   "end_t": 5.757,
+   "reacquired": true,
+   "expired": false,
+   "frame_before_switch": {
+    "t": 4.758,
+    "id": 2,
+    "observation_age": 0.0,
+    "missed": 0,
+    "policy": "cv",
+    "center": [
+     1.5983,
+     -0.8416
+    ],
+    "area_m2": 0.16443,
+    "max_extent_m": 0.22878,
+    "costmap_cells": 1112,
+    "concurrent_tracks": 2
+   },
+   "coasting_frames": [
+    {
+     "t": 4.956,
+     "id": 2,
+     "observation_age": 0.198,
+     "missed": 1,
+     "policy": "reachability",
+     "center": [
+      1.6068,
+      -0.8151
+     ],
+     "area_m2": 0.68101,
+     "max_extent_m": 0.46559,
+     "costmap_cells": 1161,
+     "concurrent_tracks": 2
+    },
+    {
+     "t": 5.157,
+     "id": 2,
+     "observation_age": 0.399,
+     "missed": 2,
+     "policy": "reachability",
+     "center": [
+      1.6155,
+      -0.7882
+     ],
+     "area_m2": 1.55007,
+     "max_extent_m": 0.70243,
+     "costmap_cells": 1138,
+     "concurrent_tracks": 2
+    },
+    {
+     "t": 5.358,
+     "id": 2,
+     "observation_age": 0.6,
+     "missed": 3,
+     "policy": "reachability",
+     "center": [
+      1.6241,
+      -0.7613
+     ],
+     "area_m2": 3.14444,
+     "max_extent_m": 1.00045,
+     "costmap_cells": 1183,
+     "concurrent_tracks": 2
+    },
+    {
+     "t": 5.556,
+     "id": 2,
+     "observation_age": 0.798,
+     "missed": 4,
+     "policy": "reachability",
+     "center": [
+      1.6327,
+      -0.7348
+     ],
+     "area_m2": 5.75882,
+     "max_extent_m": 1.35392,
+     "costmap_cells": 1217,
+     "concurrent_tracks": 2
+    },
+    {
+     "t": 5.757,
+     "id": 2,
+     "observation_age": 0.999,
+     "missed": 5,
+     "policy": "reachability",
+     "center": [
+      1.6413,
+      -0.7079
+     ],
+     "area_m2": 9.8803,
+     "max_extent_m": 1.77341,
+     "costmap_cells": 1212,
+     "concurrent_tracks": 2
+    }
+   ],
+   "frame_after_reacquisition": {
+    "t": 5.958,
+    "id": 2,
+    "observation_age": 0.0,
+    "missed": 0,
+    "policy": "cv",
+    "center": [
+     1.4842,
+     -0.8853
+    ],
+    "area_m2": 0.23323,
+    "max_extent_m": 0.27247,
+    "costmap_cells": 812,
+    "concurrent_tracks": 2
+   },
+   "cv_to_reachability": {
+    "centroid_jump_m": 0.02783,
+    "area_ratio": 4.1416,
+    "extent_ratio": 2.0351,
+    "cell_delta": 49
+   },
+   "reachability_to_cv": {
+    "centroid_jump_m": 0.23696,
+    "area_ratio": 0.0236,
+    "extent_ratio": 0.1536,
+    "cell_delta": -400
+   }
+  }
+ ],
+ "per_trial_policy_frames": {
+  "crossing_01": {
+   "cv": 100,
+   "reachability": 4
+  },
+  "occlusion_maneuver_01": {
+   "cv": 81,
+   "reachability": 3
+  },
+  "static_navigation_01": {
+   "cv": 0,
+   "reachability": 0
+  },
+  "occlusion_short_01": {
+   "cv": 71,
+   "reachability": 3
+  },
+  "single_01": {
+   "cv": 51,
+   "reachability": 0
+  },
+  "triple_01": {
+   "cv": 153,
+   "reachability": 0
+  },
+  "nav_cv_control_01": {
+   "cv": 162,
+   "reachability": 0
+  },
+  "nav_cv_control_02": {
+   "cv": 161,
+   "reachability": 0
+  },
+  "nav_cv_control_03": {
+   "cv": 161,
+   "reachability": 0
+  },
+  "nav_occlusion_maneuver_01": {
+   "cv": 308,
+   "reachability": 10
+  },
+  "nav_occlusion_maneuver_02": {
+   "cv": 306,
+   "reachability": 9
+  },
+  "nav_occlusion_maneuver_03": {
+   "cv": 311,
+   "reachability": 10
+  },
+  "nav_occlusion_short_01": {
+   "cv": 396,
+   "reachability": 14
+  },
+  "nav_occlusion_short_02": {
+   "cv": 433,
+   "reachability": 9
+  },
+  "nav_occlusion_short_03": {
+   "cv": 432,
+   "reachability": 41
+  },
+  "nav_reversal_01": {
+   "cv": 162,
+   "reachability": 0
+  },
+  "nav_reversal_02": {
+   "cv": 161,
+   "reachability": 0
+  },
+  "nav_reversal_03": {
+   "cv": 161,
+   "reachability": 0
+  }
+ }
+}

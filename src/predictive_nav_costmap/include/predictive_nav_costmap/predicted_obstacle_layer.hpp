@@ -83,6 +83,9 @@ private:
 
   void getParameters();
 
+  /// Sets mode_ from a mode name; false for an unknown name.
+  bool setMode(const std::string & name);
+
   /// Subscription callback. Does no costmap work: it only swaps the latest
   /// message under a short mutex so the costmap update thread is never
   /// blocked on ROS work.
@@ -117,6 +120,28 @@ private:
     const Eigen::Matrix2d & rotation, double translation_x, double translation_y,
     const rclcpp::Time & now);
 
+  /// Stage-4G5 hybrid mode: chooses per track, by that track's own observation
+  /// age, between the two rasterizers above. Exactly one is invoked per track.
+  WorldBounds rasterizeHybrid(
+    const predictive_nav_msgs::msg::TrackedObjectArray & tracks,
+    const Eigen::Matrix2d & rotation, double translation_x, double translation_y,
+    const rclcpp::Time & now);
+
+  /// Per-track bodies of the two rasterizers, so hybrid can invoke either for
+  /// one track without duplicating its mathematics.
+  void rasterizeTrackCv(
+    const predictive_nav_msgs::msg::TrackedObject & track,
+    const Eigen::Matrix2d & rotation, double translation_x, double translation_y,
+    WorldBounds & written);
+  void rasterizeTrackReachability(
+    const predictive_nav_msgs::msg::TrackedObject & track,
+    const Eigen::Matrix2d & rotation, double translation_x, double translation_y,
+    WorldBounds & written);
+
+  /// Track eligibility, shared by all three modes.
+  bool eligible(
+    const predictive_nav_msgs::msg::TrackedObject & track, const rclcpp::Time & now) const;
+
   void publishDebugCostmap(const rclcpp::Time & stamp);
 
   // --- Parameters ------------------------------------------------------
@@ -129,7 +154,20 @@ private:
   /// deterministic reachable set, where cost encodes SET MEMBERSHIP. The two
   /// semantics are deliberately not blended.
   std::string prediction_mode_{"cv_covariance"};
-  bool reachability_mode_{false};
+  /// Stage-4G5 adds "hybrid": per track, CV while the track is fresh and
+  /// reachability while it is coasting. See rasterizeHybrid().
+  enum class Mode { kCvCovariance, kReachability, kHybrid };
+  Mode mode_{Mode::kCvCovariance};
+  /// Hybrid mode only. A track whose observation age is at or below this uses
+  /// CV; above it, reachability. Derived from the 5 Hz LiDAR timing, not
+  /// chosen for effect: the measured scan interval is 0.2000 s (range
+  /// 0.198-0.201), and the observation-age distribution over 1,532 recorded
+  /// Stage-4G4 samples is strictly bimodal -- exactly 0.0 s when the track was
+  /// associated on this scan (97.7% of samples) and >= 0.198 s once a scan has
+  /// been missed, with NOTHING in between. Half a scan interval therefore sits
+  /// in the middle of an empty gap with ~0.1 s of margin on either side, so the
+  /// classification is insensitive to timestamp jitter.
+  double fresh_threshold_{0.1};
   /// Reachability mode only: regions whose observation_age exceeds this are
   /// dropped. Defaults to track_timeout_ so it never outlives the CV rule.
   double max_observation_age_{1.0};
@@ -160,6 +198,12 @@ private:
   rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr dyn_params_handler_;
 
   // --- Instrumentation (Stage-4D quantitative evidence) ----------------
+  /// Stage-4G5: how many track-updates each representation actually served in
+  /// hybrid mode. Reported in the throttled stats log so the CV/reachability
+  /// split is measured in production rather than assumed.
+  uint64_t hybrid_cv_tracks_{0};
+  uint64_t hybrid_reachability_tracks_{0};
+
   uint64_t update_count_{0};
   uint64_t update_costs_calls_{0};
   uint64_t cells_written_last_{0};

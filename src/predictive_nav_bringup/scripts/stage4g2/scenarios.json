@@ -750,5 +750,39 @@
     "accel": 0.5
    }
   ]
+ },
+ "nav_occlusion_short": {
+  "duration": 45,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     0.3,
+     -2.7
+    ],
+    "segments": [
+     [
+      14,
+      0.0,
+      0.45
+     ],
+     [
+      18,
+      0.0,
+      0.0
+     ]
+    ]
+   },
+   {
+    "start": [
+     1.8,
+     -0.9
+    ],
+    "velocity": [
+     0.0,
+     0.1
+    ]
+   }
+  ]
  }
 }

@@ -30,7 +30,7 @@ against ground truth at the absolute time IT claims, which is the only
 comparison that asks each model the question it actually answers.
 """
 import argparse
-from collections import defaultdict
+from collections import Counter, defaultdict
 import json
 import math
 from pathlib import Path
@@ -122,7 +122,7 @@ def describe(values):
                 p95=float(np.percentile(v, 95)), max=float(v.max()))
 
 
-def score_trial(raw, sweep_a_max, v_max, margins, cv_sigmas):
+def score_trial(raw, sweep_a_max, v_max, margins, cv_sigmas, fresh_threshold):
     gt = raw['gt']
     frames = raw['arrays']
     out = dict(scenario=raw['scenario'], layer_mode=raw.get('layer_mode', 'keep'),
@@ -143,6 +143,18 @@ def score_trial(raw, sweep_a_max, v_max, margins, cv_sigmas):
     cvc_coast = defaultdict(lambda: defaultdict(list))
     rc_fresh = defaultdict(lambda: defaultdict(list))
     rc_coast = defaultdict(lambda: defaultdict(list))
+    # Stage-4G5 hybrid policy, evaluated on exactly the same recorded samples as
+    # the two representations it selects between. Because the tracker publishes
+    # BOTH on every frame and Stage-4G5 changes only the consumer, hybrid needs
+    # no separate Gazebo runs: it is a per-sample selection over this recording,
+    # which also means the three-way comparison carries zero run-to-run
+    # variance. A fresh sample takes the CV region scored AS CONSUMED (which at
+    # observation_age == 0 is identical to scoring it at its own anchor, since
+    # the two anchors coincide); a coasting sample takes the reachable set.
+    hy = defaultdict(lambda: defaultdict(list))
+    hy_fresh = defaultdict(lambda: defaultdict(list))
+    hy_coast = defaultdict(lambda: defaultdict(list))
+    policy_counts = Counter()
     sweep = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
     cv_sigma = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
     # The same confidence sweep, scored AS CONSUMED and restricted to coasting
@@ -171,6 +183,11 @@ def score_trial(raw, sweep_a_max, v_max, margins, cv_sigmas):
 
             # ---- CV-Gaussian, anchored at the track's last observation -----
             coasting = track.get('missed', 0) > 0
+            # The age the hybrid policy uses, taken from the published samples
+            # so producer and consumer cannot disagree about it.
+            observation_age = (track['reachability'][0]['age']
+                               if track.get('reachability') else
+                               max(t - track.get('stamp', t), 0.))
             for pred in track.get('predictions', []):
                 h = round(pred['dt'], 3)
                 if h not in HORIZONS:
@@ -205,6 +222,15 @@ def score_trial(raw, sweep_a_max, v_max, margins, cv_sigmas):
                         store[h]['inside'].append(1. if ins_n else 0.)
                         store[h]['area'].append(math.pi * a * b)
                         store[h]['boundary'].append(dist_n)
+                    # Hybrid FRESH branch: the policy picks CV here.
+                    if observation_age <= fresh_threshold:
+                        for store in (hy, hy_fresh):
+                            store[h]['error'].append(float(np.linalg.norm(dn)))
+                            store[h]['inside'].append(1. if ins_n else 0.)
+                            store[h]['area'].append(math.pi * a * b)
+                            store[h]['boundary'].append(dist_n)
+                        policy_counts[('cv', h)] += 1
+
                     if coasting:
                         for k in cv_sigmas:
                             ka = k * math.sqrt(w[1])
@@ -242,7 +268,12 @@ def score_trial(raw, sweep_a_max, v_max, margins, cv_sigmas):
                 yaw = reg['sigma'][2]
                 d = truth - center
                 inside, rho, dist = ellipse_probe(d[0], d[1], a, b, yaw)
-                for store in (rc, rc_coast if reg['age'] > 1e-6 else rc_fresh):
+                targets = [rc, rc_coast if reg['age'] > 1e-6 else rc_fresh]
+                # Hybrid COASTING branch: the policy picks reachability here.
+                if reg['age'] > fresh_threshold:
+                    targets += [hy, hy_coast]
+                    policy_counts[('reachability', h)] += 1
+                for store in targets:
                     store[h]['error'].append(float(np.linalg.norm(d)))
                     store[h]['inside'].append(1. if inside else 0.)
                     store[h]['area'].append(math.pi * a * b)
@@ -298,6 +329,14 @@ def score_trial(raw, sweep_a_max, v_max, margins, cv_sigmas):
     out['reachability'] = pack(rc)
     out['reachability_fresh'] = pack(rc_fresh)
     out['reachability_coasting'] = pack(rc_coast)
+    out['hybrid'] = pack(hy)
+    out['hybrid_fresh'] = pack(hy_fresh)
+    out['hybrid_coasting'] = pack(hy_coast)
+    out['hybrid_policy_counts'] = {
+        f'{h:g}': dict(cv=policy_counts[('cv', h)],
+                       reachability=policy_counts[('reachability', h)])
+        for h in HORIZONS}
+    out['fresh_threshold_s'] = fresh_threshold
     out['a_max_sweep'] = {f'{a:g}': pack(sweep[a]) for a in sweep_a_max}
     out['cv_sigma_sweep'] = {f'{k:g}': pack(cv_sigma[k]) for k in cv_sigmas}
     out['cv_sigma_sweep_coasting_as_consumed'] = {
@@ -382,6 +421,9 @@ def main():
     ap.add_argument('--a-max-sweep', default='0.25,0.5,1.0')
     ap.add_argument('--margin-sweep', default='0.0,0.1,0.2')
     ap.add_argument('--cv-sigma-sweep', default='1.0,1.5,2.0,3.0')
+    ap.add_argument('--fresh-threshold', type=float, default=.1,
+                    help='Stage-4G5 hybrid policy: observation age at or below which a track '
+                         'uses CV. Default 0.1 s = half the measured 5 Hz scan interval.')
     ap.add_argument('--max-speed', type=float, default=.8)
     args = ap.parse_args()
 
@@ -401,7 +443,8 @@ def main():
     results = []
     for trial in trials:
         raw = json.loads((trial / 'raw.json').read_text())
-        row = score_trial(raw, sweep, args.max_speed, margins, cv_sigmas)
+        row = score_trial(raw, sweep, args.max_speed, margins, cv_sigmas,
+                          args.fresh_threshold)
         row['trial'] = trial.name
         row['source'] = str(trial)
         if raw.get('definition', {}).get('navigate'):
@@ -415,7 +458,7 @@ def main():
     out.write_text(json.dumps(dict(
         conventions=dict(sigma_k=SIGMA_K, gate_m=GATE, horizons_s=list(HORIZONS),
                          a_max_sweep=sweep, margin_sweep=margins, cv_sigma_sweep=cv_sigmas,
-                         max_speed=args.max_speed,
+                         max_speed=args.max_speed, fresh_threshold_s=args.fresh_threshold,
                          note='CV region is the k-sigma covariance ellipse; reach region is '
                               'that ellipse Minkowski-inflated by the deterministic bound. '
                               'Each is scored against GT at the absolute time it claims.'),

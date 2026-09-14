@@ -72,6 +72,15 @@ if(BUILD_TESTING)
   ament_target_dependencies(stage4g4_reach_layer ${dependencies})
   add_test(NAME stage4g4_reach_layer COMMAND stage4g4_reach_layer)
   set_tests_properties(stage4g4_reach_layer PROPERTIES ENVIRONMENT "ROS_DOMAIN_ID=97" TIMEOUT 40)
+
+  # Stage-4G5: hybrid per-track prediction policy.
+  add_executable(stage4g5_hybrid_layer test/stage4g5_hybrid_layer.cpp)
+  target_link_libraries(stage4g5_hybrid_layer predictive_nav_costmap_layers)
+  target_include_directories(stage4g5_hybrid_layer PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../predictive_nav_tracking/include)
+  ament_target_dependencies(stage4g5_hybrid_layer ${dependencies})
+  add_test(NAME stage4g5_hybrid_layer COMMAND stage4g5_hybrid_layer)
+  set_tests_properties(stage4g5_hybrid_layer PROPERTIES ENVIRONMENT "ROS_DOMAIN_ID=98" TIMEOUT 60)
   find_package(ament_lint_auto REQUIRED)
   set(ament_cmake_copyright_FOUND TRUE)
   set(ament_cmake_cpplint_FOUND TRUE)

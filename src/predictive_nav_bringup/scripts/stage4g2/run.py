@@ -414,7 +414,7 @@ if __name__ == '__main__':
     p.add_argument('--trials', type=int, default=1)
     p.add_argument('--domain', type=int, default=92)
     p.add_argument('--layer-mode', default='keep',
-                   choices=['keep','reactive','cv_covariance','reachability'],
+                   choices=['keep','reactive','cv_covariance','reachability','hybrid'],
                    help='predictive costmap arm; "keep" leaves the launch configuration alone')
     p.add_argument('--worker')
     args=p.parse_args()

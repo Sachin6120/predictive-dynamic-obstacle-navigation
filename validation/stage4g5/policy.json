@@ -1,0 +1,60 @@
+{
+ "note": "Total predictive region area summed over every scored sample. The saving comes entirely from NOT spending reachability area on frames where CV already covers.",
+ "fresh_threshold_s": 0.1,
+ "by_horizon": {
+  "0.5": {
+   "samples": 1938,
+   "frames_using_cv": 1896,
+   "frames_using_reachability": 42,
+   "fraction_cv": 0.978328173374613,
+   "fraction_reachability": 0.021671826625386997,
+   "always_reachability_area_m2": 610.2034562785082,
+   "hybrid_area_m2": 416.08507456586597,
+   "always_cv_area_m2": 320.8359609200153,
+   "area_reduction_vs_always_reachability": 0.31812075089925906
+  },
+  "1": {
+   "samples": 1820,
+   "frames_using_cv": 1778,
+   "frames_using_reachability": 42,
+   "fraction_cv": 0.9769230769230769,
+   "fraction_reachability": 0.023076923076923078,
+   "always_reachability_area_m2": 4404.673929868021,
+   "hybrid_area_m2": 2392.412682011709,
+   "always_cv_area_m2": 2027.964906676193,
+   "area_reduction_vs_always_reachability": 0.45684681315708797
+  },
+  "2": {
+   "samples": 1603,
+   "frames_using_cv": 1561,
+   "frames_using_reachability": 42,
+   "fraction_cv": 0.9737991266375546,
+   "fraction_reachability": 0.026200873362445413,
+   "always_reachability_area_m2": 49280.06098721614,
+   "hybrid_area_m2": 24078.929731056975,
+   "always_cv_area_m2": 21902.179928302365,
+   "area_reduction_vs_always_reachability": 0.5113859591751855
+  },
+  "3": {
+   "samples": 1383,
+   "frames_using_cv": 1345,
+   "frames_using_reachability": 38,
+   "fraction_cv": 0.9725234996384671,
+   "fraction_reachability": 0.0274765003615329,
+   "always_reachability_area_m2": 193164.82940842747,
+   "hybrid_area_m2": 97196.15096103624,
+   "always_cv_area_m2": 91530.71581775702,
+   "area_reduction_vs_always_reachability": 0.49682273290276446
+  }
+ },
+ "total": {
+  "samples": 6744,
+  "frames_using_cv": 6580,
+  "frames_using_reachability": 164,
+  "fraction_cv": 0.9756820877817319,
+  "fraction_reachability": 0.02431791221826809,
+  "always_reachability_area_m2": 247459.76778179014,
+  "hybrid_area_m2": 124083.57844867079,
+  "area_reduction_vs_always_reachability": 0.4985706987404611
+ }
+}

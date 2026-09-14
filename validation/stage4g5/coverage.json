@@ -1,0 +1,1928 @@
+{
+ "conventions": {
+  "sigma_k": 2.0,
+  "gate_m": 0.45,
+  "horizons_s": [
+   0.5,
+   1.0,
+   2.0,
+   3.0
+  ],
+  "a_max_sweep": [
+   0.25,
+   0.5,
+   1.0
+  ],
+  "margin_sweep": [
+   0.0,
+   0.1,
+   0.2
+  ],
+  "cv_sigma_sweep": [
+   1.0,
+   1.5,
+   2.0,
+   3.0
+  ],
+  "max_speed": 0.8,
+  "fresh_threshold_s": 0.1,
+  "note": "CV region is the k-sigma covariance ellipse; reach region is that ellipse Minkowski-inflated by the deterministic bound. Each is scored against GT at the absolute time it claims."
+ },
+ "note": "Hybrid is evaluated on exactly the same recorded samples as the two representations it selects between, so the three-way comparison carries zero run-to-run variance: the tracker publishes both representations on every frame and Stage-4G5 changes only the consumer.",
+ "pooled": {
+  "cv": {
+   "0.5": {
+    "samples": 1938,
+    "coverage": 0.9520123839009288,
+    "area_m2": 0.1655500314344764,
+    "coverage_per_m2": 5.750602253903702,
+    "missed_gt": 93
+   },
+   "1": {
+    "samples": 1820,
+    "coverage": 0.9994505494505495,
+    "area_m2": 1.1142664322396665,
+    "coverage_per_m2": 0.8969583221148123,
+    "missed_gt": 1
+   },
+   "2": {
+    "samples": 1603,
+    "coverage": 1.0,
+    "area_m2": 13.66324387292724,
+    "coverage_per_m2": 0.07318906178505896,
+    "missed_gt": 0
+   },
+   "3": {
+    "samples": 1388,
+    "coverage": 1.0,
+    "area_m2": 65.94431975342725,
+    "coverage_per_m2": 0.015164308370138704,
+    "missed_gt": 0
+   }
+  },
+  "cv_as_consumed": {
+   "0.5": {
+    "samples": 1938,
+    "coverage": 0.9427244582043344,
+    "area_m2": 0.1655500314344764,
+    "coverage_per_m2": 5.694498817280252,
+    "missed_gt": 111
+   },
+   "1": {
+    "samples": 1820,
+    "coverage": 0.9989010989010989,
+    "area_m2": 1.1142664322396665,
+    "coverage_per_m2": 0.89646521693498,
+    "missed_gt": 2
+   },
+   "2": {
+    "samples": 1603,
+    "coverage": 1.0,
+    "area_m2": 13.66324387292724,
+    "coverage_per_m2": 0.07318906178505896,
+    "missed_gt": 0
+   },
+   "3": {
+    "samples": 1383,
+    "coverage": 1.0,
+    "area_m2": 65.94445721044086,
+    "coverage_per_m2": 0.015164276761105435,
+    "missed_gt": 0
+   }
+  },
+  "cv_fresh": {
+   "0.5": {
+    "samples": 1896,
+    "coverage": 0.9520042194092827,
+    "area_m2": 0.16558179043993876,
+    "coverage_per_m2": 5.7494499659647165,
+    "missed_gt": 91
+   },
+   "1": {
+    "samples": 1778,
+    "coverage": 0.999437570303712,
+    "area_m2": 1.114379399139224,
+    "coverage_per_m2": 0.896855748657687,
+    "missed_gt": 1
+   },
+   "2": {
+    "samples": 1561,
+    "coverage": 1.0,
+    "area_m2": 13.663706007539377,
+    "coverage_per_m2": 0.07318658638060704,
+    "missed_gt": 0
+   },
+   "3": {
+    "samples": 1346,
+    "coverage": 1.0,
+    "area_m2": 65.9456229331246,
+    "coverage_per_m2": 0.015164008701746577,
+    "missed_gt": 0
+   }
+  },
+  "cv_coasting": {
+   "0.5": {
+    "samples": 42,
+    "coverage": 0.9523809523809523,
+    "area_m2": 0.16411633918789176,
+    "coverage_per_m2": 5.803084306496751,
+    "missed_gt": 2
+   },
+   "1": {
+    "samples": 42,
+    "coverage": 1.0,
+    "area_m2": 1.1094841668250783,
+    "coverage_per_m2": 0.9013197573261632,
+    "missed_gt": 0
+   },
+   "2": {
+    "samples": 42,
+    "coverage": 1.0,
+    "area_m2": 13.64606786984302,
+    "coverage_per_m2": 0.07328118323447147,
+    "missed_gt": 0
+   },
+   "3": {
+    "samples": 42,
+    "coverage": 1.0,
+    "area_m2": 65.90255594693612,
+    "coverage_per_m2": 0.01517391830455236,
+    "missed_gt": 0
+   }
+  },
+  "cv_coasting_as_consumed": {
+   "0.5": {
+    "samples": 42,
+    "coverage": 0.5238095238095238,
+    "area_m2": 0.16411633918789176,
+    "coverage_per_m2": 3.191696368573213,
+    "missed_gt": 20
+   },
+   "1": {
+    "samples": 42,
+    "coverage": 0.9761904761904762,
+    "area_m2": 1.1094841668250783,
+    "coverage_per_m2": 0.8798597631041117,
+    "missed_gt": 1
+   },
+   "2": {
+    "samples": 42,
+    "coverage": 1.0,
+    "area_m2": 13.64606786984302,
+    "coverage_per_m2": 0.07328118323447147,
+    "missed_gt": 0
+   },
+   "3": {
+    "samples": 38,
+    "coverage": 1.0,
+    "area_m2": 65.9022450585736,
+    "coverage_per_m2": 0.015173989886250534,
+    "missed_gt": 0
+   }
+  },
+  "reachability": {
+   "0.5": {
+    "samples": 1938,
+    "coverage": 0.9917440660474717,
+    "area_m2": 0.3148624645399939,
+    "coverage_per_m2": 3.1497691142587754,
+    "missed_gt": 16
+   },
+   "1": {
+    "samples": 1820,
+    "coverage": 1.0,
+    "area_m2": 2.4201505109164954,
+    "coverage_per_m2": 0.4131974418488983,
+    "missed_gt": 0
+   },
+   "2": {
+    "samples": 1603,
+    "coverage": 1.0,
+    "area_m2": 30.742396124277064,
+    "coverage_per_m2": 0.03252836883492977,
+    "missed_gt": 0
+   },
+   "3": {
+    "samples": 1384,
+    "coverage": 1.0,
+    "area_m2": 139.56996344539556,
+    "coverage_per_m2": 0.0071648653858910945,
+    "missed_gt": 0
+   }
+  },
+  "reachability_fresh": {
+   "0.5": {
+    "samples": 1896,
+    "coverage": 0.9915611814345991,
+    "area_m2": 0.26796490315757693,
+    "coverage_per_m2": 3.700339745057997,
+    "missed_gt": 16
+   },
+   "1": {
+    "samples": 1778,
+    "coverage": 1.0,
+    "area_m2": 2.2461348816230893,
+    "coverage_per_m2": 0.4452092384039669,
+    "missed_gt": 0
+   },
+   "2": {
+    "samples": 1561,
+    "coverage": 1.0,
+    "area_m2": 29.807928465040433,
+    "coverage_per_m2": 0.03354812130513624,
+    "missed_gt": 0
+   },
+   "3": {
+    "samples": 1346,
+    "coverage": 1.0,
+    "area_m2": 137.19582277652685,
+    "coverage_per_m2": 0.007288851655701374,
+    "missed_gt": 0
+   }
+  },
+  "reachability_coasting": {
+   "0.5": {
+    "samples": 42,
+    "coverage": 1.0,
+    "area_m2": 2.4319523783748123,
+    "coverage_per_m2": 0.4111922621890584,
+    "missed_gt": 0
+   },
+   "1": {
+    "samples": 42,
+    "coverage": 1.0,
+    "area_m2": 9.786812151004018,
+    "coverage_per_m2": 0.10217831757375778,
+    "missed_gt": 0
+   },
+   "2": {
+    "samples": 42,
+    "coverage": 1.0,
+    "area_m2": 65.47344412590502,
+    "coverage_per_m2": 0.015273367902824943,
+    "missed_gt": 0
+   },
+   "3": {
+    "samples": 38,
+    "coverage": 1.0,
+    "area_m2": 223.66452503216647,
+    "coverage_per_m2": 0.0044709817073413155,
+    "missed_gt": 0
+   }
+  },
+  "hybrid": {
+   "0.5": {
+    "samples": 1938,
+    "coverage": 0.9530443756449949,
+    "area_m2": 0.2146981808905397,
+    "coverage_per_m2": 4.438996044083339,
+    "missed_gt": 91
+   },
+   "1": {
+    "samples": 1820,
+    "coverage": 0.9994505494505495,
+    "area_m2": 1.314512462643796,
+    "coverage_per_m2": 0.7603203300487678,
+    "missed_gt": 1
+   },
+   "2": {
+    "samples": 1603,
+    "coverage": 1.0,
+    "area_m2": 15.021166394920133,
+    "coverage_per_m2": 0.06657272635886521,
+    "missed_gt": 0
+   },
+   "3": {
+    "samples": 1383,
+    "coverage": 1.0,
+    "area_m2": 70.27921255317155,
+    "coverage_per_m2": 0.014228958516622882,
+    "missed_gt": 0
+   }
+  },
+  "hybrid_fresh": {
+   "0.5": {
+    "samples": 1896,
+    "coverage": 0.9520042194092827,
+    "area_m2": 0.16558179043993876,
+    "coverage_per_m2": 5.7494499659647165,
+    "missed_gt": 91
+   },
+   "1": {
+    "samples": 1778,
+    "coverage": 0.999437570303712,
+    "area_m2": 1.114379399139224,
+    "coverage_per_m2": 0.896855748657687,
+    "missed_gt": 1
+   },
+   "2": {
+    "samples": 1561,
+    "coverage": 1.0,
+    "area_m2": 13.663706007539377,
+    "coverage_per_m2": 0.07318658638060704,
+    "missed_gt": 0
+   },
+   "3": {
+    "samples": 1345,
+    "coverage": 1.0,
+    "area_m2": 65.94564982142299,
+    "coverage_per_m2": 0.015164002518861248,
+    "missed_gt": 0
+   }
+  },
+  "hybrid_coasting": {
+   "0.5": {
+    "samples": 42,
+    "coverage": 1.0,
+    "area_m2": 2.4319523783748123,
+    "coverage_per_m2": 0.4111922621890584,
+    "missed_gt": 0
+   },
+   "1": {
+    "samples": 42,
+    "coverage": 1.0,
+    "area_m2": 9.786812151004018,
+    "coverage_per_m2": 0.10217831757375778,
+    "missed_gt": 0
+   },
+   "2": {
+    "samples": 42,
+    "coverage": 1.0,
+    "area_m2": 65.47344412590502,
+    "coverage_per_m2": 0.015273367902824943,
+    "missed_gt": 0
+   },
+   "3": {
+    "samples": 38,
+    "coverage": 1.0,
+    "area_m2": 223.66452503216647,
+    "coverage_per_m2": 0.0044709817073413155,
+    "missed_gt": 0
+   }
+  }
+ },
+ "by_scenario": {
+  "accelerate": {
+   "cv_fresh": {
+    "0.5": {
+     "samples": 98,
+     "coverage": 0.8979591836734694,
+     "area_m2": 0.1641657052850127,
+     "coverage_per_m2": 5.4698341661219505,
+     "missed_gt": 10
+    },
+    "1": {
+     "samples": 92,
+     "coverage": 1.0,
+     "area_m2": 1.1096317152659239,
+     "coverage_per_m2": 0.9011999082599667,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 82,
+     "coverage": 1.0,
+     "area_m2": 13.646647669250862,
+     "coverage_per_m2": 0.07327806976751056,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 72,
+     "coverage": 1.0,
+     "area_m2": 65.90361250778926,
+     "coverage_per_m2": 0.015173675037643927,
+     "missed_gt": 0
+    }
+   },
+   "cv_coasting_as_consumed": {},
+   "reachability_fresh": {
+    "0.5": {
+     "samples": 98,
+     "coverage": 0.9795918367346939,
+     "area_m2": 0.26620647907114203,
+     "coverage_per_m2": 3.6798196653692417,
+     "missed_gt": 2
+    },
+    "1": {
+     "samples": 92,
+     "coverage": 1.0,
+     "area_m2": 2.2395242968284736,
+     "coverage_per_m2": 0.4465233984807223,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 82,
+     "coverage": 1.0,
+     "area_m2": 29.802043067360245,
+     "coverage_per_m2": 0.03355474648968677,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 72,
+     "coverage": 1.0,
+     "area_m2": 136.66676771127166,
+     "coverage_per_m2": 0.007317067760852037,
+     "missed_gt": 0
+    }
+   },
+   "reachability_coasting": {},
+   "hybrid_fresh": {
+    "0.5": {
+     "samples": 98,
+     "coverage": 0.8979591836734694,
+     "area_m2": 0.1641657052850127,
+     "coverage_per_m2": 5.4698341661219505,
+     "missed_gt": 10
+    },
+    "1": {
+     "samples": 92,
+     "coverage": 1.0,
+     "area_m2": 1.1096317152659239,
+     "coverage_per_m2": 0.9011999082599667,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 82,
+     "coverage": 1.0,
+     "area_m2": 13.646647669250862,
+     "coverage_per_m2": 0.07327806976751056,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 72,
+     "coverage": 1.0,
+     "area_m2": 65.90361250778926,
+     "coverage_per_m2": 0.015173675037643927,
+     "missed_gt": 0
+    }
+   },
+   "hybrid_coasting": {}
+  },
+  "accelerate_step": {
+   "cv_fresh": {
+    "0.5": {
+     "samples": 49,
+     "coverage": 0.8979591836734694,
+     "area_m2": 0.1641657052850127,
+     "coverage_per_m2": 5.4698341661219505,
+     "missed_gt": 5
+    },
+    "1": {
+     "samples": 46,
+     "coverage": 1.0,
+     "area_m2": 1.1096317152659239,
+     "coverage_per_m2": 0.9011999082599667,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 41,
+     "coverage": 1.0,
+     "area_m2": 13.646647669250862,
+     "coverage_per_m2": 0.07327806976751056,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 36,
+     "coverage": 1.0,
+     "area_m2": 65.90361250778926,
+     "coverage_per_m2": 0.015173675037643927,
+     "missed_gt": 0
+    }
+   },
+   "cv_coasting_as_consumed": {},
+   "reachability_fresh": {
+    "0.5": {
+     "samples": 49,
+     "coverage": 0.9591836734693877,
+     "area_m2": 0.26620647907114203,
+     "coverage_per_m2": 3.603156755674049,
+     "missed_gt": 2
+    },
+    "1": {
+     "samples": 46,
+     "coverage": 1.0,
+     "area_m2": 2.2395242968284736,
+     "coverage_per_m2": 0.4465233984807223,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 41,
+     "coverage": 1.0,
+     "area_m2": 29.817042406836077,
+     "coverage_per_m2": 0.03353786691367929,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 36,
+     "coverage": 1.0,
+     "area_m2": 137.3653117466855,
+     "coverage_per_m2": 0.007279858264683981,
+     "missed_gt": 0
+    }
+   },
+   "reachability_coasting": {},
+   "hybrid_fresh": {
+    "0.5": {
+     "samples": 49,
+     "coverage": 0.8979591836734694,
+     "area_m2": 0.1641657052850127,
+     "coverage_per_m2": 5.4698341661219505,
+     "missed_gt": 5
+    },
+    "1": {
+     "samples": 46,
+     "coverage": 1.0,
+     "area_m2": 1.1096317152659239,
+     "coverage_per_m2": 0.9011999082599667,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 41,
+     "coverage": 1.0,
+     "area_m2": 13.646647669250862,
+     "coverage_per_m2": 0.07327806976751056,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 36,
+     "coverage": 1.0,
+     "area_m2": 65.90361250778926,
+     "coverage_per_m2": 0.015173675037643927,
+     "missed_gt": 0
+    }
+   },
+   "hybrid_coasting": {}
+  },
+  "crossing": {
+   "cv_fresh": {
+    "0.5": {
+     "samples": 94,
+     "coverage": 0.9574468085106383,
+     "area_m2": 0.1655859438586713,
+     "coverage_per_m2": 5.782174417701937,
+     "missed_gt": 4
+    },
+    "1": {
+     "samples": 90,
+     "coverage": 0.9888888888888889,
+     "area_m2": 1.11441930342759,
+     "coverage_per_m2": 0.8873580041617993,
+     "missed_gt": 1
+    },
+    "2": {
+     "samples": 80,
+     "coverage": 1.0,
+     "area_m2": 13.66608507916111,
+     "coverage_per_m2": 0.07317384563373322,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 70,
+     "coverage": 1.0,
+     "area_m2": 65.95246981079595,
+     "coverage_per_m2": 0.015162434445120767,
+     "missed_gt": 0
+    }
+   },
+   "cv_coasting_as_consumed": {
+    "0.5": {
+     "samples": 2,
+     "coverage": 0.0,
+     "area_m2": 0.1638144255243598,
+     "coverage_per_m2": 0.0,
+     "missed_gt": 2
+    },
+    "1": {
+     "samples": 2,
+     "coverage": 1.0,
+     "area_m2": 1.1085841257005462,
+     "coverage_per_m2": 0.9020515239365089,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 2,
+     "coverage": 1.0,
+     "area_m2": 13.642951535570889,
+     "coverage_per_m2": 0.07329792218294756,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 2,
+     "coverage": 1.0,
+     "area_m2": 65.89586326854894,
+     "coverage_per_m2": 0.015175459435513372,
+     "missed_gt": 0
+    }
+   },
+   "reachability_fresh": {
+    "0.5": {
+     "samples": 94,
+     "coverage": 0.9680851063829787,
+     "area_m2": 0.2679912848275351,
+     "coverage_per_m2": 3.612375331555975,
+     "missed_gt": 3
+    },
+    "1": {
+     "samples": 90,
+     "coverage": 1.0,
+     "area_m2": 2.2462625754432355,
+     "coverage_per_m2": 0.4451839294890441,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 80,
+     "coverage": 1.0,
+     "area_m2": 29.89725340951776,
+     "coverage_per_m2": 0.03344788855024559,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 70,
+     "coverage": 1.0,
+     "area_m2": 143.50511053886166,
+     "coverage_per_m2": 0.006968392946042132,
+     "missed_gt": 0
+    }
+   },
+   "reachability_coasting": {
+    "0.5": {
+     "samples": 2,
+     "coverage": 1.0,
+     "area_m2": 1.1271477095716964,
+     "coverage_per_m2": 0.8871951666210535,
+     "missed_gt": 0
+    },
+    "1": {
+     "samples": 2,
+     "coverage": 1.0,
+     "area_m2": 5.997419805095423,
+     "coverage_per_m2": 0.16673836958193214,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 2,
+     "coverage": 1.0,
+     "area_m2": 52.22892097049305,
+     "coverage_per_m2": 0.0191464801764707,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 2,
+     "coverage": 1.0,
+     "area_m2": 208.5488696644452,
+     "coverage_per_m2": 0.004795039175273395,
+     "missed_gt": 0
+    }
+   },
+   "hybrid_fresh": {
+    "0.5": {
+     "samples": 94,
+     "coverage": 0.9574468085106383,
+     "area_m2": 0.1655859438586713,
+     "coverage_per_m2": 5.782174417701937,
+     "missed_gt": 4
+    },
+    "1": {
+     "samples": 90,
+     "coverage": 0.9888888888888889,
+     "area_m2": 1.11441930342759,
+     "coverage_per_m2": 0.8873580041617993,
+     "missed_gt": 1
+    },
+    "2": {
+     "samples": 80,
+     "coverage": 1.0,
+     "area_m2": 13.66608507916111,
+     "coverage_per_m2": 0.07317384563373322,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 70,
+     "coverage": 1.0,
+     "area_m2": 65.95246981079595,
+     "coverage_per_m2": 0.015162434445120767,
+     "missed_gt": 0
+    }
+   },
+   "hybrid_coasting": {
+    "0.5": {
+     "samples": 2,
+     "coverage": 1.0,
+     "area_m2": 1.1271477095716964,
+     "coverage_per_m2": 0.8871951666210535,
+     "missed_gt": 0
+    },
+    "1": {
+     "samples": 2,
+     "coverage": 1.0,
+     "area_m2": 5.997419805095423,
+     "coverage_per_m2": 0.16673836958193214,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 2,
+     "coverage": 1.0,
+     "area_m2": 52.22892097049305,
+     "coverage_per_m2": 0.0191464801764707,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 2,
+     "coverage": 1.0,
+     "area_m2": 208.5488696644452,
+     "coverage_per_m2": 0.004795039175273395,
+     "missed_gt": 0
+    }
+   }
+  },
+  "cv_control": {
+   "cv_fresh": {
+    "0.5": {
+     "samples": 98,
+     "coverage": 0.9489795918367347,
+     "area_m2": 0.1641657052850127,
+     "coverage_per_m2": 5.780620198287971,
+     "missed_gt": 5
+    },
+    "1": {
+     "samples": 92,
+     "coverage": 1.0,
+     "area_m2": 1.1096317152659239,
+     "coverage_per_m2": 0.9011999082599667,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 82,
+     "coverage": 1.0,
+     "area_m2": 13.646647669250862,
+     "coverage_per_m2": 0.07327806976751056,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 72,
+     "coverage": 1.0,
+     "area_m2": 65.90361250778926,
+     "coverage_per_m2": 0.015173675037643927,
+     "missed_gt": 0
+    }
+   },
+   "cv_coasting_as_consumed": {},
+   "reachability_fresh": {
+    "0.5": {
+     "samples": 98,
+     "coverage": 0.9897959183673469,
+     "area_m2": 0.26620647907114203,
+     "coverage_per_m2": 3.7181511202168376,
+     "missed_gt": 1
+    },
+    "1": {
+     "samples": 92,
+     "coverage": 1.0,
+     "area_m2": 2.2395242968284736,
+     "coverage_per_m2": 0.4465233984807223,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 82,
+     "coverage": 1.0,
+     "area_m2": 29.87176388864339,
+     "coverage_per_m2": 0.033476429571679185,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 72,
+     "coverage": 1.0,
+     "area_m2": 138.55967566611176,
+     "coverage_per_m2": 0.007217106962704699,
+     "missed_gt": 0
+    }
+   },
+   "reachability_coasting": {},
+   "hybrid_fresh": {
+    "0.5": {
+     "samples": 98,
+     "coverage": 0.9489795918367347,
+     "area_m2": 0.1641657052850127,
+     "coverage_per_m2": 5.780620198287971,
+     "missed_gt": 5
+    },
+    "1": {
+     "samples": 92,
+     "coverage": 1.0,
+     "area_m2": 1.1096317152659239,
+     "coverage_per_m2": 0.9011999082599667,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 82,
+     "coverage": 1.0,
+     "area_m2": 13.646647669250862,
+     "coverage_per_m2": 0.07327806976751056,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 72,
+     "coverage": 1.0,
+     "area_m2": 65.90361250778926,
+     "coverage_per_m2": 0.015173675037643927,
+     "missed_gt": 0
+    }
+   },
+   "hybrid_coasting": {}
+  },
+  "decelerate_stop": {
+   "cv_fresh": {
+    "0.5": {
+     "samples": 98,
+     "coverage": 0.8979591836734694,
+     "area_m2": 0.1641657052850127,
+     "coverage_per_m2": 5.4698341661219505,
+     "missed_gt": 10
+    },
+    "1": {
+     "samples": 92,
+     "coverage": 1.0,
+     "area_m2": 1.1096317152659239,
+     "coverage_per_m2": 0.9011999082599667,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 82,
+     "coverage": 1.0,
+     "area_m2": 13.646647669250862,
+     "coverage_per_m2": 0.07327806976751056,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 72,
+     "coverage": 1.0,
+     "area_m2": 65.90361250778926,
+     "coverage_per_m2": 0.015173675037643927,
+     "missed_gt": 0
+    }
+   },
+   "cv_coasting_as_consumed": {},
+   "reachability_fresh": {
+    "0.5": {
+     "samples": 98,
+     "coverage": 0.9591836734693877,
+     "area_m2": 0.26620647907114203,
+     "coverage_per_m2": 3.603156755674049,
+     "missed_gt": 4
+    },
+    "1": {
+     "samples": 92,
+     "coverage": 1.0,
+     "area_m2": 2.2395242968284736,
+     "coverage_per_m2": 0.4465233984807223,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 82,
+     "coverage": 1.0,
+     "area_m2": 29.575397533048967,
+     "coverage_per_m2": 0.03381188702138499,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 72,
+     "coverage": 1.0,
+     "area_m2": 135.51531529595113,
+     "coverage_per_m2": 0.007379239739922426,
+     "missed_gt": 0
+    }
+   },
+   "reachability_coasting": {},
+   "hybrid_fresh": {
+    "0.5": {
+     "samples": 98,
+     "coverage": 0.8979591836734694,
+     "area_m2": 0.1641657052850127,
+     "coverage_per_m2": 5.4698341661219505,
+     "missed_gt": 10
+    },
+    "1": {
+     "samples": 92,
+     "coverage": 1.0,
+     "area_m2": 1.1096317152659239,
+     "coverage_per_m2": 0.9011999082599667,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 82,
+     "coverage": 1.0,
+     "area_m2": 13.646647669250862,
+     "coverage_per_m2": 0.07327806976751056,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 72,
+     "coverage": 1.0,
+     "area_m2": 65.90361250778926,
+     "coverage_per_m2": 0.015173675037643927,
+     "missed_gt": 0
+    }
+   },
+   "hybrid_coasting": {}
+  },
+  "occlusion_long": {
+   "cv_fresh": {
+    "0.5": {
+     "samples": 315,
+     "coverage": 1.0,
+     "area_m2": 0.16718105487654963,
+     "coverage_per_m2": 5.981539001165073,
+     "missed_gt": 0
+    },
+    "1": {
+     "samples": 303,
+     "coverage": 1.0,
+     "area_m2": 1.1196187872802057,
+     "coverage_per_m2": 0.8931611467767655,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 273,
+     "coverage": 1.0,
+     "area_m2": 13.685940688753984,
+     "coverage_per_m2": 0.07306768476804232,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 243,
+     "coverage": 1.0,
+     "area_m2": 65.99894360848197,
+     "coverage_per_m2": 0.015151757669519476,
+     "missed_gt": 0
+    }
+   },
+   "cv_coasting_as_consumed": {
+    "0.5": {
+     "samples": 15,
+     "coverage": 1.0,
+     "area_m2": 0.1644277475613533,
+     "coverage_per_m2": 6.081698586954539,
+     "missed_gt": 0
+    },
+    "1": {
+     "samples": 15,
+     "coverage": 1.0,
+     "area_m2": 1.1104124264208712,
+     "coverage_per_m2": 0.9005662906918672,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 15,
+     "coverage": 1.0,
+     "area_m2": 13.649281799994212,
+     "coverage_per_m2": 0.07326392806985815,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 15,
+     "coverage": 1.0,
+     "area_m2": 65.90945817179036,
+     "coverage_per_m2": 0.015172329248915081,
+     "missed_gt": 0
+    }
+   },
+   "reachability_fresh": {
+    "0.5": {
+     "samples": 315,
+     "coverage": 1.0,
+     "area_m2": 0.26990520802557866,
+     "coverage_per_m2": 3.705004461808054,
+     "missed_gt": 0
+    },
+    "1": {
+     "samples": 303,
+     "coverage": 1.0,
+     "area_m2": 2.2532792923504625,
+     "coverage_per_m2": 0.4437976257070513,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 273,
+     "coverage": 1.0,
+     "area_m2": 29.67114895028237,
+     "coverage_per_m2": 0.03370277307682362,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 243,
+     "coverage": 1.0,
+     "area_m2": 131.19270134930147,
+     "coverage_per_m2": 0.007622375251939459,
+     "missed_gt": 0
+    }
+   },
+   "reachability_coasting": {
+    "0.5": {
+     "samples": 15,
+     "coverage": 1.0,
+     "area_m2": 4.202929566142145,
+     "coverage_per_m2": 0.23792927867642014,
+     "missed_gt": 0
+    },
+    "1": {
+     "samples": 15,
+     "coverage": 1.0,
+     "area_m2": 14.802984390060931,
+     "coverage_per_m2": 0.06755394545112291,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 15,
+     "coverage": 1.0,
+     "area_m2": 82.63594627778717,
+     "coverage_per_m2": 0.012101271239012888,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 15,
+     "coverage": 1.0,
+     "area_m2": 261.49130966327755,
+     "coverage_per_m2": 0.0038242188671114936,
+     "missed_gt": 0
+    }
+   },
+   "hybrid_fresh": {
+    "0.5": {
+     "samples": 315,
+     "coverage": 1.0,
+     "area_m2": 0.16718105487654963,
+     "coverage_per_m2": 5.981539001165073,
+     "missed_gt": 0
+    },
+    "1": {
+     "samples": 303,
+     "coverage": 1.0,
+     "area_m2": 1.1196187872802057,
+     "coverage_per_m2": 0.8931611467767655,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 273,
+     "coverage": 1.0,
+     "area_m2": 13.685940688753984,
+     "coverage_per_m2": 0.07306768476804232,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 243,
+     "coverage": 1.0,
+     "area_m2": 65.99894360848197,
+     "coverage_per_m2": 0.015151757669519476,
+     "missed_gt": 0
+    }
+   },
+   "hybrid_coasting": {
+    "0.5": {
+     "samples": 15,
+     "coverage": 1.0,
+     "area_m2": 4.202929566142145,
+     "coverage_per_m2": 0.23792927867642014,
+     "missed_gt": 0
+    },
+    "1": {
+     "samples": 15,
+     "coverage": 1.0,
+     "area_m2": 14.802984390060931,
+     "coverage_per_m2": 0.06755394545112291,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 15,
+     "coverage": 1.0,
+     "area_m2": 82.63594627778717,
+     "coverage_per_m2": 0.012101271239012888,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 15,
+     "coverage": 1.0,
+     "area_m2": 261.49130966327755,
+     "coverage_per_m2": 0.0038242188671114936,
+     "missed_gt": 0
+    }
+   }
+  },
+  "occlusion_maneuver": {
+   "cv_fresh": {
+    "0.5": {
+     "samples": 382,
+     "coverage": 0.9659685863874345,
+     "area_m2": 0.165838791556955,
+     "coverage_per_m2": 5.8247444841979945,
+     "missed_gt": 13
+    },
+    "1": {
+     "samples": 354,
+     "coverage": 1.0,
+     "area_m2": 1.1152999945904796,
+     "coverage_per_m2": 0.8966197479156127,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 304,
+     "coverage": 1.0,
+     "area_m2": 13.670063606626867,
+     "coverage_per_m2": 0.07315254915970017,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 254,
+     "coverage": 1.0,
+     "area_m2": 65.96462521483608,
+     "coverage_per_m2": 0.015159640439753312,
+     "missed_gt": 0
+    }
+   },
+   "cv_coasting_as_consumed": {
+    "0.5": {
+     "samples": 10,
+     "coverage": 0.1,
+     "area_m2": 0.16398845268976667,
+     "coverage_per_m2": 0.6097990337720912,
+     "missed_gt": 9
+    },
+    "1": {
+     "samples": 10,
+     "coverage": 0.9,
+     "area_m2": 1.1091029865207844,
+     "coverage_per_m2": 0.8114665733822133,
+     "missed_gt": 1
+    },
+    "2": {
+     "samples": 10,
+     "coverage": 1.0,
+     "area_m2": 13.64474813922032,
+     "coverage_per_m2": 0.07328827104734975,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 10,
+     "coverage": 1.0,
+     "area_m2": 65.89972171572026,
+     "coverage_per_m2": 0.015174570908111312,
+     "missed_gt": 0
+    }
+   },
+   "reachability_fresh": {
+    "0.5": {
+     "samples": 382,
+     "coverage": 1.0,
+     "area_m2": 0.2683065245462163,
+     "coverage_per_m2": 3.727080441637744,
+     "missed_gt": 0
+    },
+    "1": {
+     "samples": 354,
+     "coverage": 1.0,
+     "area_m2": 2.247495757996129,
+     "coverage_per_m2": 0.4449396607055675,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 304,
+     "coverage": 1.0,
+     "area_m2": 29.863704915663266,
+     "coverage_per_m2": 0.03348546346891836,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 254,
+     "coverage": 1.0,
+     "area_m2": 140.06764647550494,
+     "coverage_per_m2": 0.00713940745891579,
+     "missed_gt": 0
+    }
+   },
+   "reachability_coasting": {
+    "0.5": {
+     "samples": 10,
+     "coverage": 1.0,
+     "area_m2": 1.1241116620592402,
+     "coverage_per_m2": 0.8895913402126954,
+     "missed_gt": 0
+    },
+    "1": {
+     "samples": 10,
+     "coverage": 1.0,
+     "area_m2": 5.986326030711565,
+     "coverage_per_m2": 0.16704736676046608,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 10,
+     "coverage": 1.0,
+     "area_m2": 51.59325083236661,
+     "coverage_per_m2": 0.019382380134353894,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 10,
+     "coverage": 1.0,
+     "area_m2": 194.28345714629285,
+     "coverage_per_m2": 0.005147118620845898,
+     "missed_gt": 0
+    }
+   },
+   "hybrid_fresh": {
+    "0.5": {
+     "samples": 382,
+     "coverage": 0.9659685863874345,
+     "area_m2": 0.165838791556955,
+     "coverage_per_m2": 5.8247444841979945,
+     "missed_gt": 13
+    },
+    "1": {
+     "samples": 354,
+     "coverage": 1.0,
+     "area_m2": 1.1152999945904796,
+     "coverage_per_m2": 0.8966197479156127,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 304,
+     "coverage": 1.0,
+     "area_m2": 13.670063606626867,
+     "coverage_per_m2": 0.07315254915970017,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 254,
+     "coverage": 1.0,
+     "area_m2": 65.96462521483608,
+     "coverage_per_m2": 0.015159640439753312,
+     "missed_gt": 0
+    }
+   },
+   "hybrid_coasting": {
+    "0.5": {
+     "samples": 10,
+     "coverage": 1.0,
+     "area_m2": 1.1241116620592402,
+     "coverage_per_m2": 0.8895913402126954,
+     "missed_gt": 0
+    },
+    "1": {
+     "samples": 10,
+     "coverage": 1.0,
+     "area_m2": 5.986326030711565,
+     "coverage_per_m2": 0.16704736676046608,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 10,
+     "coverage": 1.0,
+     "area_m2": 51.59325083236661,
+     "coverage_per_m2": 0.019382380134353894,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 10,
+     "coverage": 1.0,
+     "area_m2": 194.28345714629285,
+     "coverage_per_m2": 0.005147118620845898,
+     "missed_gt": 0
+    }
+   }
+  },
+  "occlusion_short": {
+   "cv_fresh": {
+    "0.5": {
+     "samples": 329,
+     "coverage": 0.9483282674772037,
+     "area_m2": 0.1661294394130156,
+     "coverage_per_m2": 5.708369755703309,
+     "missed_gt": 17
+    },
+    "1": {
+     "samples": 299,
+     "coverage": 1.0,
+     "area_m2": 1.1164322018424377,
+     "coverage_per_m2": 0.8957104590406021,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 249,
+     "coverage": 1.0,
+     "area_m2": 13.675765293023833,
+     "coverage_per_m2": 0.07312205047202087,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 199,
+     "coverage": 1.0,
+     "area_m2": 65.97623699206643,
+     "coverage_per_m2": 0.015156972352337234,
+     "missed_gt": 0
+    }
+   },
+   "cv_coasting_as_consumed": {
+    "0.5": {
+     "samples": 11,
+     "coverage": 0.5454545454545454,
+     "area_m2": 0.16381442552606293,
+     "coverage_per_m2": 3.329710089345968,
+     "missed_gt": 5
+    },
+    "1": {
+     "samples": 11,
+     "coverage": 1.0,
+     "area_m2": 1.1085841257066888,
+     "coverage_per_m2": 0.9020515239315106,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 11,
+     "coverage": 1.0,
+     "area_m2": 13.64295153559517,
+     "coverage_per_m2": 0.07329792218281711,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 11,
+     "coverage": 1.0,
+     "area_m2": 65.89586326860368,
+     "coverage_per_m2": 0.015175459435500766,
+     "missed_gt": 0
+    }
+   },
+   "reachability_fresh": {
+    "0.5": {
+     "samples": 329,
+     "coverage": 0.993920972644377,
+     "area_m2": 0.26867098193368083,
+     "coverage_per_m2": 3.6993982956064753,
+     "missed_gt": 2
+    },
+    "1": {
+     "samples": 299,
+     "coverage": 1.0,
+     "area_m2": 2.24908688487329,
+     "coverage_per_m2": 0.44462488609297923,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 249,
+     "coverage": 1.0,
+     "area_m2": 29.859898310740355,
+     "coverage_per_m2": 0.03348973226879036,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 199,
+     "coverage": 1.0,
+     "area_m2": 139.3602750806244,
+     "coverage_per_m2": 0.007175645996834233,
+     "missed_gt": 0
+    }
+   },
+   "reachability_coasting": {
+    "0.5": {
+     "samples": 11,
+     "coverage": 1.0,
+     "area_m2": 1.3102574089569816,
+     "coverage_per_m2": 0.7632088116151473,
+     "missed_gt": 0
+    },
+    "1": {
+     "samples": 11,
+     "coverage": 1.0,
+     "area_m2": 6.602329281407046,
+     "coverage_per_m2": 0.15146169743701215,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 11,
+     "coverage": 1.0,
+     "area_m2": 54.39725501697936,
+     "coverage_per_m2": 0.018383280547664835,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 11,
+     "coverage": 1.0,
+     "area_m2": 201.5409086801221,
+     "coverage_per_m2": 0.004961771813717289,
+     "missed_gt": 0
+    }
+   },
+   "hybrid_fresh": {
+    "0.5": {
+     "samples": 329,
+     "coverage": 0.9483282674772037,
+     "area_m2": 0.1661294394130156,
+     "coverage_per_m2": 5.708369755703309,
+     "missed_gt": 17
+    },
+    "1": {
+     "samples": 299,
+     "coverage": 1.0,
+     "area_m2": 1.1164322018424377,
+     "coverage_per_m2": 0.8957104590406021,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 249,
+     "coverage": 1.0,
+     "area_m2": 13.675765293023833,
+     "coverage_per_m2": 0.07312205047202087,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 199,
+     "coverage": 1.0,
+     "area_m2": 65.97623699206643,
+     "coverage_per_m2": 0.015156972352337234,
+     "missed_gt": 0
+    }
+   },
+   "hybrid_coasting": {
+    "0.5": {
+     "samples": 11,
+     "coverage": 1.0,
+     "area_m2": 1.3102574089569816,
+     "coverage_per_m2": 0.7632088116151473,
+     "missed_gt": 0
+    },
+    "1": {
+     "samples": 11,
+     "coverage": 1.0,
+     "area_m2": 6.602329281407046,
+     "coverage_per_m2": 0.15146169743701215,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 11,
+     "coverage": 1.0,
+     "area_m2": 54.39725501697936,
+     "coverage_per_m2": 0.018383280547664835,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 11,
+     "coverage": 1.0,
+     "area_m2": 201.5409086801221,
+     "coverage_per_m2": 0.004961771813717289,
+     "missed_gt": 0
+    }
+   }
+  },
+  "reach_triple": {
+   "cv_fresh": {
+    "0.5": {
+     "samples": 139,
+     "coverage": 0.9496402877697842,
+     "area_m2": 0.1664418442572159,
+     "coverage_per_m2": 5.7055381235876546,
+     "missed_gt": 7
+    },
+    "1": {
+     "samples": 131,
+     "coverage": 1.0,
+     "area_m2": 1.1168240006089352,
+     "coverage_per_m2": 0.8953962302518228,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 119,
+     "coverage": 1.0,
+     "area_m2": 13.646551428737638,
+     "coverage_per_m2": 0.0732785865514819,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 109,
+     "coverage": 1.0,
+     "area_m2": 65.90366408053177,
+     "coverage_per_m2": 0.015173663163523626,
+     "missed_gt": 0
+    }
+   },
+   "cv_coasting_as_consumed": {
+    "0.5": {
+     "samples": 4,
+     "coverage": 0.0,
+     "area_m2": 0.16424949343451853,
+     "coverage_per_m2": 0.0,
+     "missed_gt": 4
+    },
+    "1": {
+     "samples": 4,
+     "coverage": 1.0,
+     "area_m2": 1.109881277739431,
+     "coverage_per_m2": 0.900997268858131,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 4,
+     "coverage": 1.0,
+     "area_m2": 13.647443044650451,
+     "coverage_per_m2": 0.0732737991086163,
+     "missed_gt": 0
+    }
+   },
+   "reachability_fresh": {
+    "0.5": {
+     "samples": 139,
+     "coverage": 1.0,
+     "area_m2": 0.26899839105540263,
+     "coverage_per_m2": 3.7174943540611776,
+     "missed_gt": 0
+    },
+    "1": {
+     "samples": 131,
+     "coverage": 1.0,
+     "area_m2": 2.249409927825625,
+     "coverage_per_m2": 0.444561032486703,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 119,
+     "coverage": 1.0,
+     "area_m2": 29.85196131026062,
+     "coverage_per_m2": 0.033498636475060795,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 109,
+     "coverage": 1.0,
+     "area_m2": 136.9019602931732,
+     "coverage_per_m2": 0.007304497304921837,
+     "missed_gt": 0
+    }
+   },
+   "reachability_coasting": {
+    "0.5": {
+     "samples": 4,
+     "coverage": 1.0,
+     "area_m2": 2.7974532153368363,
+     "coverage_per_m2": 0.3574679978623313,
+     "missed_gt": 0
+    },
+    "1": {
+     "samples": 4,
+     "coverage": 1.0,
+     "area_m2": 11.129405619617712,
+     "coverage_per_m2": 0.08985205806833998,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 4,
+     "coverage": 1.0,
+     "area_m2": 72.89632591744444,
+     "coverage_per_m2": 0.013718112503125417,
+     "missed_gt": 0
+    }
+   },
+   "hybrid_fresh": {
+    "0.5": {
+     "samples": 139,
+     "coverage": 0.9496402877697842,
+     "area_m2": 0.1664418442572159,
+     "coverage_per_m2": 5.7055381235876546,
+     "missed_gt": 7
+    },
+    "1": {
+     "samples": 131,
+     "coverage": 1.0,
+     "area_m2": 1.1168240006089352,
+     "coverage_per_m2": 0.8953962302518228,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 119,
+     "coverage": 1.0,
+     "area_m2": 13.646551428737638,
+     "coverage_per_m2": 0.0732785865514819,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 108,
+     "coverage": 1.0,
+     "area_m2": 65.90361043153864,
+     "coverage_per_m2": 0.015173675515680746,
+     "missed_gt": 0
+    }
+   },
+   "hybrid_coasting": {
+    "0.5": {
+     "samples": 4,
+     "coverage": 1.0,
+     "area_m2": 2.7974532153368363,
+     "coverage_per_m2": 0.3574679978623313,
+     "missed_gt": 0
+    },
+    "1": {
+     "samples": 4,
+     "coverage": 1.0,
+     "area_m2": 11.129405619617712,
+     "coverage_per_m2": 0.08985205806833998,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 4,
+     "coverage": 1.0,
+     "area_m2": 72.89632591744444,
+     "coverage_per_m2": 0.013718112503125417,
+     "missed_gt": 0
+    }
+   }
+  },
+  "reversal": {
+   "cv_fresh": {
+    "0.5": {
+     "samples": 98,
+     "coverage": 0.8979591836734694,
+     "area_m2": 0.16416567717864286,
+     "coverage_per_m2": 5.46983510259774,
+     "missed_gt": 10
+    },
+    "1": {
+     "samples": 92,
+     "coverage": 1.0,
+     "area_m2": 1.109631626462327,
+     "coverage_per_m2": 0.9011999803828149,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 82,
+     "coverage": 1.0,
+     "area_m2": 13.646647307974872,
+     "coverage_per_m2": 0.07327807170744545,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 72,
+     "coverage": 1.0,
+     "area_m2": 65.90361160161916,
+     "coverage_per_m2": 0.015173675246280908,
+     "missed_gt": 0
+    }
+   },
+   "cv_coasting_as_consumed": {},
+   "reachability_fresh": {
+    "0.5": {
+     "samples": 98,
+     "coverage": 1.0,
+     "area_m2": 0.2662064432811548,
+     "coverage_per_m2": 3.7564830801027864,
+     "missed_gt": 0
+    },
+    "1": {
+     "samples": 92,
+     "coverage": 1.0,
+     "area_m2": 2.239524170670717,
+     "coverage_per_m2": 0.4465234236344541,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 82,
+     "coverage": 1.0,
+     "area_m2": 29.816522265563226,
+     "coverage_per_m2": 0.0335384519728163,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 72,
+     "coverage": 1.0,
+     "area_m2": 136.86157342869274,
+     "coverage_per_m2": 0.007306652809460921,
+     "missed_gt": 0
+    }
+   },
+   "reachability_coasting": {},
+   "hybrid_fresh": {
+    "0.5": {
+     "samples": 98,
+     "coverage": 0.8979591836734694,
+     "area_m2": 0.16416567717864286,
+     "coverage_per_m2": 5.46983510259774,
+     "missed_gt": 10
+    },
+    "1": {
+     "samples": 92,
+     "coverage": 1.0,
+     "area_m2": 1.109631626462327,
+     "coverage_per_m2": 0.9011999803828149,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 82,
+     "coverage": 1.0,
+     "area_m2": 13.646647307974872,
+     "coverage_per_m2": 0.07327807170744545,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 72,
+     "coverage": 1.0,
+     "area_m2": 65.90361160161916,
+     "coverage_per_m2": 0.015173675246280908,
+     "missed_gt": 0
+    }
+   },
+   "hybrid_coasting": {}
+  },
+  "reversal_step": {
+   "cv_fresh": {
+    "0.5": {
+     "samples": 49,
+     "coverage": 0.9387755102040817,
+     "area_m2": 0.1641657052850127,
+     "coverage_per_m2": 5.718462991854767,
+     "missed_gt": 3
+    },
+    "1": {
+     "samples": 46,
+     "coverage": 1.0,
+     "area_m2": 1.1096317152659239,
+     "coverage_per_m2": 0.9011999082599667,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 41,
+     "coverage": 1.0,
+     "area_m2": 13.646647669250862,
+     "coverage_per_m2": 0.07327806976751056,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 36,
+     "coverage": 1.0,
+     "area_m2": 65.90361250778926,
+     "coverage_per_m2": 0.015173675037643927,
+     "missed_gt": 0
+    }
+   },
+   "cv_coasting_as_consumed": {},
+   "reachability_fresh": {
+    "0.5": {
+     "samples": 49,
+     "coverage": 0.9795918367346939,
+     "area_m2": 0.26620647907114203,
+     "coverage_per_m2": 3.6798196653692417,
+     "missed_gt": 1
+    },
+    "1": {
+     "samples": 46,
+     "coverage": 1.0,
+     "area_m2": 2.2395242968284736,
+     "coverage_per_m2": 0.4465233984807223,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 41,
+     "coverage": 1.0,
+     "area_m2": 29.85799757266466,
+     "coverage_per_m2": 0.03349186420041481,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 36,
+     "coverage": 1.0,
+     "area_m2": 137.94723156190244,
+     "coverage_per_m2": 0.007249148740989847,
+     "missed_gt": 0
+    }
+   },
+   "reachability_coasting": {},
+   "hybrid_fresh": {
+    "0.5": {
+     "samples": 49,
+     "coverage": 0.9387755102040817,
+     "area_m2": 0.1641657052850127,
+     "coverage_per_m2": 5.718462991854767,
+     "missed_gt": 3
+    },
+    "1": {
+     "samples": 46,
+     "coverage": 1.0,
+     "area_m2": 1.1096317152659239,
+     "coverage_per_m2": 0.9011999082599667,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 41,
+     "coverage": 1.0,
+     "area_m2": 13.646647669250862,
+     "coverage_per_m2": 0.07327806976751056,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 36,
+     "coverage": 1.0,
+     "area_m2": 65.90361250778926,
+     "coverage_per_m2": 0.015173675037643927,
+     "missed_gt": 0
+    }
+   },
+   "hybrid_coasting": {}
+  },
+  "static_navigation": {
+   "cv_fresh": {},
+   "cv_coasting_as_consumed": {},
+   "reachability_fresh": {},
+   "reachability_coasting": {},
+   "hybrid_fresh": {},
+   "hybrid_coasting": {}
+  },
+  "triple": {
+   "cv_fresh": {
+    "0.5": {
+     "samples": 147,
+     "coverage": 0.9523809523809523,
+     "area_m2": 0.16416564990933105,
+     "coverage_per_m2": 5.801341223982933,
+     "missed_gt": 7
+    },
+    "1": {
+     "samples": 141,
+     "coverage": 1.0,
+     "area_m2": 1.1096481591990874,
+     "coverage_per_m2": 0.9011865533321586,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 126,
+     "coverage": 1.0,
+     "area_m2": 13.646559001910582,
+     "coverage_per_m2": 0.07327854588544962,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 111,
+     "coverage": 1.0,
+     "area_m2": 65.90366212649943,
+     "coverage_per_m2": 0.01517366361342015,
+     "missed_gt": 0
+    }
+   },
+   "cv_coasting_as_consumed": {},
+   "reachability_fresh": {
+    "0.5": {
+     "samples": 147,
+     "coverage": 0.9931972789115646,
+     "area_m2": 0.2662064085574351,
+     "coverage_per_m2": 3.7309292600943462,
+     "missed_gt": 1
+    },
+    "1": {
+     "samples": 141,
+     "coverage": 1.0,
+     "area_m2": 2.239547657916933,
+     "coverage_per_m2": 0.4465187407220119,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 126,
+     "coverage": 1.0,
+     "area_m2": 29.85747456384598,
+     "coverage_per_m2": 0.0334924508722813,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 111,
+     "coverage": 1.0,
+     "area_m2": 136.6622630934328,
+     "coverage_per_m2": 0.007317308943701036,
+     "missed_gt": 0
+    }
+   },
+   "reachability_coasting": {},
+   "hybrid_fresh": {
+    "0.5": {
+     "samples": 147,
+     "coverage": 0.9523809523809523,
+     "area_m2": 0.16416564990933105,
+     "coverage_per_m2": 5.801341223982933,
+     "missed_gt": 7
+    },
+    "1": {
+     "samples": 141,
+     "coverage": 1.0,
+     "area_m2": 1.1096481591990874,
+     "coverage_per_m2": 0.9011865533321586,
+     "missed_gt": 0
+    },
+    "2": {
+     "samples": 126,
+     "coverage": 1.0,
+     "area_m2": 13.646559001910582,
+     "coverage_per_m2": 0.07327854588544962,
+     "missed_gt": 0
+    },
+    "3": {
+     "samples": 111,
+     "coverage": 1.0,
+     "area_m2": 65.90366212649943,
+     "coverage_per_m2": 0.01517366361342015,
+     "missed_gt": 0
+    }
+   },
+   "hybrid_coasting": {}
+  }
+ }
+}
