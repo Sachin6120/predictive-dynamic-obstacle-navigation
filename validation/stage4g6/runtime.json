@@ -1,0 +1,166 @@
+{
+ "note": "Parsed from the benchmark trials own launch logs. The tracker is identical across arms (Stage-4G5 is consumer-side only), so it is a control; the layer updateCosts row is where a mode cost would appear.",
+ "scan_period_ms": 200.0,
+ "cases": {
+  "fresh_only": {
+   "cv_covariance": {
+    "frames": 1981,
+    "tracker_callback_ms": {
+     "mean": 14.021618949520443,
+     "p95": 32.127542,
+     "max": 34.693946000000004
+    },
+    "callback_max_fraction_of_200ms": 0.17346973000000002,
+    "layer_updateCosts_us": {
+     "mean": 18.577333333333332,
+     "max": 160.3
+    },
+    "layer_cv_track_updates": 0,
+    "layer_reachability_track_updates": 0,
+    "layer_reachability_share": 0.0,
+    "trials": 10
+   },
+   "hybrid": {
+    "frames": 1753,
+    "tracker_callback_ms": {
+     "mean": 14.23035288762122,
+     "p95": 32.1274486,
+     "max": 39.009297
+    },
+    "callback_max_fraction_of_200ms": 0.195046485,
+    "layer_updateCosts_us": {
+     "mean": 20.253125,
+     "max": 1186.7
+    },
+    "layer_cv_track_updates": 195,
+    "layer_reachability_track_updates": 4,
+    "layer_reachability_share": 0.020100502512562814,
+    "trials": 10
+   },
+   "hybrid_minus_cv": {
+    "tracker_callback_mean_ms": 0.208733938100778,
+    "layer_updateCosts_mean_us": 1.6757916666666688
+   }
+  },
+  "short_occlusion": {
+   "cv_covariance": {
+    "frames": 4058,
+    "tracker_callback_ms": {
+     "mean": 15.247747389847218,
+     "p95": 32.98315764999999,
+     "max": 72.172871
+    },
+    "callback_max_fraction_of_200ms": 0.360864355,
+    "layer_updateCosts_us": {
+     "mean": 19.212962962962962,
+     "max": 197.7
+    },
+    "layer_cv_track_updates": 0,
+    "layer_reachability_track_updates": 0,
+    "layer_reachability_share": 0.0,
+    "trials": 20
+   },
+   "hybrid": {
+    "frames": 4520,
+    "tracker_callback_ms": {
+     "mean": 14.94090511438053,
+     "p95": 33.07148505,
+     "max": 82.185784
+    },
+    "callback_max_fraction_of_200ms": 0.41092892,
+    "layer_updateCosts_us": {
+     "mean": 20.02277777777778,
+     "max": 140.3
+    },
+    "layer_cv_track_updates": 406,
+    "layer_reachability_track_updates": 18,
+    "layer_reachability_share": 0.04245283018867924,
+    "trials": 20
+   },
+   "hybrid_minus_cv": {
+    "tracker_callback_mean_ms": -0.3068422754666873,
+    "layer_updateCosts_mean_us": 0.8098148148148177
+   }
+  },
+  "long_valid_occlusion": {
+   "cv_covariance": {
+    "frames": 2926,
+    "tracker_callback_ms": {
+     "mean": 15.103783539302801,
+     "p95": 32.656873749999995,
+     "max": 71.8876
+    },
+    "callback_max_fraction_of_200ms": 0.35943800000000004,
+    "layer_updateCosts_us": {
+     "mean": 18.60769230769231,
+     "max": 126.1
+    },
+    "layer_cv_track_updates": 0,
+    "layer_reachability_track_updates": 0,
+    "layer_reachability_share": 0.0,
+    "trials": 14
+   },
+   "hybrid": {
+    "frames": 3142,
+    "tracker_callback_ms": {
+     "mean": 15.433072376193508,
+     "p95": 33.225275749999994,
+     "max": 51.224745999999996
+    },
+    "callback_max_fraction_of_200ms": 0.25612373,
+    "layer_updateCosts_us": {
+     "mean": 19.665599999999998,
+     "max": 116.9
+    },
+    "layer_cv_track_updates": 420,
+    "layer_reachability_track_updates": 15,
+    "layer_reachability_share": 0.034482758620689655,
+    "trials": 14
+   },
+   "hybrid_minus_cv": {
+    "tracker_callback_mean_ms": 0.3292888368907061,
+    "layer_updateCosts_mean_us": 1.0579076923076869
+   }
+  },
+  "multi_object_mixed": {
+   "cv_covariance": {
+    "frames": 2295,
+    "tracker_callback_ms": {
+     "mean": 15.63485011764706,
+     "p95": 34.014121100000004,
+     "max": 71.989174
+    },
+    "callback_max_fraction_of_200ms": 0.35994587,
+    "layer_updateCosts_us": {
+     "mean": 19.421111111111113,
+     "max": 88.7
+    },
+    "layer_cv_track_updates": 0,
+    "layer_reachability_track_updates": 0,
+    "layer_reachability_share": 0.0,
+    "trials": 10
+   },
+   "hybrid": {
+    "frames": 2311,
+    "tracker_callback_ms": {
+     "mean": 15.365127439636522,
+     "p95": 33.595621,
+     "max": 81.593223
+    },
+    "callback_max_fraction_of_200ms": 0.40796611499999996,
+    "layer_updateCosts_us": {
+     "mean": 19.965555555555554,
+     "max": 215.7
+    },
+    "layer_cv_track_updates": 562,
+    "layer_reachability_track_updates": 36,
+    "layer_reachability_share": 0.06020066889632107,
+    "trials": 10
+   },
+   "hybrid_minus_cv": {
+    "tracker_callback_mean_ms": -0.2697226780105382,
+    "layer_updateCosts_mean_us": 0.5444444444444407
+   }
+  }
+ }
+}

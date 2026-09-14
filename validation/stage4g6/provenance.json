@@ -1,0 +1,94 @@
+{
+ "stage4g5_checkpoint": "76ee6b0dc6ead8dc19b51780d56860eb6915258f",
+ "stage4f_reference": "68b2bf2ee1efb774ba563438a4c621b0052f61d5",
+ "note": "Stage-4G6 is EVALUATION ONLY. No tracker, predictor, hybrid-policy or costmap source changed. The two harness edits are: run.py records a setup failure and continues instead of aborting a batch, and its readiness allowance rose 100 s -> 180 s because Stage-4G6 starts four Gazebo sessions at once. Neither touches an algorithm.",
+ "decision_rule_sha256": "eef5f3ff7f6bed9d229a7c0d005b4a18c6e9c4c3ece7108cc16503fd3efec293",
+ "unchanged_since_stage4g5": {
+  "src/predictive_nav_costmap/src/predicted_obstacle_layer.cpp": {
+   "stage4g5": "e3bf0660da66f3bb46e44880ecba91a828848400c2440ac44522baf61f8b2106",
+   "now": "e3bf0660da66f3bb46e44880ecba91a828848400c2440ac44522baf61f8b2106",
+   "unchanged": true
+  },
+  "src/predictive_nav_costmap/include/predictive_nav_costmap/predicted_obstacle_layer.hpp": {
+   "stage4g5": "c19a2b3c5e6d92682ab331cc04ea5eaad524c30951e242c6641748d3f2d7e733",
+   "now": "c19a2b3c5e6d92682ab331cc04ea5eaad524c30951e242c6641748d3f2d7e733",
+   "unchanged": true
+  },
+  "src/predictive_nav_costmap/test/stage4g5_hybrid_layer.cpp": {
+   "stage4g5": "8c78925f9386fa76cff621602ca5356cc456b0adb4302c74c82c255ded13e187",
+   "now": "8c78925f9386fa76cff621602ca5356cc456b0adb4302c74c82c255ded13e187",
+   "unchanged": true
+  },
+  "src/predictive_nav_bringup/scripts/stage4g5/transitions.py": {
+   "stage4g5": "6de83ad300f15c886e7e3b5dd83d6a0f97cb840991c5356fc0013a5a9c60967c",
+   "now": "6de83ad300f15c886e7e3b5dd83d6a0f97cb840991c5356fc0013a5a9c60967c",
+   "unchanged": true
+  },
+  "src/predictive_nav_bringup/scripts/stage4g5/summarize.py": {
+   "stage4g5": "55d91df6da00a6ba7ef2efe57ef90cc6953c898b8698d7c712cebafe55f073f5",
+   "now": "55d91df6da00a6ba7ef2efe57ef90cc6953c898b8698d7c712cebafe55f073f5",
+   "unchanged": true
+  },
+  "src/predictive_nav_bringup/scripts/stage4g4/evaluate.py": {
+   "stage4g5": "1b5cc1511c458592c4b228a7d3ba71267353d0fe6c5a726cb79980dc2f04471c",
+   "now": "1b5cc1511c458592c4b228a7d3ba71267353d0fe6c5a726cb79980dc2f04471c",
+   "unchanged": true
+  },
+  "src/predictive_nav_bringup/scripts/stage4g2/run.py": {
+   "stage4g5": "8c5b5dcbe584d792dd96598840b236c5c4c27c1d50c669b1b425e25f6d27ad4b",
+   "now": "0f0fea381d3f93445e08a0e4bfa1cf9622075eba5b81946422598811a00dd8bc",
+   "unchanged": false
+  },
+  "src/predictive_nav_bringup/scripts/stage4g2/scenarios.json": {
+   "stage4g5": "4c022d8f9596baffc6ed15d282c46ec745c631ee0b02adc86ce4764170d5de3e",
+   "now": "980cf266969d836ee8477c40a337e1b9e51746061e88d6581c019ae9aa015464",
+   "unchanged": false
+  },
+  "src/predictive_nav_tracking/src/lidar_obstacle_tracker_node.cpp": {
+   "stage4g5": "a47177254088b93274b2da180250b2db5f176c05ad2d88bee10069c8ba11ad07",
+   "now": "a47177254088b93274b2da180250b2db5f176c05ad2d88bee10069c8ba11ad07",
+   "unchanged": true
+  },
+  "src/predictive_nav_tracking/include/predictive_nav_tracking/reachability.hpp": {
+   "stage4g5": "2272aeddf38f1eef52a6159b85cd6b0290a0da56cc93e53ab3c1502dc706cd60",
+   "now": "2272aeddf38f1eef52a6159b85cd6b0290a0da56cc93e53ab3c1502dc706cd60",
+   "unchanged": true
+  },
+  "src/predictive_nav_tracking/config/tracker_params.yaml": {
+   "stage4g5": "53d7594066789d72f3e4b5821e296249664cc52c31669a4a766622d186234f3e",
+   "now": "53d7594066789d72f3e4b5821e296249664cc52c31669a4a766622d186234f3e",
+   "unchanged": true
+  },
+  "src/predictive_nav_msgs/msg/ReachabilityPrediction.msg": {
+   "stage4g5": "459d8395688664d064c57959aceec8f4e3ce5376674d34b91c98dd2f3c683d2f",
+   "now": "459d8395688664d064c57959aceec8f4e3ce5376674d34b91c98dd2f3c683d2f",
+   "unchanged": true
+  },
+  "src/predictive_nav_msgs/msg/TrackedObject.msg": {
+   "stage4g5": "a5633bc72e364e1148280e7a3670abb4843876b4e5fee7a79d02b7541b21f7a7",
+   "now": "a5633bc72e364e1148280e7a3670abb4843876b4e5fee7a79d02b7541b21f7a7",
+   "unchanged": true
+  },
+  "src/predictive_nav_tracking/include/predictive_nav_tracking/kalman_filter.hpp": {
+   "stage4g5": "a7588026ebba8bad83c45e0b9cc4d5bf8651d6724d19a3d0b65d84ff78e214db",
+   "now": "a7588026ebba8bad83c45e0b9cc4d5bf8651d6724d19a3d0b65d84ff78e214db",
+   "unchanged": true
+  },
+  "src/predictive_nav_bringup/config/nav2_stage4f_params.yaml": {
+   "stage4g5": "471a5b38b874a01d11db56b5d0701c9f6d2e51689d5d929f047e7493fbc1b4e5",
+   "now": "471a5b38b874a01d11db56b5d0701c9f6d2e51689d5d929f047e7493fbc1b4e5",
+   "unchanged": true
+  }
+ },
+ "all_algorithm_files_unchanged": true,
+ "frozen_policy": {
+  "fresh_threshold_s": 0.1,
+  "max_acceleration": 0.5,
+  "max_speed": 0.8,
+  "sigma_level": 1.5,
+  "temporal_decay": 0.35,
+  "max_cost": 250,
+  "track_timeout": 1.0,
+  "retuned_for_stage4g6": false
+ }
+}

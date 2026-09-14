@@ -112,9 +112,19 @@ def run(args, scenarios):
                             '--definitions', args.definitions,
                             '--layer-mode', args.layer_mode], env=env,
                             stdout=wlog, stderr=subprocess.STDOUT, start_new_session=True)
-                        worker.wait(timeout=240)
+                        worker.wait(timeout=300)
                         if worker.returncode:
                             raise RuntimeError((trial_dir / 'worker.log').read_text()[-4000:])
+            except Exception as exc:
+                # Record the failure IN the trial directory and continue. A
+                # simulation/setup failure must never delete the rest of a
+                # batch, and must stay visible to the analysis rather than
+                # being silently dropped.
+                (trial_dir / 'setup_failure.json').write_text(json.dumps(dict(
+                    trial=trial_dir.name, scenario=name, layer_mode=args.layer_mode,
+                    error=type(exc).__name__, detail=str(exc)[-2000:]), indent=2) + '\n')
+                print(f'FAILED {trial_dir.name}: {type(exc).__name__}', flush=True)
+                continue
             finally:
                 stop(worker)
                 stop(launch)
@@ -267,7 +277,7 @@ def worker(args, scenario):
                  '/local_costmap/predicted_obstacle_layer/debug_costmap', on_grid, qos),
              n.create_subscription(Odometry, '/odom', lambda m: odoms.append(odom_record(m)), 20)]
 
-    def spin_until(condition, timeout=100):
+    def spin_until(condition, timeout=180):
         deadline = time.monotonic()+timeout
         while not condition():
             if time.monotonic() > deadline:
