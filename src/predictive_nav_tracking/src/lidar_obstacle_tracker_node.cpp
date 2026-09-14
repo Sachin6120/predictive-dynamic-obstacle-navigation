@@ -17,6 +17,17 @@
 //   - RViz markers for the raw measurement, filtered state, predicted path
 //     and per-sample uncertainty ellipses.
 //
+// Stage-4G4 addition (ADDITIVE ONLY):
+//   - an optional second future-motion representation: conservative
+//     bounded-motion REACHABLE SETS (see reachability.hpp), published in the
+//     new TrackedObject.reachability_predictions field. The Stage-4C
+//     constant-velocity Gaussian prediction above is untouched -- same state,
+//     same covariance, same anchoring, same field -- so every Stage-4D/4E/4F
+//     result stays reproducible. Reachability differs in one further respect
+//     that the legacy field deliberately does NOT adopt: it propagates through
+//     a coasting track's observation age, so a stale track is never presented
+//     as a fresh one.
+//
 // Deliberately no JPDA/MHT, no prediction-aware replanning, no costmap
 // plugin: that is Stage-4D+.
 
@@ -46,10 +57,14 @@
 #include "predictive_nav_msgs/msg/tracked_object.hpp"
 #include "predictive_nav_msgs/msg/tracked_object_array.hpp"
 #include "predictive_nav_msgs/msg/tracked_object_prediction.hpp"
+#include "predictive_nav_msgs/msg/reachability_prediction.hpp"
 #include "predictive_nav_tracking/kalman_filter.hpp"
+#include "predictive_nav_tracking/reachability.hpp"
 
 using std::placeholders::_1;
 using predictive_nav_tracking::ConstantVelocityKalmanFilter2D;
+using predictive_nav_tracking::ReachabilityBounds;
+using predictive_nav_tracking::ReachabilityRegion;
 
 namespace
 {
@@ -260,6 +275,40 @@ private:
     // (1 - exp(-sigma^2/2)); this is a mathematically-defined confidence
     // region, not an arbitrary fixed-width corridor.
     this->declare_parameter<double>("uncertainty_ellipse_sigma", 2.0);
+
+    // --- Stage-4G4: conservative bounded-motion reachable sets -----------
+    // An ADDITIONAL future-motion representation published alongside the
+    // untouched Stage-4C constant-velocity Gaussian prediction. Every value
+    // below is a physical quantity chosen from the obstacle's motion
+    // capability, not from a desired navigation outcome.
+    //
+    // max_acceleration: the acceleration bound the obstacle class is permitted
+    //   to use. The Stage-4G4 scenario driver commands ramps at a known bound,
+    //   and this is set to that bound. NOTE the measured limitation, recorded
+    //   rather than hidden: Gazebo's VelocityControl plugin can also apply a
+    //   STEP velocity change (measured |a| 5-9.5 m/s^2 in the Stage-4G3
+    //   recordings), which no finite bound can cover at short horizon.
+    // max_speed: |v| ceiling. Scenario obstacles run at 0.15-0.5 m/s; 0.8 m/s
+    //   leaves headroom without licensing motion the models cannot perform.
+    // reachability_horizon / _time_step: mirror the Stage-4C prediction grid so
+    //   the two representations are compared at identical horizons.
+    // max_observation_age: beyond this much time without a real measurement the
+    //   region is marked invalid rather than grown without limit. Defaults to
+    //   the existing track_timeout, so it never outlives the track itself.
+    // base_safety_margin: deterministic body allowance. ZERO by default, so the
+    //   published region measures the motion model alone and reachability gets
+    //   no free inflation in the comparison against CV.
+    // covariance_sigma_level: the k applied to the Stage-4C propagated position
+    //   covariance for the separately reported STATISTICAL term. Matches the
+    //   Stage-4D layer's sigma_level so both representations use the same k.
+    this->declare_parameter<bool>("reachability_enabled", true);
+    this->declare_parameter<double>("max_acceleration", 0.5);
+    this->declare_parameter<double>("max_speed", 0.8);
+    this->declare_parameter<double>("reachability_horizon", 3.0);
+    this->declare_parameter<double>("reachability_time_step", 0.5);
+    this->declare_parameter<double>("base_safety_margin", 0.0);
+    this->declare_parameter<double>("max_observation_age", 1.0);
+    this->declare_parameter<double>("covariance_sigma_level", 2.0);
   }
 
   void read_parameters()
@@ -323,6 +372,18 @@ private:
     uncertainty_ellipse_sigma_ = this->get_parameter("uncertainty_ellipse_sigma").as_double();
     num_prediction_samples_ = (prediction_time_step_ > 1e-6) ?
       static_cast<size_t>(std::lround(prediction_horizon_ / prediction_time_step_)) : 0;
+
+    reachability_enabled_ = this->get_parameter("reachability_enabled").as_bool();
+    reachability_bounds_.max_acceleration = this->get_parameter("max_acceleration").as_double();
+    reachability_bounds_.max_speed = this->get_parameter("max_speed").as_double();
+    reachability_bounds_.safety_margin = this->get_parameter("base_safety_margin").as_double();
+    reachability_bounds_.covariance_sigma_level =
+      this->get_parameter("covariance_sigma_level").as_double();
+    reachability_horizon_ = this->get_parameter("reachability_horizon").as_double();
+    reachability_time_step_ = this->get_parameter("reachability_time_step").as_double();
+    max_observation_age_ = this->get_parameter("max_observation_age").as_double();
+    num_reachability_samples_ = (reachability_time_step_ > 1e-6) ?
+      static_cast<size_t>(std::lround(reachability_horizon_ / reachability_time_step_)) : 0;
   }
 
   // ---------------------------------------------------------------------
@@ -532,7 +593,13 @@ private:
     associate_and_update(centroids, stamp);
     const auto association_end = std::chrono::steady_clock::now();
     prune_stale_tracks(stamp);
+    // Stage-4G4: reachability is computed inside publish_tracks and accumulated
+    // into reachability_total_us_, so its cost is separable from the rest of
+    // message construction.
+    reachability_total_us_ = 0.0;
+    const auto publish_start = std::chrono::steady_clock::now();
     publish_tracks(stamp);
+    const auto publish_end = std::chrono::steady_clock::now();
     publish_markers(stamp, centroids);
     const auto callback_end = std::chrono::steady_clock::now();
     if (get_parameter("profile_scans").as_bool()) {
@@ -541,10 +608,13 @@ private:
         };
       RCLCPP_INFO(get_logger(),
         "G2_PERF %.9f scan_us=%.3f cluster_us=%.3f deblend_us=%.3f association_us=%.3f "
+        "reach_us=%.3f publish_us=%.3f "
         "callback_us=%.3f clusters=%zu measurements=%zu tracks=%zu splits=%zu ambiguous=%zu",
         stamp.seconds(), us(callback_start, cluster_start), us(cluster_start, cluster_end),
         us(deblend_start, deblend_end),
-        us(association_start, association_end), us(callback_start, callback_end),
+        us(association_start, association_end),
+        reachability_total_us_, us(publish_start, publish_end),
+        us(callback_start, callback_end),
         clusters.size(), centroids.size(), tracks_.size(),
         deblend_split_count_ - splits_before, ambiguous_merge_count_);
     }
@@ -1133,6 +1203,60 @@ private:
   }
 
   // ---------------------------------------------------------------------
+  // Conservative bounded-motion reachable sets (Stage-4G4)
+  // ---------------------------------------------------------------------
+  // Produces an ADDITIONAL, deterministic representation of the same track's
+  // future. The live filter is not touched, and predict_future() above is not
+  // touched: the two representations are computed independently from the same
+  // (kf_x, kf_P).
+  //
+  // OBSERVATION AGE IS EXPLICIT AND CENTRAL. `scan_stamp` is now; the track's
+  // filtered state belongs to `track.last_update`, which for a coasting track
+  // is in the past. Every region therefore uses
+  //     total_time = observation_age + horizon
+  // for BOTH the constant-velocity nominal centre and the bound around it, so
+  // a track that has not been seen for 0.8 s is expanded for 0.8 s of
+  // unobserved motion instead of being presented as freshly measured. This is
+  // exactly the semantic the legacy Stage-4C message deliberately does not
+  // have, and it is why reachability is published in its own field rather than
+  // written into the existing one.
+  std::vector<ReachabilityRegion> predict_reachability(
+    const Track & track, const rclcpp::Time & scan_stamp) const
+  {
+    std::vector<ReachabilityRegion> regions;
+    if (!reachability_enabled_ || !track.kalman_initialized || num_reachability_samples_ == 0) {
+      return regions;
+    }
+    const double observation_age = std::max((scan_stamp - track.last_update).seconds(), 0.0);
+    regions.reserve(num_reachability_samples_);
+
+    for (size_t i = 1; i <= num_reachability_samples_; ++i) {
+      const double horizon = static_cast<double>(i) * reachability_time_step_;
+      const double total_time = observation_age + horizon;
+
+      // Stage-4C propagated position covariance at the SAME total time, so the
+      // statistical term is the identical mathematics the CV representation
+      // uses -- only the deterministic term is new.
+      const Eigen::Matrix4d F = ConstantVelocityKalmanFilter2D::stateTransition(total_time);
+      const Eigen::Matrix4d Pp = F * track.kf_P * F.transpose() +
+        ConstantVelocityKalmanFilter2D::processNoise(total_time, kf_accel_noise_);
+
+      ReachabilityRegion region = predictive_nav_tracking::buildRegion(
+        track.kf_x(0), track.kf_x(1), track.kf_x(2), track.kf_x(3),
+        Pp.topLeftCorner<2, 2>(), total_time, reachability_bounds_);
+
+      // A region is only meaningful while the track's information is recent
+      // enough to be worth extrapolating; past that it is published as invalid
+      // rather than silently grown without limit.
+      if (max_observation_age_ > 0.0 && observation_age > max_observation_age_) {
+        region.valid = false;
+      }
+      regions.push_back(region);
+    }
+    return regions;
+  }
+
+  // ---------------------------------------------------------------------
   // Publishing
   // ---------------------------------------------------------------------
   void publish_tracks(const rclcpp::Time & stamp)
@@ -1190,6 +1314,40 @@ private:
         pred.velocity.z = 0.0;
         pred.position_covariance = s.position_covariance;
         obj.predictions.push_back(pred);
+      }
+
+      // Stage-4G4: the additive reachability field. Note the different time
+      // anchor -- these samples count from `stamp` (this scan), not from
+      // t.last_update -- which is recorded in every sample's observation_age
+      // and total_time so no consumer has to infer it.
+      const auto reach_start = std::chrono::steady_clock::now();
+      const std::vector<ReachabilityRegion> reach_regions = predict_reachability(t, stamp);
+      reachability_total_us_ +=
+        std::chrono::duration<double, std::micro>(
+        std::chrono::steady_clock::now() - reach_start).count();
+      for (const auto & r : reach_regions) {
+        predictive_nav_msgs::msg::ReachabilityPrediction reach;
+        reach.time_from_now = r.total_time - (stamp - t.last_update).seconds();
+        reach.stamp = stamp + rclcpp::Duration::from_seconds(reach.time_from_now);
+        reach.observation_age = (stamp - t.last_update).seconds();
+        reach.total_time = r.total_time;
+        reach.position.x = r.center_x;
+        reach.position.y = r.center_y;
+        reach.position.z = 0.0;
+        reach.velocity.x = r.vx;
+        reach.velocity.y = r.vy;
+        reach.velocity.z = 0.0;
+        reach.reach_radius = r.reach_radius;
+        reach.speed_capped = r.speed_capped;
+        reach.sigma_semi_major = r.sigma_semi_major;
+        reach.sigma_semi_minor = r.sigma_semi_minor;
+        reach.sigma_yaw = r.sigma_yaw;
+        reach.covariance_sigma_level = reachability_bounds_.covariance_sigma_level;
+        reach.safety_margin = r.safety_margin;
+        reach.semi_major = r.semi_major;
+        reach.semi_minor = r.semi_minor;
+        reach.valid = r.valid;
+        obj.reachability_predictions.push_back(reach);
       }
 
       array_msg.tracks.push_back(obj);
@@ -1501,6 +1659,15 @@ private:
   bool deblend_use_mahalanobis_{true};
   size_t deblend_split_count_{0};
   size_t ambiguous_merge_count_{0};
+
+  // --- Stage-4G4: bounded-motion reachability ---
+  bool reachability_enabled_{true};
+  ReachabilityBounds reachability_bounds_{};
+  double reachability_horizon_{3.0};
+  double reachability_time_step_{0.5};
+  double max_observation_age_{1.0};
+  size_t num_reachability_samples_{6};
+  double reachability_total_us_{0.0};
 
   double association_gate_{0.6};
   double track_timeout_{1.0};

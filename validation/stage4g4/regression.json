@@ -1,0 +1,108 @@
+{
+ "note": "Stage-4G3 scenarios re-run on the Stage-4G4 build and scored by the unchanged Stage-4G2 scorer.",
+ "all_identical": true,
+ "trials": [
+  {
+   "trial": "crossing_01",
+   "stage4g3": {
+    "id_switches": 0,
+    "track_fragments": 1,
+    "distinct_confirmed_ids": 2,
+    "false_confirmed_ids": 0,
+    "false_persistent_ids": 0,
+    "duplicate_frames": 0,
+    "categories": {
+     "A_cluster_merge": 5,
+     "D_insufficient_lidar_returns": 4
+    },
+    "max_missed_scans_retained": 4,
+    "per_gt": [
+     {
+      "purity": 1.0,
+      "matched_frame_fraction": 0.92
+     },
+     {
+      "purity": 1.0,
+      "matched_frame_fraction": 1.0
+     }
+    ]
+   },
+   "stage4g4": {
+    "id_switches": 0,
+    "track_fragments": 1,
+    "distinct_confirmed_ids": 2,
+    "false_confirmed_ids": 0,
+    "false_persistent_ids": 0,
+    "duplicate_frames": 0,
+    "categories": {
+     "A_cluster_merge": 5,
+     "D_insufficient_lidar_returns": 4
+    },
+    "max_missed_scans_retained": 4,
+    "per_gt": [
+     {
+      "purity": 1.0,
+      "matched_frame_fraction": 0.92
+     },
+     {
+      "purity": 1.0,
+      "matched_frame_fraction": 1.0
+     }
+    ]
+   },
+   "identical": true
+  },
+  {
+   "trial": "triple_01",
+   "stage4g3": {
+    "id_switches": 0,
+    "track_fragments": 0,
+    "distinct_confirmed_ids": 3,
+    "false_confirmed_ids": 0,
+    "false_persistent_ids": 0,
+    "duplicate_frames": 0,
+    "categories": {},
+    "max_missed_scans_retained": 0,
+    "per_gt": [
+     {
+      "purity": 1.0,
+      "matched_frame_fraction": 1.0
+     },
+     {
+      "purity": 1.0,
+      "matched_frame_fraction": 1.0
+     },
+     {
+      "purity": 1.0,
+      "matched_frame_fraction": 1.0
+     }
+    ]
+   },
+   "stage4g4": {
+    "id_switches": 0,
+    "track_fragments": 0,
+    "distinct_confirmed_ids": 3,
+    "false_confirmed_ids": 0,
+    "false_persistent_ids": 0,
+    "duplicate_frames": 0,
+    "categories": {},
+    "max_missed_scans_retained": 0,
+    "per_gt": [
+     {
+      "purity": 1.0,
+      "matched_frame_fraction": 1.0
+     },
+     {
+      "purity": 1.0,
+      "matched_frame_fraction": 1.0
+     },
+     {
+      "purity": 1.0,
+      "matched_frame_fraction": 1.0
+     }
+    ]
+   },
+   "identical": true
+  }
+ ]
+}

@@ -30,4 +30,15 @@ builtin_interfaces/Time stamp      # timestamp of the most recent observation us
 
 # Future trajectory prediction (Stage-4C): state propagated forward from the
 # current filtered state without modifying it. Empty until kalman_initialized.
+# UNCHANGED at Stage-4G4: semantics, anchoring and covariance are exactly as
+# validated at Stage-4C/4D/4F, and this remains the sole statistical output.
 TrackedObjectPrediction[] predictions
+
+# Conservative bounded-motion reachable regions (Stage-4G4). ADDITIVE and
+# OPTIONAL: empty when reachability_enabled is false, and empty until
+# kalman_initialized, so every pre-Stage-4G4 consumer is unaffected. These are
+# deterministic set bounds, not covariances -- see ReachabilityPrediction.msg.
+# Note the different time anchor: these samples are relative to the CURRENT
+# SCAN (TrackedObjectArray.header.stamp), whereas `predictions` above are
+# relative to this track's `stamp` (its last real observation).
+ReachabilityPrediction[] reachability_predictions

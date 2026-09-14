@@ -1,0 +1,67 @@
+{
+ "stage4g3_checkpoint": "7adb5e040702d5c1ff6bcc26d8944d4853814a7b",
+ "stage4f_reference": "68b2bf2ee1efb774ba563438a4c621b0052f61d5",
+ "protected_files": {
+  "src/predictive_nav_tracking/include/predictive_nav_tracking/kalman_filter.hpp": {
+   "expected": "a7588026ebba8bad83c45e0b9cc4d5bf8651d6724d19a3d0b65d84ff78e214db",
+   "actual": "a7588026ebba8bad83c45e0b9cc4d5bf8651d6724d19a3d0b65d84ff78e214db",
+   "unchanged": true
+  },
+  "src/predictive_nav_bringup/config/nav2_stage4f_params.yaml": {
+   "expected": "471a5b38b874a01d11db56b5d0701c9f6d2e51689d5d929f047e7493fbc1b4e5",
+   "actual": "471a5b38b874a01d11db56b5d0701c9f6d2e51689d5d929f047e7493fbc1b4e5",
+   "unchanged": true
+  }
+ },
+ "note": "predicted_obstacle_layer.cpp is NO LONGER byte-identical to Stage-4G3: it gains the optional reachability mode. The CV path within it is unchanged, which is verified behaviourally instead of by hash -- stage4g2_multi_layer reproduces its Stage-4G3 output exactly, and stage4g4_reach_layer additionally asserts that CV output is unaffected by the presence of reachability data and is restored exactly after switching modes.",
+ "frozen_stage4c_prediction": {
+  "kalman_filter_hpp_unchanged": true,
+  "predict_future_unchanged": true,
+  "tracked_object_prediction_msg_unchanged": true,
+  "position_covariance_semantics_unchanged": true,
+  "coasting_anchor_semantics_unchanged": true
+ },
+ "frozen_tracker_parameters_unchanged": {
+  "static_reject_radius": true,
+  "cluster_distance": true,
+  "cluster_min_points": true,
+  "cluster_max_points": true,
+  "cluster_max_diameter": true,
+  "association_gate": true,
+  "track_timeout": true,
+  "max_missed_scans": true,
+  "min_observations_to_publish": true,
+  "kf_process_accel_noise": true,
+  "kf_measurement_noise": true,
+  "prediction_horizon": true,
+  "prediction_time_step": true,
+  "deblend_enabled": true,
+  "merge_min_cluster_diameter": true,
+  "merge_track_radius": true,
+  "deblend_min_points": true,
+  "deblend_max_child_diameter": true,
+  "deblend_min_child_separation": true,
+  "deblend_min_gap": true
+ },
+ "frozen_reachability_parameters": {
+  "max_acceleration": 0.5,
+  "max_speed": 0.8,
+  "reachability_horizon": 3.0,
+  "reachability_time_step": 0.5,
+  "base_safety_margin": 0.0,
+  "max_observation_age": 1.0,
+  "covariance_sigma_level": 2.0
+ },
+ "sha256": {
+  "src/predictive_nav_tracking/src/lidar_obstacle_tracker_node.cpp": "a47177254088b93274b2da180250b2db5f176c05ad2d88bee10069c8ba11ad07",
+  "src/predictive_nav_tracking/include/predictive_nav_tracking/reachability.hpp": "2272aeddf38f1eef52a6159b85cd6b0290a0da56cc93e53ab3c1502dc706cd60",
+  "src/predictive_nav_tracking/config/tracker_params.yaml": "53d7594066789d72f3e4b5821e296249664cc52c31669a4a766622d186234f3e",
+  "src/predictive_nav_costmap/src/predicted_obstacle_layer.cpp": "3b2db52576232615f3d1df3df54047d769f3273a8011a34e50df770423519753",
+  "src/predictive_nav_msgs/msg/ReachabilityPrediction.msg": "459d8395688664d064c57959aceec8f4e3ce5376674d34b91c98dd2f3c683d2f",
+  "src/predictive_nav_msgs/msg/TrackedObject.msg": "a5633bc72e364e1148280e7a3670abb4843876b4e5fee7a79d02b7541b21f7a7",
+  "src/predictive_nav_bringup/scripts/stage4g4/evaluate.py": "3e0dd06724dba567ebbba61963c973a2b99b1121fa7a89c65f866db8289b8835",
+  "src/predictive_nav_bringup/scripts/stage4g4/summarize.py": "e99821441cb7cf0c35e8891c74d9f8616bbbd5b7b4addbe9bed3d44af7666731",
+  "src/predictive_nav_bringup/scripts/stage4g2/run.py": "8b36397235a431f750fcc6ef2a786d69e9e3e4311e79a4bea3a5a29d17109964",
+  "src/predictive_nav_bringup/scripts/stage4g2/scenarios.json": "4f3dcc481bc8e863cdc8df16be4f919ce6704019c64f725aa4d2cc52b9bbced9"
+ }
+}

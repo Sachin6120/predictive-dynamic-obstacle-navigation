@@ -1,5 +1,19 @@
 #!/usr/bin/env python3
-"""Gazebo Stage-4G2 trials. GT stays in this simulation/evaluation process.
+"""Gazebo Stage-4G2/4G4 trials. GT stays in this simulation/evaluation process.
+
+Stage-4G4 extends this runner ADDITIVELY, so every Stage-4G2/4G3 scenario and
+result reproduces unchanged:
+  * scenario objects may carry an optional "accel" (m/s^2). Without it a
+    "segments" boundary is a STEP velocity change, which is what Stage-4G2/4G3
+    used and what the measured GT shows (|a| 5-9.5 m/s^2 at a boundary). With
+    it the commanded velocity RAMPS toward the segment target at that bound, so
+    the obstacle's dynamics are physically bounded and known -- the premise a
+    reachable set needs.
+  * the recorded tracker frames additionally carry the new
+    reachability_predictions field.
+  * --layer-mode selects the predictive costmap arm (reactive / cv_covariance /
+    reachability) by setting live parameters, the same way Stage-4E switched
+    its A/B arms. Default "keep" touches nothing.
 
 No global pkill: each subprocess has its own process group, and only groups
 created by this runner are stopped. Each trial uses an isolated DDS domain
@@ -73,7 +87,7 @@ def run(args, scenarios):
             provenance = {
                 'head': subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
                 'stage4f_reference': subprocess.check_output(['git','rev-parse','stage4f-validated^{commit}'],cwd=ROOT,text=True).strip(),
-                'definition': scenarios[name],
+                'definition': scenarios[name], 'layer_mode': args.layer_mode,
                 'ros_domain_id': env['ROS_DOMAIN_ID'], 'gz_partition': env['GZ_PARTITION'],
                 'sha256': {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
                     for p in [Path(__file__).resolve(), HERE/'score.py',
@@ -95,7 +109,8 @@ def run(args, scenarios):
                         worker = subprocess.Popen([
                             sys.executable, str(Path(__file__).resolve()),
                             '--worker', name, '--out', str(trial_dir),
-                            '--definitions', args.definitions], env=env,
+                            '--definitions', args.definitions,
+                            '--layer-mode', args.layer_mode], env=env,
                             stdout=wlog, stderr=subprocess.STDOUT, start_new_session=True)
                         worker.wait(timeout=240)
                         if worker.returncode:
@@ -158,7 +173,15 @@ def worker(args, scenario):
                 missed=tr.missed_count, covariance=list(tr.covariance),
                 predictions=[dict(dt=p.time_from_now, stamp=seconds(p.stamp),
                     p=[p.position.x,p.position.y], covariance=list(p.position_covariance))
-                    for p in tr.predictions]))
+                    for p in tr.predictions],
+                reachability=[dict(dt=r.time_from_now, stamp=seconds(r.stamp),
+                    age=r.observation_age, total=r.total_time,
+                    p=[r.position.x,r.position.y], v=[r.velocity.x,r.velocity.y],
+                    reach_radius=r.reach_radius, capped=bool(r.speed_capped),
+                    sigma=[r.sigma_semi_major,r.sigma_semi_minor,r.sigma_yaw],
+                    k=r.covariance_sigma_level, margin=r.safety_margin,
+                    axes=[r.semi_major,r.semi_minor], valid=bool(r.valid))
+                    for r in tr.reachability_predictions]))
         arrays.append(dict(t=seconds(m.header.stamp), tracks=rows))
 
     def on_markers(m):
@@ -183,7 +206,19 @@ def worker(args, scenario):
         r = np.array(m.ranges)
         ok = np.isfinite(r) & (r >= m.range_min) & (r <= m.range_max)
         points = np.column_stack((p.x+r[ok]*np.cos(a[ok]), p.y+r[ok]*np.sin(a[ok])))
-        scans.append(dict(t=seconds(m.header.stamp), sensor=[p.x,p.y], points=points.tolist()))
+        # Stage-4G4: the robot's own map-frame pose at the SAME stamp, so
+        # footprint clearance can be measured against the real oriented
+        # collision box rather than approximated from the sensor position.
+        robot = None
+        try:
+            rb = buffer.lookup_transform('map', 'base_footprint', Time.from_msg(m.header.stamp))
+            rq, rp = rb.transform.rotation, rb.transform.translation
+            robot = [rp.x, rp.y,
+                     math.atan2(2*(rq.w*rq.z+rq.x*rq.y), 1-2*(rq.y*rq.y+rq.z*rq.z))]
+        except Exception:
+            pass
+        scans.append(dict(t=seconds(m.header.stamp), sensor=[p.x,p.y], robot=robot,
+                          points=points.tolist()))
         return True
 
     def drain_scans():
@@ -252,6 +287,25 @@ def worker(args, scenario):
     req = SetParameters.Request(parameters=[Parameter(name='profile_scans',
         value=ParameterValue(type=ParameterType.PARAMETER_BOOL, bool_value=True))])
     assert all(x.successful for x in service(param, req).results)
+
+    # Stage-4G4 navigation arms. One launch serves all three; only these live
+    # parameters differ, so the controller, planner, costmap geometry, tracker
+    # and scenario are provably identical across arms.
+    layer_mode = getattr(args, 'layer_mode', 'keep')
+    if layer_mode != 'keep':
+        layer = n.create_client(SetParameters, '/local_costmap/local_costmap/set_parameters')
+        params = [Parameter(name='predicted_obstacle_layer.enabled',
+            value=ParameterValue(type=ParameterType.PARAMETER_BOOL,
+                bool_value=layer_mode != 'reactive'))]
+        if layer_mode != 'reactive':
+            params.append(Parameter(name='predicted_obstacle_layer.prediction_mode',
+                value=ParameterValue(type=ParameterType.PARAMETER_STRING,
+                    string_value=layer_mode)))
+        results = service(layer, SetParameters.Request(parameters=params)).results
+        bad = [r.reason for r in results if not r.successful]
+        if bad:
+            raise RuntimeError(f'predictive layer configuration rejected: {bad}')
+        print(f'predictive layer arm: {layer_mode}', flush=True)
     print('Nav2 and tracker ready', flush=True)
     try:
         for i, obj in enumerate(objects):
@@ -293,12 +347,13 @@ def worker(args, scenario):
             goal_handle = f.result()
             assert goal_handle.accepted
             result_future = goal_handle.get_result_async()
+        commanded = [(0.0, [0.0, 0.0]) for _ in objects]
         wall_deadline = time.monotonic()+120
         while n.get_clock().now().nanoseconds*1e-9-t0 < scenario['duration']:
             if time.monotonic()>wall_deadline:
                 raise TimeoutError('Simulation clock stalled')
             elapsed = n.get_clock().now().nanoseconds*1e-9-t0
-            for pub,obj in zip(pubs,objects):
+            for i,(pub,obj) in enumerate(zip(pubs,objects)):
                 v = obj.get('velocity', [0,0])
                 if 'segments' in obj:
                     remaining = elapsed
@@ -308,8 +363,24 @@ def worker(args, scenario):
                             v = [vx,vy]
                             break
                         remaining -= duration
+                v = [float(v[0]), float(v[1])]
+                accel = obj.get('accel')
+                if accel:
+                    # Ramp the COMMAND toward the segment target at a known
+                    # bound instead of stepping. This is what makes the
+                    # obstacle's acceleration a declared physical quantity;
+                    # without it the VelocityControl plugin applies the target
+                    # instantaneously. The ramp is integrated on the commanded
+                    # value, not on odometry, so it stays deterministic.
+                    prev_t, prev_v = commanded[i]
+                    step = max(elapsed - prev_t, 0.0) * float(accel)
+                    dx, dy = v[0]-prev_v[0], v[1]-prev_v[1]
+                    gap = math.hypot(dx, dy)
+                    if gap > step and gap > 0.0:
+                        v = [prev_v[0] + dx*step/gap, prev_v[1] + dy*step/gap]
+                commanded[i] = (elapsed, v)
                 cmd = Twist()
-                cmd.linear.x, cmd.linear.y = map(float,v)
+                cmd.linear.x, cmd.linear.y = v
                 pub.publish(cmd)
             rclpy.spin_once(n, timeout_sec=.025)
         for pub in pubs:
@@ -321,6 +392,7 @@ def worker(args, scenario):
             status=result_future.result().status if result_future and result_future.done() else None,
             robot_distance=math.hypot(odoms[-1][1]-odoms[0][1],odoms[-1][2]-odoms[0][2]) if odoms else 0)
         raw = dict(scenario=args.worker, definition=scenario, t0=t0, end=t0+scenario['duration'],
+            layer_mode=layer_mode,
             gt=gt, arrays=arrays, clusters=clusters, scans=scans, grids=grids, nav=nav)
         with (out/'raw.json').open('x') as f:
             json.dump(raw,f)
@@ -341,6 +413,9 @@ if __name__ == '__main__':
     p.add_argument('--scenarios', default='single,parallel,opposing,crossing,crossing_resolved,near_crossing,occlusion')
     p.add_argument('--trials', type=int, default=1)
     p.add_argument('--domain', type=int, default=92)
+    p.add_argument('--layer-mode', default='keep',
+                   choices=['keep','reactive','cv_covariance','reachability'],
+                   help='predictive costmap arm; "keep" leaves the launch configuration alone')
     p.add_argument('--worker')
     args=p.parse_args()
     definitions=json.loads(Path(args.definitions).read_text())

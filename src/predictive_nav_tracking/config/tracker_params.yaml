@@ -89,6 +89,45 @@ lidar_obstacle_tracker:
                                        # can never be sliced in two
     deblend_use_mahalanobis: true      # ownership uses predicted covariance + R
 
+    # --- Stage-4G4: conservative bounded-motion reachability -----------
+    # An ADDITIONAL future-motion representation, published in the new
+    # TrackedObject.reachability_predictions field. The Stage-4C constant-
+    # velocity Gaussian prediction above is completely unchanged, so every
+    # Stage-4D / 4E / 4F result remains reproducible; set reachability_enabled
+    # to false to return to a byte-identical Stage-4G3 message payload.
+    #
+    # These are PHYSICAL bounds on obstacle motion, chosen from what the
+    # obstacle can do, not from what makes navigation look good:
+    #
+    # max_acceleration 0.5 m/s^2 is the bound the Stage-4G4 scenario driver
+    #   COMMANDS for its ramped manoeuvres (scenarios.json "accel" field), so
+    #   the model and the world share one declared bound. Measured honestly and
+    #   recorded here: the same Gazebo VelocityControl plugin can also apply a
+    #   STEP velocity change -- |a| of 5-9.5 m/s^2 was measured in the retained
+    #   Stage-4G3 GT odometry at segment boundaries -- and NO finite
+    #   acceleration bound covers a step change at short horizon. The step
+    #   scenarios are kept as an out-of-model stress test and reported as such.
+    # max_speed 0.8 m/s: scenario obstacles run at 0.15-0.50 m/s; this leaves
+    #   headroom without licensing motion the models never perform. The cap can
+    #   only shrink the reachable radius, never grow it.
+    # base_safety_margin 0.0: deterministic body allowance, deliberately zero
+    #   so the published region measures the motion model alone. Giving
+    #   reachability a free additive margin would make the comparison against
+    #   the CV covariance ellipse unfair; the costmap layer applies its own.
+    # covariance_sigma_level 2.0: matches the Stage-4D layer's sigma_level, so
+    #   the statistical term of the reachable region and the CV ellipse it is
+    #   compared against use the SAME k on the SAME covariance.
+    # max_observation_age 1.0 s: equals track_timeout below, so a region never
+    #   outlives the track that produced it.
+    reachability_enabled: true
+    max_acceleration: 0.5          # m/s^2, isotropic |a| bound
+    max_speed: 0.8                 # m/s, |v| bound
+    reachability_horizon: 3.0      # s, mirrors prediction_horizon
+    reachability_time_step: 0.5    # s, mirrors prediction_time_step
+    base_safety_margin: 0.0        # m, deterministic; 0 => model-only region
+    max_observation_age: 1.0       # s, == track_timeout
+    covariance_sigma_level: 2.0    # k for the STATISTICAL term only
+
     # Gated nearest-neighbour association + track lifecycle.
     association_gate: 0.6
     track_timeout: 1.0

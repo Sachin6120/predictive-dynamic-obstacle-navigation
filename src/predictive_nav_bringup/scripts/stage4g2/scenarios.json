@@ -1,416 +1,754 @@
 {
-  "single": {
-    "duration": 10,
-    "objects": [
-      {
-        "start": [
-          -1,
-          -1
-        ],
-        "velocity": [
-          0.3,
-          0
-        ]
-      }
+ "single": {
+  "duration": 10,
+  "objects": [
+   {
+    "start": [
+     -1,
+     -1
+    ],
+    "velocity": [
+     0.3,
+     0
     ]
-  },
-  "parallel": {
-    "duration": 10,
-    "objects": [
-      {
-        "start": [
-          -1,
-          -1
-        ],
-        "velocity": [
-          0.3,
-          0
-        ]
-      },
-      {
-        "start": [
-          -1,
-          1
-        ],
-        "velocity": [
-          0.3,
-          0
-        ]
-      }
+   }
+  ]
+ },
+ "parallel": {
+  "duration": 10,
+  "objects": [
+   {
+    "start": [
+     -1,
+     -1
+    ],
+    "velocity": [
+     0.3,
+     0
     ]
-  },
-  "opposing": {
-    "duration": 10,
-    "objects": [
-      {
-        "start": [
-          -1.5,
-          -0.45
-        ],
-        "velocity": [
-          0.3,
-          0
-        ]
-      },
-      {
-        "start": [
-          1.5,
-          0.45
-        ],
-        "velocity": [
-          -0.3,
-          0
-        ]
-      }
+   },
+   {
+    "start": [
+     -1,
+     1
+    ],
+    "velocity": [
+     0.3,
+     0
     ]
-  },
-  "crossing": {
-    "duration": 10,
-    "objects": [
-      {
-        "start": [
-          -1.5,
-          0
-        ],
-        "velocity": [
-          0.5,
-          0
-        ]
-      },
-      {
-        "start": [
-          0,
-          2.15
-        ],
-        "velocity": [
-          0,
-          -0.5
-        ]
-      }
+   }
+  ]
+ },
+ "opposing": {
+  "duration": 10,
+  "objects": [
+   {
+    "start": [
+     -1.5,
+     -0.45
+    ],
+    "velocity": [
+     0.3,
+     0
     ]
-  },
-  "crossing_resolved": {
-    "duration": 10,
-    "objects": [
-      {
-        "start": [
-          -1.5,
-          0
-        ],
-        "velocity": [
-          0.5,
-          0
-        ]
-      },
-      {
-        "start": [
-          0,
-          2.7
-        ],
-        "velocity": [
-          0,
-          -0.5
-        ]
-      }
+   },
+   {
+    "start": [
+     1.5,
+     0.45
+    ],
+    "velocity": [
+     -0.3,
+     0
     ]
-  },
-  "near_crossing": {
-    "duration": 10,
-    "objects": [
-      {
-        "start": [
-          -1.5,
-          -0.45
-        ],
-        "velocity": [
-          0.3,
-          0
-        ]
-      },
-      {
-        "start": [
-          0,
-          2
-        ],
-        "segments": [
-          [
-            5,
-            0,
-            -0.3
-          ],
-          [
-            5,
-            0.3,
-            0
-          ]
-        ]
-      }
+   }
+  ]
+ },
+ "crossing": {
+  "duration": 10,
+  "objects": [
+   {
+    "start": [
+     -1.5,
+     0
+    ],
+    "velocity": [
+     0.5,
+     0
     ]
-  },
-  "occlusion": {
-    "duration": 7,
-    "objects": [
-      {
-        "start": [
-          -1,
-          -2
-        ],
-        "velocity": [
-          0,
-          0.6
-        ]
-      },
-      {
-        "start": [
-          0,
-          0
-        ],
-        "velocity": [
-          0.15,
-          0
-        ]
-      }
+   },
+   {
+    "start": [
+     0,
+     2.15
+    ],
+    "velocity": [
+     0,
+     -0.5
     ]
-  },
-  "triple": {
-    "duration": 10,
-    "objects": [
-      {
-        "start": [
-          -1,
-          -1.5
-        ],
-        "velocity": [
-          0.25,
-          0
-        ]
-      },
-      {
-        "start": [
-          -1,
-          0
-        ],
-        "velocity": [
-          0.2,
-          0
-        ]
-      },
-      {
-        "start": [
-          -1,
-          1.5
-        ],
-        "velocity": [
-          0.3,
-          0
-        ]
-      }
+   }
+  ]
+ },
+ "crossing_resolved": {
+  "duration": 10,
+  "objects": [
+   {
+    "start": [
+     -1.5,
+     0
+    ],
+    "velocity": [
+     0.5,
+     0
     ]
-  },
-  "navigation": {
-    "duration": 22,
-    "navigate": true,
-    "objects": [
-      {
-        "start": [
-          -1,
-          -1.5
-        ],
-        "velocity": [
-          0.15,
-          0
-        ]
-      },
-      {
-        "start": [
-          -1,
-          1.5
-        ],
-        "velocity": [
-          0.15,
-          0
-        ]
-      }
+   },
+   {
+    "start": [
+     0,
+     2.7
+    ],
+    "velocity": [
+     0,
+     -0.5
     ]
-  },
-  "static_navigation": {
-    "duration": 19,
-    "navigate": true,
-    "objects": []
-  },
-  "resolution_55": {
-    "duration": 6,
-    "objects": [
-      {
-        "start": [
-          0,
-          -0.275
-        ],
-        "velocity": [
-          0.15,
-          0
-        ]
-      },
-      {
-        "start": [
-          0,
-          0.275
-        ],
-        "velocity": [
-          0.15,
-          0
-        ]
-      }
+   }
+  ]
+ },
+ "near_crossing": {
+  "duration": 10,
+  "objects": [
+   {
+    "start": [
+     -1.5,
+     -0.45
+    ],
+    "velocity": [
+     0.3,
+     0
     ]
-  },
-  "resolution_65": {
-    "duration": 6,
-    "objects": [
-      {
-        "start": [
-          0,
-          -0.325
-        ],
-        "velocity": [
-          0.15,
-          0
-        ]
-      },
-      {
-        "start": [
-          0,
-          0.325
-        ],
-        "velocity": [
-          0.15,
-          0
-        ]
-      }
+   },
+   {
+    "start": [
+     0,
+     2
+    ],
+    "segments": [
+     [
+      5,
+      0,
+      -0.3
+     ],
+     [
+      5,
+      0.3,
+      0
+     ]
     ]
-  },
-  "resolution_75": {
-    "duration": 6,
-    "objects": [
-      {
-        "start": [
-          0,
-          -0.375
-        ],
-        "velocity": [
-          0.15,
-          0
-        ]
-      },
-      {
-        "start": [
-          0,
-          0.375
-        ],
-        "velocity": [
-          0.15,
-          0
-        ]
-      }
+   }
+  ]
+ },
+ "occlusion": {
+  "duration": 7,
+  "objects": [
+   {
+    "start": [
+     -1,
+     -2
+    ],
+    "velocity": [
+     0,
+     0.6
     ]
-  },
-  "resolution_85": {
-    "duration": 6,
-    "objects": [
-      {
-        "start": [
-          0,
-          -0.425
-        ],
-        "velocity": [
-          0.15,
-          0
-        ]
-      },
-      {
-        "start": [
-          0,
-          0.425
-        ],
-        "velocity": [
-          0.15,
-          0
-        ]
-      }
+   },
+   {
+    "start": [
+     0,
+     0
+    ],
+    "velocity": [
+     0.15,
+     0
     ]
-  },
-  "resolution_95": {
-    "duration": 6,
-    "objects": [
-      {
-        "start": [
-          0,
-          -0.475
-        ],
-        "velocity": [
-          0.15,
-          0
-        ]
-      },
-      {
-        "start": [
-          0,
-          0.475
-        ],
-        "velocity": [
-          0.15,
-          0
-        ]
-      }
+   }
+  ]
+ },
+ "triple": {
+  "duration": 10,
+  "objects": [
+   {
+    "start": [
+     -1,
+     -1.5
+    ],
+    "velocity": [
+     0.25,
+     0
     ]
-  },
-  "resolution_105": {
-    "duration": 6,
-    "objects": [
-      {
-        "start": [
-          0,
-          -0.525
-        ],
-        "velocity": [
-          0.15,
-          0
-        ]
-      },
-      {
-        "start": [
-          0,
-          0.525
-        ],
-        "velocity": [
-          0.15,
-          0
-        ]
-      }
+   },
+   {
+    "start": [
+     -1,
+     0
+    ],
+    "velocity": [
+     0.2,
+     0
     ]
-  },
-  "occlusion_long": {
-    "duration": 12,
-    "objects": [
-      {
-        "start": [
-          -1,
-          -0.8
-        ],
-        "velocity": [
-          0,
-          0.15
-        ]
-      },
-      {
-        "start": [
-          0,
-          0
-        ],
-        "velocity": [
-          0.05,
-          0
-        ]
-      }
+   },
+   {
+    "start": [
+     -1,
+     1.5
+    ],
+    "velocity": [
+     0.3,
+     0
     ]
-  }
+   }
+  ]
+ },
+ "navigation": {
+  "duration": 22,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     -1,
+     -1.5
+    ],
+    "velocity": [
+     0.15,
+     0
+    ]
+   },
+   {
+    "start": [
+     -1,
+     1.5
+    ],
+    "velocity": [
+     0.15,
+     0
+    ]
+   }
+  ]
+ },
+ "static_navigation": {
+  "duration": 19,
+  "navigate": true,
+  "objects": []
+ },
+ "resolution_55": {
+  "duration": 6,
+  "objects": [
+   {
+    "start": [
+     0,
+     -0.275
+    ],
+    "velocity": [
+     0.15,
+     0
+    ]
+   },
+   {
+    "start": [
+     0,
+     0.275
+    ],
+    "velocity": [
+     0.15,
+     0
+    ]
+   }
+  ]
+ },
+ "resolution_65": {
+  "duration": 6,
+  "objects": [
+   {
+    "start": [
+     0,
+     -0.325
+    ],
+    "velocity": [
+     0.15,
+     0
+    ]
+   },
+   {
+    "start": [
+     0,
+     0.325
+    ],
+    "velocity": [
+     0.15,
+     0
+    ]
+   }
+  ]
+ },
+ "resolution_75": {
+  "duration": 6,
+  "objects": [
+   {
+    "start": [
+     0,
+     -0.375
+    ],
+    "velocity": [
+     0.15,
+     0
+    ]
+   },
+   {
+    "start": [
+     0,
+     0.375
+    ],
+    "velocity": [
+     0.15,
+     0
+    ]
+   }
+  ]
+ },
+ "resolution_85": {
+  "duration": 6,
+  "objects": [
+   {
+    "start": [
+     0,
+     -0.425
+    ],
+    "velocity": [
+     0.15,
+     0
+    ]
+   },
+   {
+    "start": [
+     0,
+     0.425
+    ],
+    "velocity": [
+     0.15,
+     0
+    ]
+   }
+  ]
+ },
+ "resolution_95": {
+  "duration": 6,
+  "objects": [
+   {
+    "start": [
+     0,
+     -0.475
+    ],
+    "velocity": [
+     0.15,
+     0
+    ]
+   },
+   {
+    "start": [
+     0,
+     0.475
+    ],
+    "velocity": [
+     0.15,
+     0
+    ]
+   }
+  ]
+ },
+ "resolution_105": {
+  "duration": 6,
+  "objects": [
+   {
+    "start": [
+     0,
+     -0.525
+    ],
+    "velocity": [
+     0.15,
+     0
+    ]
+   },
+   {
+    "start": [
+     0,
+     0.525
+    ],
+    "velocity": [
+     0.15,
+     0
+    ]
+   }
+  ]
+ },
+ "occlusion_long": {
+  "duration": 12,
+  "objects": [
+   {
+    "start": [
+     -1,
+     -0.8
+    ],
+    "velocity": [
+     0,
+     0.15
+    ]
+   },
+   {
+    "start": [
+     0,
+     0
+    ],
+    "velocity": [
+     0.05,
+     0
+    ]
+   }
+  ]
+ },
+ "cv_control": {
+  "duration": 10,
+  "objects": [
+   {
+    "start": [
+     -1.5,
+     -1.0
+    ],
+    "velocity": [
+     0.3,
+     0.0
+    ]
+   }
+  ]
+ },
+ "accelerate": {
+  "duration": 10,
+  "objects": [
+   {
+    "start": [
+     -1.8,
+     -1.0
+    ],
+    "segments": [
+     [
+      4,
+      0.15,
+      0
+     ],
+     [
+      6,
+      0.5,
+      0
+     ]
+    ],
+    "accel": 0.5
+   }
+  ]
+ },
+ "decelerate_stop": {
+  "duration": 10,
+  "objects": [
+   {
+    "start": [
+     -1.8,
+     -1.0
+    ],
+    "segments": [
+     [
+      4,
+      0.4,
+      0
+     ],
+     [
+      6,
+      0.0,
+      0
+     ]
+    ],
+    "accel": 0.5
+   }
+  ]
+ },
+ "reversal": {
+  "duration": 10,
+  "objects": [
+   {
+    "start": [
+     -1.5,
+     -1.0
+    ],
+    "segments": [
+     [
+      4,
+      0.3,
+      0
+     ],
+     [
+      6,
+      -0.3,
+      0
+     ]
+    ],
+    "accel": 0.5
+   }
+  ]
+ },
+ "reversal_step": {
+  "duration": 10,
+  "objects": [
+   {
+    "start": [
+     -1.5,
+     -1.0
+    ],
+    "segments": [
+     [
+      4,
+      0.3,
+      0
+     ],
+     [
+      6,
+      -0.3,
+      0
+     ]
+    ]
+   }
+  ]
+ },
+ "accelerate_step": {
+  "duration": 10,
+  "objects": [
+   {
+    "start": [
+     -1.8,
+     -1.0
+    ],
+    "segments": [
+     [
+      4,
+      0.15,
+      0
+     ],
+     [
+      6,
+      0.5,
+      0
+     ]
+    ]
+   }
+  ]
+ },
+ "occlusion_short": {
+  "duration": 7,
+  "objects": [
+   {
+    "start": [
+     -1.0,
+     -2.0
+    ],
+    "velocity": [
+     0.0,
+     0.6
+    ]
+   },
+   {
+    "start": [
+     0.0,
+     0.0
+    ],
+    "velocity": [
+     0.15,
+     0.0
+    ]
+   }
+  ]
+ },
+ "occlusion_maneuver": {
+  "duration": 8,
+  "objects": [
+   {
+    "start": [
+     -1.0,
+     -2.0
+    ],
+    "velocity": [
+     0.0,
+     0.6
+    ]
+   },
+   {
+    "start": [
+     0.0,
+     0.0
+    ],
+    "segments": [
+     [
+      3.0,
+      0.15,
+      0.0
+     ],
+     [
+      5.0,
+      -0.1,
+      -0.35
+     ]
+    ],
+    "accel": 0.5
+   }
+  ]
+ },
+ "reach_triple": {
+  "duration": 10,
+  "objects": [
+   {
+    "start": [
+     -1.0,
+     -1.5
+    ],
+    "velocity": [
+     0.25,
+     0.0
+    ]
+   },
+   {
+    "start": [
+     -1.0,
+     0.0
+    ],
+    "segments": [
+     [
+      4,
+      0.2,
+      0
+     ],
+     [
+      6,
+      -0.05,
+      0.3
+     ]
+    ],
+    "accel": 0.5
+   },
+   {
+    "start": [
+     -1.0,
+     1.5
+    ],
+    "velocity": [
+     0.3,
+     0.0
+    ]
+   }
+  ]
+ },
+ "nav_cv_control": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     0.8,
+     -3.6
+    ],
+    "segments": [
+     [
+      14,
+      0.0,
+      0.45
+     ],
+     [
+      18,
+      0.0,
+      0.0
+     ]
+    ]
+   }
+  ]
+ },
+ "nav_reversal": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     0.8,
+     1.6
+    ],
+    "segments": [
+     [
+      3,
+      0.0,
+      0.3
+     ],
+     [
+      9,
+      0.0,
+      -0.5
+     ],
+     [
+      20,
+      0.0,
+      0.0
+     ]
+    ],
+    "accel": 0.5
+   }
+  ]
+ },
+ "nav_occlusion_maneuver": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     0.3,
+     -2.7
+    ],
+    "segments": [
+     [
+      14,
+      0.0,
+      0.45
+     ],
+     [
+      18,
+      0.0,
+      0.0
+     ]
+    ]
+   },
+   {
+    "start": [
+     1.8,
+     -0.9
+    ],
+    "segments": [
+     [
+      4.5,
+      0.02,
+      0.0
+     ],
+     [
+      10,
+      0.0,
+      0.18
+     ],
+     [
+      17.5,
+      0.0,
+      0.0
+     ]
+    ],
+    "accel": 0.5
+   }
+  ]
+ }
 }

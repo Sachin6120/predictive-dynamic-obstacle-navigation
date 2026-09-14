@@ -99,14 +99,40 @@ private:
     const rclcpp::Time & now);
 
   /// Rasterizes one prediction's sigma-level covariance ellipse.
+  /// CV mode only; unchanged from Stage-4D.
   void rasterizeEllipse(
     double mean_x, double mean_y, const Eigen::Matrix2d & covariance,
     double time_from_now, WorldBounds & written);
+
+  /// Stage-4G4, reachability mode only. Rasterizes one deterministic
+  /// bounded-motion reachable region as a UNIFORM-cost ellipse. Deliberately
+  /// not a Gaussian falloff: a reachable set has no density, only membership.
+  void rasterizeReachableSet(
+    double center_x, double center_y, double semi_major, double semi_minor, double yaw,
+    double time_from_now, WorldBounds & written);
+
+  /// Stage-4G4 reachability-mode counterpart of rasterizePredictions().
+  WorldBounds rasterizeReachability(
+    const predictive_nav_msgs::msg::TrackedObjectArray & tracks,
+    const Eigen::Matrix2d & rotation, double translation_x, double translation_y,
+    const rclcpp::Time & now);
 
   void publishDebugCostmap(const rclcpp::Time & stamp);
 
   // --- Parameters ------------------------------------------------------
   std::string tracked_objects_topic_;
+  /// Stage-4G4 MODE SWITCH. "cv_covariance" (default) is the validated
+  /// Stage-4D path, byte-for-byte: it reads TrackedObject.predictions and
+  /// paints a Gaussian-likelihood-weighted sigma ellipse, where cost encodes
+  /// a PROBABILITY DENSITY RATIO. "reachability" reads
+  /// TrackedObject.reachability_predictions and paints a uniform-cost
+  /// deterministic reachable set, where cost encodes SET MEMBERSHIP. The two
+  /// semantics are deliberately not blended.
+  std::string prediction_mode_{"cv_covariance"};
+  bool reachability_mode_{false};
+  /// Reachability mode only: regions whose observation_age exceeds this are
+  /// dropped. Defaults to track_timeout_ so it never outlives the CV rule.
+  double max_observation_age_{1.0};
   double track_timeout_{1.0};
   double track_array_timeout_{1.0};
   double max_prediction_horizon_{3.0};

@@ -46,6 +46,10 @@ void PredictedObstacleLayer::onInitialize()
   declareParameter("transform_tolerance", rclcpp::ParameterValue(0.2));
   declareParameter("publish_debug_costmap", rclcpp::ParameterValue(false));
   declareParameter("stats_log_period", rclcpp::ParameterValue(5.0));
+  // Stage-4G4: optional second representation. Default keeps the validated
+  // Stage-4D CV behaviour exactly.
+  declareParameter("prediction_mode", rclcpp::ParameterValue(std::string("cv_covariance")));
+  declareParameter("max_observation_age", rclcpp::ParameterValue(1.0));
 
   getParameters();
 
@@ -83,11 +87,12 @@ void PredictedObstacleLayer::onInitialize()
 
   RCLCPP_INFO(
     logger_,
-    "PredictedObstacleLayer(%s): topic=%s frame=%s rolling=%d sigma=%.2f "
-    "horizon=%.2fs decay=%.2f cost=[%d,%d] influence_radius=%.2fm",
+    "PredictedObstacleLayer(%s): topic=%s frame=%s rolling=%d mode=%s sigma=%.2f "
+    "horizon=%.2fs decay=%.2f cost=[%d,%d] influence_radius=%.2fm max_obs_age=%.2fs",
     name_.c_str(), tracked_objects_topic_.c_str(), global_frame_.c_str(),
-    static_cast<int>(rolling_window_), sigma_level_, max_prediction_horizon_, temporal_decay_,
-    min_cost_, max_cost_, max_influence_radius_);
+    static_cast<int>(rolling_window_), prediction_mode_.c_str(),
+    sigma_level_, max_prediction_horizon_, temporal_decay_,
+    min_cost_, max_cost_, max_influence_radius_, max_observation_age_);
 }
 
 void PredictedObstacleLayer::getParameters()
@@ -107,6 +112,17 @@ void PredictedObstacleLayer::getParameters()
   node->get_parameter(getFullName("transform_tolerance"), transform_tolerance_);
   node->get_parameter(getFullName("publish_debug_costmap"), publish_debug_costmap_);
   node->get_parameter(getFullName("stats_log_period"), stats_log_period_);
+  node->get_parameter(getFullName("prediction_mode"), prediction_mode_);
+  node->get_parameter(getFullName("max_observation_age"), max_observation_age_);
+  if (prediction_mode_ != "cv_covariance" && prediction_mode_ != "reachability") {
+    RCLCPP_WARN(
+      logger_,
+      "PredictedObstacleLayer(%s): unknown prediction_mode '%s'; falling back to "
+      "'cv_covariance' (the validated Stage-4D behaviour)",
+      name_.c_str(), prediction_mode_.c_str());
+    prediction_mode_ = "cv_covariance";
+  }
+  reachability_mode_ = (prediction_mode_ == "reachability");
 
   // This layer must never assert a hard obstacle: MAX_NON_OBSTACLE (252) is
   // the highest value that is not INSCRIBED_INFLATED_OBSTACLE/LETHAL, so a
@@ -257,7 +273,10 @@ void PredictedObstacleLayer::updateBounds(
     translation_y = transform.transform.translation.y;
   }
 
-  previous_written_ = rasterizePredictions(*tracks, rotation, translation_x, translation_y, now);
+  // Stage-4G4 mode switch. The CV branch is the unmodified Stage-4D call.
+  previous_written_ = reachability_mode_ ?
+    rasterizeReachability(*tracks, rotation, translation_x, translation_y, now) :
+    rasterizePredictions(*tracks, rotation, translation_x, translation_y, now);
 
   if (previous_written_.valid) {
     touch(previous_written_.min_x, previous_written_.min_y, min_x, min_y, max_x, max_y);
@@ -314,6 +333,148 @@ PredictedObstacleLayer::WorldBounds PredictedObstacleLayer::rasterizePredictions
     }
   }
   return written;
+}
+
+// ---------------------------------------------------------------------------
+// Stage-4G4: deterministic reachable-set rasterization (reachability mode)
+// ---------------------------------------------------------------------------
+//
+// COST SEMANTICS, stated explicitly because they differ from CV mode.
+//   CV mode:            cost = min_cost + exp(-d_maha^2/2) * exp(-decay*t) * span
+//                       -> a PROBABILITY DENSITY RATIO, peaked at the mean.
+//   Reachability mode:  cost = min_cost + 1 * exp(-decay*t) * span inside the
+//                       region, nothing outside
+//                       -> SET MEMBERSHIP. A bounded-motion reachable set has
+//                       no internal density: every point in it is equally
+//                       reachable, so painting a peak would invent
+//                       information the model does not contain.
+// The temporal decay is retained in both modes and means the same thing in
+// both: a policy statement that the layer commits less cost to more distant
+// futures. It is NOT a probability, and it never reshapes the region itself.
+//
+// Both modes still respect max_cost < INSCRIBED_INFLATED_OBSTACLE, so a
+// prediction can never be promoted to a sensed lethal obstacle, and both
+// combine with updateWithMax().
+PredictedObstacleLayer::WorldBounds PredictedObstacleLayer::rasterizeReachability(
+  const predictive_nav_msgs::msg::TrackedObjectArray & tracks,
+  const Eigen::Matrix2d & rotation, double translation_x, double translation_y,
+  const rclcpp::Time & now)
+{
+  WorldBounds written;
+
+  for (const auto & track : tracks.tracks) {
+    if (!track.kalman_initialized || track.reachability_predictions.empty()) {
+      continue;
+    }
+    // Same freshness rule as CV mode, so mode choice never changes which
+    // tracks are eligible -- only how an eligible track is painted.
+    const double track_age = (now - rclcpp::Time(track.stamp)).seconds();
+    if (track_age > track_timeout_) {
+      continue;
+    }
+
+    for (const auto & region : track.reachability_predictions) {
+      // The producer already marks a region invalid past its own
+      // max_observation_age; this layer additionally enforces its own bound so
+      // a mis-parameterised tracker cannot make the costmap paint stale sets.
+      if (!region.valid) {
+        continue;
+      }
+      if (region.time_from_now < 0.0 || region.time_from_now > max_prediction_horizon_) {
+        continue;
+      }
+      if (max_observation_age_ > 0.0 && region.observation_age > max_observation_age_) {
+        continue;
+      }
+      if (!std::isfinite(region.position.x) || !std::isfinite(region.position.y) ||
+        !std::isfinite(region.semi_major) || !std::isfinite(region.semi_minor) ||
+        !std::isfinite(region.sigma_yaw))
+      {
+        continue;
+      }
+      if (region.semi_major <= 0.0 || region.semi_minor <= 0.0) {
+        continue;
+      }
+
+      const Eigen::Vector2d center_map(region.position.x, region.position.y);
+      const Eigen::Vector2d center = rotation * center_map +
+        Eigen::Vector2d(translation_x, translation_y);
+      // The region is an ellipse in the map frame; the map->costmap transform
+      // here is a rotation, so only its orientation needs rotating.
+      const double yaw_costmap =
+        region.sigma_yaw + std::atan2(rotation(1, 0), rotation(0, 0));
+
+      rasterizeReachableSet(
+        center.x(), center.y(), region.semi_major, region.semi_minor, yaw_costmap,
+        region.time_from_now, written);
+    }
+  }
+  return written;
+}
+
+void PredictedObstacleLayer::rasterizeReachableSet(
+  double center_x, double center_y, double semi_major, double semi_minor, double yaw,
+  double time_from_now, WorldBounds & written)
+{
+  // Same costmap-policy bound as CV mode: this is not a statement about the
+  // model, only about how far this layer will paint per sample.
+  if (max_influence_radius_ > 0.0) {
+    semi_major = std::min(semi_major, max_influence_radius_);
+    semi_minor = std::min(semi_minor, max_influence_radius_);
+  }
+
+  const double c = std::cos(yaw);
+  const double sn = std::sin(yaw);
+  // Axis-aligned bounding box of a rotated ellipse.
+  const double half_x = std::hypot(semi_major * c, semi_minor * sn);
+  const double half_y = std::hypot(semi_major * sn, semi_minor * c);
+
+  const double temporal_weight = std::exp(-temporal_decay_ * time_from_now);
+  const double cost_span = static_cast<double>(max_cost_ - min_cost_);
+  const int cost_value = static_cast<int>(
+    std::lround(static_cast<double>(min_cost_) + temporal_weight * cost_span));
+  if (cost_value <= 0) {
+    return;
+  }
+  const unsigned char cost = static_cast<unsigned char>(
+    std::clamp(cost_value, 0, static_cast<int>(MAX_NON_OBSTACLE)));
+
+  int min_i = 0;
+  int min_j = 0;
+  int max_i = 0;
+  int max_j = 0;
+  worldToMapEnforceBounds(center_x - half_x, center_y - half_y, min_i, min_j);
+  worldToMapEnforceBounds(center_x + half_x, center_y + half_y, max_i, max_j);
+
+  for (int j = min_j; j <= max_j; ++j) {
+    for (int i = min_i; i <= max_i; ++i) {
+      double wx = 0.0;
+      double wy = 0.0;
+      mapToWorld(static_cast<unsigned int>(i), static_cast<unsigned int>(j), wx, wy);
+
+      const double dx = wx - center_x;
+      const double dy = wy - center_y;
+      const double u = (dx * c + dy * sn) / semi_major;
+      const double v = (-dx * sn + dy * c) / semi_minor;
+      if (u * u + v * v > 1.0) {
+        continue;   // outside the reachable set: this layer says nothing here
+      }
+
+      const unsigned int mx = static_cast<unsigned int>(i);
+      const unsigned int my = static_cast<unsigned int>(j);
+      const unsigned char existing = getCost(mx, my);
+      // Overlapping reachable sets (different horizons, different tracks) are
+      // alternative future occupancies: keep the most conservative one, the
+      // same max-composition rule CV mode uses.
+      if (existing == NO_INFORMATION || cost > existing) {
+        setCost(mx, my, cost);
+      }
+      if (existing == NO_INFORMATION) {
+        ++cells_written_last_;
+      }
+      written.include(wx, wy);
+    }
+  }
 }
 
 void PredictedObstacleLayer::rasterizeEllipse(
@@ -519,6 +680,20 @@ rcl_interfaces::msg::SetParametersResult PredictedObstacleLayer::dynamicParamete
       min_cost_ = std::clamp(static_cast<int>(parameter.as_int()), 0, max_cost_);
     } else if (full_name == getFullName("max_influence_radius")) {
       max_influence_radius_ = parameter.as_double();
+    } else if (full_name == getFullName("max_observation_age")) {
+      max_observation_age_ = parameter.as_double();
+    } else if (full_name == getFullName("prediction_mode")) {
+      // Runtime-switchable so one Gazebo launch can serve both A/B arms, the
+      // same way Stage-4E switched `enabled`. An unknown value falls back to
+      // the validated CV path rather than silently painting nothing.
+      const std::string requested = parameter.as_string();
+      if (requested == "cv_covariance" || requested == "reachability") {
+        prediction_mode_ = requested;
+        reachability_mode_ = (requested == "reachability");
+      } else {
+        result.successful = false;
+        result.reason = "prediction_mode must be 'cv_covariance' or 'reachability'";
+      }
     }
   }
   return result;

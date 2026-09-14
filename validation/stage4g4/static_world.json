@@ -1,0 +1,44 @@
+{
+ "note": "Stage-4F arena with no dynamic obstacle, robot navigating, predictive layer enabled in each mode. A reachable set is a SPLITTING-FREE but INFLATING mechanism, so the question it must answer is whether it ever asserts future occupancy where there is no dynamic object at all.",
+ "false_predictive_occupancy_max": 0,
+ "persistent_false_tracks_max": 0,
+ "all_succeeded": true,
+ "runs": [
+  {
+   "mode": "cv_covariance",
+   "trial": "static_navigation_01",
+   "confirmed_tracks": 0,
+   "false_confirmed_ids": 0,
+   "false_persistent_ids": 0,
+   "costmap_grids": 97,
+   "grids_with_predictive_cost": 0,
+   "nav_status": 4,
+   "succeeded": true,
+   "robot_distance_m": 5.850129526224574
+  },
+  {
+   "mode": "reachability",
+   "trial": "static_navigation_01",
+   "confirmed_tracks": 0,
+   "false_confirmed_ids": 0,
+   "false_persistent_ids": 0,
+   "costmap_grids": 96,
+   "grids_with_predictive_cost": 0,
+   "nav_status": 4,
+   "succeeded": true,
+   "robot_distance_m": 5.847574711240944
+  },
+  {
+   "mode": "reachability",
+   "trial": "static_navigation_02",
+   "confirmed_tracks": 0,
+   "false_confirmed_ids": 0,
+   "false_persistent_ids": 0,
+   "costmap_grids": 97,
+   "grids_with_predictive_cost": 0,
+   "nav_status": 4,
+   "succeeded": true,
+   "robot_distance_m": 5.879719967680663
+  }
+ ]
+}

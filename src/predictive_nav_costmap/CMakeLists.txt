@@ -63,6 +63,15 @@ if(BUILD_TESTING)
   ament_target_dependencies(stage4g2_multi_layer ${dependencies})
   add_test(NAME stage4g2_multi_layer COMMAND stage4g2_multi_layer)
   set_tests_properties(stage4g2_multi_layer PROPERTIES ENVIRONMENT "ROS_DOMAIN_ID=93" TIMEOUT 20)
+
+  # Stage-4G4: optional reachability costmap mode (and CV-mode preservation).
+  add_executable(stage4g4_reach_layer test/stage4g4_reach_layer.cpp)
+  target_link_libraries(stage4g4_reach_layer predictive_nav_costmap_layers)
+  target_include_directories(stage4g4_reach_layer PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../predictive_nav_tracking/include)
+  ament_target_dependencies(stage4g4_reach_layer ${dependencies})
+  add_test(NAME stage4g4_reach_layer COMMAND stage4g4_reach_layer)
+  set_tests_properties(stage4g4_reach_layer PROPERTIES ENVIRONMENT "ROS_DOMAIN_ID=97" TIMEOUT 40)
   find_package(ament_lint_auto REQUIRED)
   set(ament_cmake_copyright_FOUND TRUE)
   set(ament_cmake_cpplint_FOUND TRUE)

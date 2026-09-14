@@ -1,0 +1,276 @@
+{
+ "note": "a_max and margin sweeps are recomputed offline from the published per-sample state (centre, velocity, total_time, statistical axes); the offline reproduction of the runtime bound was verified exact on every sample. The CV-sigma sweep varies only the confidence level applied to the unchanged published covariance.",
+ "offline_bound_reproduction_error_m": 0.0,
+ "a_max_mps2": {
+  "0.25": {
+   "0.5": {
+    "samples": 1938,
+    "coverage": 0.9798761609907121,
+    "area_m2": 0.24710446215831808,
+    "coverage_per_m2": 3.965432887905166
+   },
+   "1": {
+    "samples": 1820,
+    "coverage": 1.0,
+    "area_m2": 1.75355171221377,
+    "coverage_per_m2": 0.5702711776532389
+   },
+   "2": {
+    "samples": 1603,
+    "coverage": 1.0,
+    "area_m2": 21.700822001884266,
+    "coverage_per_m2": 0.0460812037402625
+   },
+   "3": {
+    "samples": 1384,
+    "coverage": 1.0,
+    "area_m2": 104.38872097409842,
+    "coverage_per_m2": 0.00957957900689411
+   }
+  },
+  "0.5": {
+   "0.5": {
+    "samples": 1938,
+    "coverage": 0.9917440660474717,
+    "area_m2": 0.3148624645399939,
+    "coverage_per_m2": 3.1497691142587754
+   },
+   "1": {
+    "samples": 1820,
+    "coverage": 1.0,
+    "area_m2": 2.4201505109164954,
+    "coverage_per_m2": 0.4131974418488983
+   },
+   "2": {
+    "samples": 1603,
+    "coverage": 1.0,
+    "area_m2": 30.742396124277064,
+    "coverage_per_m2": 0.03252836883492977
+   },
+   "3": {
+    "samples": 1384,
+    "coverage": 1.0,
+    "area_m2": 139.56996344539556,
+    "coverage_per_m2": 0.0071648653858910945
+   }
+  },
+  "1": {
+   "0.5": {
+    "samples": 1938,
+    "coverage": 0.9989680082559339,
+    "area_m2": 0.4699835499215177,
+    "coverage_per_m2": 2.125538241546435
+   },
+   "1": {
+    "samples": 1820,
+    "coverage": 1.0,
+    "area_m2": 4.000672002171558,
+    "coverage_per_m2": 0.24995800691913803
+   },
+   "2": {
+    "samples": 1603,
+    "coverage": 1.0,
+    "area_m2": 42.54165753564225,
+    "coverage_per_m2": 0.023506371352883464
+   },
+   "3": {
+    "samples": 1384,
+    "coverage": 1.0,
+    "area_m2": 164.76376829658892,
+    "coverage_per_m2": 0.006069295515261063
+   }
+  }
+ },
+ "cv_sigma": {
+  "1": {
+   "0.5": {
+    "samples": 1938,
+    "coverage": 0.022703818369453045,
+    "area_m2": 0.0413875078586191,
+    "coverage_per_m2": 0.5485669358737407
+   },
+   "1": {
+    "samples": 1820,
+    "coverage": 0.939010989010989,
+    "area_m2": 0.2785666080599166,
+    "coverage_per_m2": 3.3708670093330713
+   },
+   "2": {
+    "samples": 1603,
+    "coverage": 0.9987523393636931,
+    "area_m2": 3.41581096823181,
+    "coverage_per_m2": 0.292390986694646
+   },
+   "3": {
+    "samples": 1388,
+    "coverage": 1.0,
+    "area_m2": 16.486079938356813,
+    "coverage_per_m2": 0.060657233480554816
+   }
+  },
+  "1.5": {
+   "0.5": {
+    "samples": 1938,
+    "coverage": 0.4855521155830753,
+    "area_m2": 0.09312189268189297,
+    "coverage_per_m2": 5.214156430880707
+   },
+   "1": {
+    "samples": 1820,
+    "coverage": 0.987912087912088,
+    "area_m2": 0.6267748681348125,
+    "coverage_per_m2": 1.5761833126014853
+   },
+   "2": {
+    "samples": 1603,
+    "coverage": 1.0,
+    "area_m2": 7.685574678521574,
+    "coverage_per_m2": 0.13011388761788256
+   },
+   "3": {
+    "samples": 1388,
+    "coverage": 1.0,
+    "area_m2": 37.093679861302824,
+    "coverage_per_m2": 0.026958770435802144
+   }
+  },
+  "2": {
+   "0.5": {
+    "samples": 1938,
+    "coverage": 0.9520123839009288,
+    "area_m2": 0.1655500314344764,
+    "coverage_per_m2": 5.750602253903702
+   },
+   "1": {
+    "samples": 1820,
+    "coverage": 0.9994505494505495,
+    "area_m2": 1.1142664322396665,
+    "coverage_per_m2": 0.8969583221148123
+   },
+   "2": {
+    "samples": 1603,
+    "coverage": 1.0,
+    "area_m2": 13.66324387292724,
+    "coverage_per_m2": 0.07318906178505896
+   },
+   "3": {
+    "samples": 1388,
+    "coverage": 1.0,
+    "area_m2": 65.94431975342725,
+    "coverage_per_m2": 0.015164308370138704
+   }
+  },
+  "3": {
+   "0.5": {
+    "samples": 1938,
+    "coverage": 0.9989680082559339,
+    "area_m2": 0.3724875707275719,
+    "coverage_per_m2": 2.681882797604955
+   },
+   "1": {
+    "samples": 1820,
+    "coverage": 1.0,
+    "area_m2": 2.50709947253925,
+    "coverage_per_m2": 0.3988673010198419
+   },
+   "2": {
+    "samples": 1603,
+    "coverage": 1.0,
+    "area_m2": 30.742298714086296,
+    "coverage_per_m2": 0.03252847190447064
+   },
+   "3": {
+    "samples": 1388,
+    "coverage": 1.0,
+    "area_m2": 148.3747194452113,
+    "coverage_per_m2": 0.006739692608950536
+   }
+  }
+ },
+ "base_safety_margin_m": {
+  "0": {
+   "0.5": {
+    "samples": 1938,
+    "coverage": 0.9917440660474717,
+    "area_m2": 0.3148624645399939,
+    "coverage_per_m2": 3.1497691142587754
+   },
+   "1": {
+    "samples": 1820,
+    "coverage": 1.0,
+    "area_m2": 2.4201505109164954,
+    "coverage_per_m2": 0.4131974418488983
+   },
+   "2": {
+    "samples": 1603,
+    "coverage": 1.0,
+    "area_m2": 30.742396124277064,
+    "coverage_per_m2": 0.03252836883492977
+   },
+   "3": {
+    "samples": 1384,
+    "coverage": 1.0,
+    "area_m2": 139.56996344539556,
+    "coverage_per_m2": 0.0071648653858910945
+   }
+  },
+  "0.1": {
+   "0.5": {
+    "samples": 1938,
+    "coverage": 0.999484004127967,
+    "area_m2": 0.5365556179614278,
+    "coverage_per_m2": 1.8627780059882224
+   },
+   "1": {
+    "samples": 1820,
+    "coverage": 1.0,
+    "area_m2": 2.9948149226976715,
+    "coverage_per_m2": 0.3339104504992981
+   },
+   "2": {
+    "samples": 1603,
+    "coverage": 1.0,
+    "area_m2": 32.732375983808794,
+    "coverage_per_m2": 0.030550791683886747
+   },
+   "3": {
+    "samples": 1384,
+    "coverage": 1.0,
+    "area_m2": 143.78309383244934,
+    "coverage_per_m2": 0.00695492059146607
+   }
+  },
+  "0.2": {
+   "0.5": {
+    "samples": 1938,
+    "coverage": 1.0,
+    "area_m2": 0.8210806244546572,
+    "coverage_per_m2": 1.2179071947583429
+   },
+   "1": {
+    "samples": 1820,
+    "coverage": 1.0,
+    "area_m2": 3.6323111875506418,
+    "coverage_per_m2": 0.2753068083559011
+   },
+   "2": {
+    "samples": 1603,
+    "coverage": 1.0,
+    "area_m2": 34.785187696412315,
+    "coverage_per_m2": 0.02874786845273048
+   },
+   "3": {
+    "samples": 1384,
+    "coverage": 1.0,
+    "area_m2": 148.0590560725749,
+    "coverage_per_m2": 0.00675406170028414
+   }
+  }
+ },
+ "frozen": {
+  "max_acceleration": 0.5,
+  "max_speed": 0.8,
+  "covariance_sigma_level": 2.0,
+  "base_safety_margin": 0.0
+ }
+}
