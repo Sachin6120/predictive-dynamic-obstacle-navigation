@@ -31,6 +31,7 @@ install(PROGRAMS
   scripts/stage4f_trial.py
   scripts/run_stage4f_bench.py
   scripts/summarize_stage4f.py
+  scripts/stage4g8/scan_noise.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

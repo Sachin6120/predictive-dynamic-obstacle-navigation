@@ -23,6 +23,8 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
+from launch.substitutions import PythonExpression
+from launch_ros.parameter_descriptions import ParameterValue
 from launch.actions import (DeclareLaunchArgument, EmitEvent, IncludeLaunchDescription,
                             RegisterEventHandler, TimerAction)
 from launch.conditions import IfCondition
@@ -44,6 +46,9 @@ ARG_NAMES = (
     'policy_max_prediction_horizon', 'policy_sigma_level',
     'policy_temporal_decay', 'policy_max_cost', 'policy_min_cost',
     'policy_max_influence_radius', 'nav_timeout',
+    # Stage-4G8 robustness hooks (defaults reproduce every earlier stage).
+    'tracker_params', 'tracker_scan_topic',
+    'initialpose_dx', 'initialpose_dy', 'initialpose_dyaw',
 )
 
 
@@ -101,6 +106,21 @@ def generate_launch_description():
         DeclareLaunchArgument('policy_min_cost', default_value='0'),
         DeclareLaunchArgument('policy_max_influence_radius', default_value='0.55'),
         DeclareLaunchArgument('nav_timeout', default_value='60.0'),
+        # --- Stage-4G8 robustness hooks. Defaults reproduce every earlier
+        # stage exactly; each is a TEST perturbation, never an algorithm change.
+        DeclareLaunchArgument(
+            'tracker_params',
+            default_value=os.path.join(tracking_dir, 'config', 'tracker_params.yaml'),
+            description='tracker parameter file; the Stage-4G8 production run '
+                        'points this at production_tracker_params.yaml'),
+        DeclareLaunchArgument(
+            'tracker_scan_topic', default_value='',
+            description='override the tracker scan topic only (e.g. /scan_noisy), '
+                        'so injected sensor noise reaches the TRACKER without '
+                        'also corrupting AMCL and the obstacle costmap'),
+        DeclareLaunchArgument('initialpose_dx', default_value='0.0'),
+        DeclareLaunchArgument('initialpose_dy', default_value='0.0'),
+        DeclareLaunchArgument('initialpose_dyaw', default_value='0.0'),
     ]
 
     tb3_simulation = IncludeLaunchDescription(
@@ -118,11 +138,21 @@ def generate_launch_description():
         }.items(),
     )
 
+    # The robot is SPAWNED at (start_x, start_y, start_yaw) but AMCL is TOLD
+    # (start + initialpose_d*). A non-zero offset is therefore a controlled,
+    # repeatable localisation error whose magnitude is known exactly, rather
+    # than an unbounded random perturbation.
     initial_pose_publisher = Node(
         package='predictive_nav_bringup', executable='publish_initial_pose.py',
         name='initial_pose_publisher', output='screen',
-        parameters=[{'x': a['start_x'], 'y': a['start_y'],
-                     'yaw': a['start_yaw'], 'wait_timeout_sec': 60.0}],
+        parameters=[{
+            'x': ParameterValue(PythonExpression(
+                [a['start_x'], ' + ', a['initialpose_dx']]), value_type=float),
+            'y': ParameterValue(PythonExpression(
+                [a['start_y'], ' + ', a['initialpose_dy']]), value_type=float),
+            'yaw': ParameterValue(PythonExpression(
+                [a['start_yaw'], ' + ', a['initialpose_dyaw']]), value_type=float),
+            'wait_timeout_sec': 60.0}],
     )
 
     spawn_dynamic_obstacle = Node(
@@ -145,7 +175,10 @@ def generate_launch_description():
     lidar_obstacle_tracker = Node(
         package='predictive_nav_tracking', executable='lidar_obstacle_tracker_node',
         name='lidar_obstacle_tracker', output='screen',
-        parameters=[os.path.join(tracking_dir, 'config', 'tracker_params.yaml')],
+        parameters=[a['tracker_params'],
+                    {'scan_topic': ParameterValue(PythonExpression(
+                        ["'", a['tracker_scan_topic'], "' or '/scan'"]),
+                        value_type=str)}],
     )
 
     trial = Node(

@@ -1,0 +1,26 @@
+condition,trials,collisions,worst_clearance_m,mean_clearance_m,false_confirmed,false_persistent,failure_class,note
+speed 0.15 m/s,10,0,0.8547,0.8826,0,0,-,within envelope
+speed 0.25,9,0,0.5855,0.649,0,0,-,within envelope
+speed 0.50,10,0,0.7586,0.8032,1,0,-,within envelope
+speed 0.75,10,0,0.6605,0.6902,0,0,-,within envelope
+speed 1.00,9,0,0.028,0.1837,8,5,H,"reaction lead falls to 0.76 s and worst clearance to 0.028 m: insufficient time to react, not a tracking or prediction fault."
+timing -1.5 s,8,0,0.8867,0.9347,0,0,-,within envelope
+timing 0.0 s,15,0,0.7359,0.7824,0,0,-,within envelope
+timing +1.5 s,8,2,-0.115,0.4676,22,9,H,the crossing arrives inside the braking distance.
+sensor noise +0.00 m,20,0,0.9886,1.116,1,0,-,within envelope
+sensor noise +0.03 m,9,0,1.0877,1.14,0,0,-,within envelope
+sensor noise +0.06 m,10,0,1.0889,1.1463,0,0,-,within envelope
+sensor noise +0.10 m,9,0,1.1241,1.1743,80,35,B,added range noise exceeds the 0.15 m static-rejection radius; walls begin producing false tracks. Navigation stays collision-free because the false cost is conservative.
+localisation offset dx=0.15 m,10,0,1.0957,1.1817,24,1,-,tolerated
+localisation offset dx=0.3 m,10,0,1.1255,1.2208,126,73,B,pose error shifts scan points off their map cells; Stage-4G1 identified this exact sensitivity. Navigation stays collision-free.
+localisation offset dx=0.5 m,10,0,1.298,1.3592,155,69,B,"as above, more severe. Still collision-free but static rejection is substantially degraded."
+geometry-rich world (corner),10,0,0.8853,0.9453,0,0,-,within envelope
+brief occlusion (CV-only),10,0,0.1104,0.3811,0,0,A,"CV coasting coverage is low during the gap (the known Stage-4G4/4G7 limitation). Track survives, same ID reacquired, no collision."
+2 objects (validated),10,0,1.1052,1.12,0,0,-,within envelope
+3 objects (validated),10,0,1.7383,1.7543,0,0,-,within envelope
+3 objects mixed visibility,10,0,0.1482,0.3843,14,0,-,within envelope
+2 objects converging (stress),10,6,-0.2,-0.0419,122,69,H,two obstacles converge on the robot from opposite sides with no escape corridor; harsher than any validated scenario.
+3 objects converging (stress),10,7,-0.2,-0.0614,136,77,H,as above.
+head-on (stress),10,2,-0.2,0.0372,48,23,H,head-on closing speed leaves minimal braking distance; Stage-4F recorded the same class as the hardest condition.
+randomised jitter,12,0,0.9057,1.1493,0,0,-,within envelope
+"endurance 150 s, 3 objects",2,0,0.1726,0.2043,0,0,-,within envelope

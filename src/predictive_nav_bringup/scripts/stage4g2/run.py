@@ -25,6 +25,7 @@ import hashlib
 import json
 import math
 import os
+import random
 from pathlib import Path
 import signal
 import subprocess
@@ -81,13 +82,47 @@ def run(args, scenarios):
             trial_dir = out / f'{name}_{trial:02d}'
             trial_dir.mkdir()  # never silently overwrite baseline evidence
             sequence += 1
+            # Deterministic per-trial randomisation: the seed is derived from the
+            # base seed and the trial index, and is recorded in provenance, so a
+            # jittered trial is exactly reproducible.
+            trial_seed = args.seed + sequence
+            scenario_def = json.loads(json.dumps(scenarios[name]))
+            jitter_applied = None
+            if args.jitter > 0:
+                rng = random.Random(trial_seed)
+                j = args.jitter
+                jitter_applied = []
+                for obj in scenario_def.get('objects', []):
+                    dx = rng.uniform(-0.15, 0.15) * j
+                    dy = rng.uniform(-0.15, 0.15) * j
+                    ds = 1.0 + rng.uniform(-0.12, 0.12) * j
+                    dt = rng.uniform(-0.8, 0.8) * j
+                    obj['start'] = [obj['start'][0] + dx, obj['start'][1] + dy]
+                    if 'velocity' in obj:
+                        obj['velocity'] = [v * ds for v in obj['velocity']]
+                    if 'segments' in obj:
+                        obj['segments'] = [[d, vx * ds, vy * ds]
+                                           for d, vx, vy in obj['segments']]
+                    # A positive dt delays the object by holding it still first.
+                    if dt > 0:
+                        obj.setdefault('segments', [[scenario_def['duration'],
+                                                     *obj.get('velocity', [0, 0])]])
+                        obj['segments'] = [[dt, 0.0, 0.0]] + obj['segments']
+                        obj.pop('velocity', None)
+                    jitter_applied.append(dict(dx=round(dx, 4), dy=round(dy, 4),
+                                               speed_scale=round(ds, 4),
+                                               delay_s=round(max(dt, 0.0), 4)))
             env = dict(os.environ, ROS_DOMAIN_ID=str(args.domain + sequence),
                        GZ_PARTITION=f'stage4g2_{os.getpid()}_{name}_{trial}',
                        ROS_LOG_DIR=str(trial_dir / 'ros_logs'))
             provenance = {
                 'head': subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
                 'stage4f_reference': subprocess.check_output(['git','rev-parse','stage4f-validated^{commit}'],cwd=ROOT,text=True).strip(),
-                'definition': scenarios[name], 'layer_mode': args.layer_mode,
+                'definition': scenario_def, 'layer_mode': args.layer_mode,
+                'production': bool(args.production), 'scan_noise_sigma': args.scan_noise,
+                'pose_offset': [args.pose_dx, args.pose_dy, args.pose_dyaw],
+                'jitter': args.jitter, 'trial_seed': trial_seed,
+                'jitter_applied': jitter_applied,
                 'world': scenarios[name].get('world', 'stage4f_benchmark'),
                 'ros_domain_id': env['ROS_DOMAIN_ID'], 'gz_partition': env['GZ_PARTITION'],
                 'sha256': {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
@@ -95,9 +130,14 @@ def run(args, scenarios):
                         ROOT/'src/predictive_nav_tracking/src/lidar_obstacle_tracker_node.cpp',
                         ROOT/'src/predictive_nav_tracking/config/tracker_params.yaml']}}
             (trial_dir/'provenance.json').write_text(json.dumps(provenance,indent=2)+'\n')
+            # The worker reads the (possibly jittered) definition from the trial
+            # directory, so what ran is exactly what was recorded.
+            (trial_dir/'definition.json').write_text(
+                json.dumps({name: scenario_def}, indent=1)+'\n')
             print(f'START {trial_dir.name}', flush=True)
             launch = None
             worker = None
+            noise = None
             try:
                 with (trial_dir / 'launch.log').open('w') as log:
                     # Stage-4G7: a scenario may name its own static world. The
@@ -107,6 +147,18 @@ def run(args, scenarios):
                         'ros2', 'launch', 'predictive_nav_bringup',
                         'stage4f_bringup.launch.py', 'spawn_obstacle:=False',
                         'run_trial:=False', 'headless:=True', 'use_rviz:=False']
+                    if args.production:
+                        launch_args += [
+                            f'params_file:={ROOT}/src/predictive_nav_bringup/config/'
+                            'production_nav2_params.yaml',
+                            f'tracker_params:={ROOT}/src/predictive_nav_tracking/config/'
+                            'production_tracker_params.yaml']
+                    if args.scan_noise > 0:
+                        launch_args += ['tracker_scan_topic:=/scan_noisy']
+                    if args.pose_dx or args.pose_dy or args.pose_dyaw:
+                        launch_args += [f'initialpose_dx:={args.pose_dx}',
+                                        f'initialpose_dy:={args.pose_dy}',
+                                        f'initialpose_dyaw:={args.pose_dyaw}']
                     world = scenarios[name].get('world')
                     if world:
                         launch_args += [
@@ -115,11 +167,19 @@ def run(args, scenarios):
                     launch = subprocess.Popen(
                         launch_args, env=env, stdout=log, stderr=subprocess.STDOUT,
                         start_new_session=True)
+                    if args.scan_noise > 0:
+                        noise = subprocess.Popen([
+                            sys.executable,
+                            str(ROOT / 'src/predictive_nav_bringup/scripts/stage4g8/'
+                                       'scan_noise.py'),
+                            '--sigma', str(args.scan_noise), '--seed', str(trial_seed)],
+                            env=env, stdout=log, stderr=subprocess.STDOUT,
+                            start_new_session=True)
                     with (trial_dir / 'worker.log').open('w') as wlog:
                         worker = subprocess.Popen([
                             sys.executable, str(Path(__file__).resolve()),
                             '--worker', name, '--out', str(trial_dir),
-                            '--definitions', args.definitions,
+                            '--definitions', str(trial_dir / 'definition.json'),
                             '--layer-mode', args.layer_mode], env=env,
                             stdout=wlog, stderr=subprocess.STDOUT, start_new_session=True)
                         worker.wait(timeout=300)
@@ -137,6 +197,7 @@ def run(args, scenarios):
                 continue
             finally:
                 stop(worker)
+                stop(noise)
                 stop(launch)
             subprocess.run([sys.executable, str(HERE / 'score.py'), str(trial_dir)], check=True)
             print(f'DONE {trial_dir.name}', flush=True)
@@ -368,7 +429,10 @@ def worker(args, scenario):
             assert goal_handle.accepted
             result_future = goal_handle.get_result_async()
         commanded = [(0.0, [0.0, 0.0]) for _ in objects]
-        wall_deadline = time.monotonic()+120
+        # The wall-clock guard must scale with the scenario: a fixed 120 s budget
+        # aborts any scenario longer than that as a "stalled clock", which is what
+        # happened to the Stage-4G8 150 s endurance run.
+        wall_deadline = time.monotonic()+max(120, scenario['duration']*2.5)
         while n.get_clock().now().nanoseconds*1e-9-t0 < scenario['duration']:
             if time.monotonic()>wall_deadline:
                 raise TimeoutError('Simulation clock stalled')
@@ -433,6 +497,23 @@ if __name__ == '__main__':
     p.add_argument('--scenarios', default='single,parallel,opposing,crossing,crossing_resolved,near_crossing,occlusion')
     p.add_argument('--trials', type=int, default=1)
     p.add_argument('--domain', type=int, default=92)
+    # --- Stage-4G8 robustness dimensions. All default to the validated
+    # behaviour, so every earlier stage reproduces unchanged.
+    p.add_argument('--production', action='store_true',
+                   help='use the FINAL production configuration '
+                        '(production_nav2_params.yaml + production_tracker_params.yaml)')
+    p.add_argument('--scan-noise', type=float, default=0.0,
+                   help='extra LiDAR range sigma (m) injected on the TRACKER input only')
+    p.add_argument('--pose-dx', type=float, default=0.0)
+    p.add_argument('--pose-dy', type=float, default=0.0)
+    p.add_argument('--pose-dyaw', type=float, default=0.0,
+                   help='controlled localisation error: the robot spawns at the true pose '
+                        'but AMCL is initialised at true + (dx, dy, dyaw)')
+    p.add_argument('--jitter', type=float, default=0.0,
+                   help='per-trial random perturbation scale for obstacle start time, '
+                        'position and speed; 0 disables. Seeded per trial and logged.')
+    p.add_argument('--seed', type=int, default=4008,
+                   help='base RNG seed; each trial uses seed + trial index')
     p.add_argument('--layer-mode', default='keep',
                    choices=['keep','reactive','cv_covariance','reachability','hybrid'],
                    help='predictive costmap arm; "keep" leaves the launch configuration alone')

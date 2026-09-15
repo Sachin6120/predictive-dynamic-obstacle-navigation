@@ -1650,5 +1650,528 @@
     ]
    }
   ]
+ },
+ "g8_perp": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     0.8,
+     -2.5
+    ],
+    "velocity": [
+     0.0,
+     0.45
+    ]
+   }
+  ]
+ },
+ "g8_oblique": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     0.2,
+     -2.6
+    ],
+    "velocity": [
+     0.3,
+     0.34
+    ]
+   }
+  ]
+ },
+ "g8_headon": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     3.2,
+     0.0
+    ],
+    "velocity": [
+     -0.35,
+     0.0
+    ]
+   }
+  ]
+ },
+ "g8_noconf": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     0.8,
+     -3.2
+    ],
+    "velocity": [
+     0.0,
+     -0.3
+    ]
+   }
+  ]
+ },
+ "g8_reversal": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     0.8,
+     1.6
+    ],
+    "segments": [
+     [
+      3,
+      0.0,
+      0.3
+     ],
+     [
+      9,
+      0.0,
+      -0.5
+     ],
+     [
+      20,
+      0.0,
+      0.0
+     ]
+    ],
+    "accel": 0.5
+   }
+  ]
+ },
+ "g8_multi2": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     0.8,
+     -2.5
+    ],
+    "velocity": [
+     0.0,
+     0.45
+    ]
+   },
+   {
+    "start": [
+     -0.4,
+     2.4
+    ],
+    "velocity": [
+     0.0,
+     -0.25
+    ]
+   }
+  ]
+ },
+ "g8_multi3": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     0.8,
+     -2.5
+    ],
+    "velocity": [
+     0.0,
+     0.45
+    ]
+   },
+   {
+    "start": [
+     -0.4,
+     2.4
+    ],
+    "velocity": [
+     0.0,
+     -0.25
+    ]
+   },
+   {
+    "start": [
+     2.2,
+     2.6
+    ],
+    "velocity": [
+     0.0,
+     -0.3
+    ]
+   }
+  ]
+ },
+ "g8_speed_015": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     0.8,
+     -2.5
+    ],
+    "segments": [
+     [
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      32.0,
+      0.0,
+      0.15
+     ]
+    ]
+   }
+  ]
+ },
+ "g8_speed_025": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     0.8,
+     -2.5
+    ],
+    "segments": [
+     [
+      0.0,
+      0.0,
+      0.0
+     ],
+     [
+      32.0,
+      0.0,
+      0.25
+     ]
+    ]
+   }
+  ]
+ },
+ "g8_speed_05": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     0.8,
+     -2.5
+    ],
+    "segments": [
+     [
+      3.3000000000000007,
+      0.0,
+      0.0
+     ],
+     [
+      32.0,
+      0.0,
+      0.5
+     ]
+    ]
+   }
+  ]
+ },
+ "g8_speed_075": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     0.8,
+     -2.5
+    ],
+    "segments": [
+     [
+      4.966666666666667,
+      0.0,
+      0.0
+     ],
+     [
+      32.0,
+      0.0,
+      0.75
+     ]
+    ]
+   }
+  ]
+ },
+ "g8_speed_10": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     0.8,
+     -2.5
+    ],
+    "segments": [
+     [
+      5.800000000000001,
+      0.0,
+      0.0
+     ],
+     [
+      32.0,
+      0.0,
+      1.0
+     ]
+    ]
+   }
+  ]
+ },
+ "g8_time_m15": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     0.8,
+     -2.5
+    ],
+    "segments": [
+     [
+      1.4,
+      0.0,
+      0.0
+     ],
+     [
+      32.0,
+      0.0,
+      0.45
+     ]
+    ]
+   }
+  ]
+ },
+ "g8_time_m10": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     0.8,
+     -2.5
+    ],
+    "segments": [
+     [
+      1.9,
+      0.0,
+      0.0
+     ],
+     [
+      32.0,
+      0.0,
+      0.45
+     ]
+    ]
+   }
+  ]
+ },
+ "g8_time_m05": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     0.8,
+     -2.5
+    ],
+    "segments": [
+     [
+      2.4,
+      0.0,
+      0.0
+     ],
+     [
+      32.0,
+      0.0,
+      0.45
+     ]
+    ]
+   }
+  ]
+ },
+ "g8_time_p00": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     0.8,
+     -2.5
+    ],
+    "segments": [
+     [
+      2.9,
+      0.0,
+      0.0
+     ],
+     [
+      32.0,
+      0.0,
+      0.45
+     ]
+    ]
+   }
+  ]
+ },
+ "g8_time_p05": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     0.8,
+     -2.5
+    ],
+    "segments": [
+     [
+      3.4,
+      0.0,
+      0.0
+     ],
+     [
+      32.0,
+      0.0,
+      0.45
+     ]
+    ]
+   }
+  ]
+ },
+ "g8_time_p10": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     0.8,
+     -2.5
+    ],
+    "segments": [
+     [
+      3.9,
+      0.0,
+      0.0
+     ],
+     [
+      32.0,
+      0.0,
+      0.45
+     ]
+    ]
+   }
+  ]
+ },
+ "g8_time_p15": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     0.8,
+     -2.5
+    ],
+    "segments": [
+     [
+      4.4,
+      0.0,
+      0.0
+     ],
+     [
+      32.0,
+      0.0,
+      0.45
+     ]
+    ]
+   }
+  ]
+ },
+ "g8_corner": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     -0.25,
+     3.4
+    ],
+    "velocity": [
+     0.0,
+     -0.68
+    ]
+   }
+  ],
+  "world": "stage4g7_c30"
+ },
+ "g8_occlusion": {
+  "duration": 32,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     -1.0,
+     -2.0
+    ],
+    "velocity": [
+     0.0,
+     0.6
+    ]
+   },
+   {
+    "start": [
+     0.0,
+     0.0
+    ],
+    "velocity": [
+     0.15,
+     0.0
+    ]
+   }
+  ]
+ },
+ "g8_endurance": {
+  "duration": 150,
+  "navigate": true,
+  "objects": [
+   {
+    "start": [
+     0.8,
+     -2.5
+    ],
+    "velocity": [
+     0.0,
+     0.22
+    ]
+   },
+   {
+    "start": [
+     -0.4,
+     2.8
+    ],
+    "velocity": [
+     0.0,
+     -0.18
+    ]
+   },
+   {
+    "start": [
+     2.2,
+     -2.8
+    ],
+    "velocity": [
+     0.0,
+     0.16
+    ]
+   }
+  ]
  }
 }

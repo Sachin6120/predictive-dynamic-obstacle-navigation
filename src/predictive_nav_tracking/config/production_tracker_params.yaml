@@ -1,0 +1,172 @@
+# ===========================================================================
+# FINAL PRODUCTION TRACKER PARAMETERS -- Stage-4G8
+#
+# Derived from tracker_params.yaml, which stays byte-for-byte unchanged so
+# Stage-4B..4G7 remain reproducible. The ONLY difference is
+# reachability_enabled: true -> false. Every Stage-4G1 static-rejection,
+# Stage-4B clustering, Stage-4G3 deblending, association, lifecycle and
+# Stage-4C Kalman/prediction parameter is identical.
+# ===========================================================================
+lidar_obstacle_tracker:
+  ros__parameters:
+    scan_topic: "/scan"
+    map_topic: "/map"
+    map_frame: "map"
+
+    # --- Static rejection (Stage-4G1: range aware) ---------------------
+    # A transformed scan point is rejected as STATIC when its distance to the
+    # nearest static map cell is <= r_reject(range), where
+    #
+    #   r_reject(range) = clamp(base_static_margin
+    #                           + localization_margin
+    #                           + angular_sampling_scale * range,
+    #                           static_reject_radius,
+    #                           max_static_reject_radius)
+    #
+    # The distance itself comes from an exact Euclidean distance transform of
+    # the map, rebuilt once per map message, so the query is a single lookup.
+    #
+    # WHY the range term exists (measured, Stage-4G1 section 2): a pose yaw
+    # error of dtheta displaces a beam endpoint laterally by range * dtheta, so
+    # the mismatch between a wall return and the mapped wall GROWS WITH RANGE
+    # while a fixed radius does not. In the 10 x 8 m Stage-4F arena, with the
+    # robot driving, the measured residual-retention rate under the old fixed
+    # 0.15 m rule rose from 0.00% at 1-2 m to 2.48% at 5-6 m, which is what
+    # produced false dynamic tracks there. Stationary, the rate is 0% at every
+    # range -- the error is motion-induced, not sensor-intrinsic.
+    static_reject_radius: 0.15      # m: MINIMUM radius (and the only radius if
+                                    # range_aware_static_rejection is false).
+                                    # Unchanged from Stage-4B, so close-range
+                                    # behaviour is bit-for-bit the old one.
+    range_aware_static_rejection: true
+    base_static_margin: 0.06        # m: one 0.05 m map cell of discretisation
+                                    # plus ~3 sigma of the 0.01 m range noise.
+    localization_margin: 0.06       # m: translation component of the
+                                    # map->sensor pose error (measured p95
+                                    # 0.118 m while driving; only the part
+                                    # normal to a surface displaces a point
+                                    # off it).
+    angular_sampling_scale: 0.030   # rad: beam half-spacing (0.0087) + pose
+                                    # yaw uncertainty (measured p95 0.0262).
+    max_static_reject_radius: 0.40  # m: ceiling, so an anomalously long return
+                                    # can never blank out a region.
+    occupied_threshold: 65
+    unknown_cells_are_static: false
+
+    # Clustering of the surviving (non-static) points.
+    cluster_distance: 0.35
+    cluster_min_points: 3
+    cluster_max_points: 200
+    cluster_max_diameter: 1.2
+
+    # --- Stage-4G3: track-aware cluster deblending ---------------------
+    # Two obstacles passing close together fall into ONE 0.35 m-connected
+    # cluster. The blended centroid can then only feed one track (greedy
+    # association is one-to-one), the other track starves and expires, and
+    # the identity is lost. Measured at Stage-4G2: 4-5 merged scans per close
+    # crossing, 2 ID switches per trial.
+    #
+    # The fix splits such a cluster using the tracker's OWN Kalman predictions
+    # as seeds -- runtime state, never simulator ground truth -- and only when
+    # the raw returns show a gap to split on. If one object is physically
+    # occluded it contributes no returns, no gap exists, the split is refused
+    # and the unobserved track coasts on prediction exactly as before.
+    #
+    # The thresholds are measured from the 1,197 recorded Stage-4G2 frames,
+    # not derived from the simulator's cylinder size:
+    #   accepted clusters holding ONE object's returns : max diameter 0.468 m
+    #   accepted clusters holding TWO objects' returns : min diameter 0.785 m
+    #   largest gap between returns ON one object      : p95 0.147 m, max 0.161 m
+    #   smallest gap BETWEEN two merged objects        : 0.123 m (median 0.235 m)
+    # Point count is deliberately NOT used as merge evidence: the single-object
+    # (max 16) and merged (min 12) distributions overlap, so it does not
+    # discriminate. Diameter does, with a 0.32 m margin on either side.
+    #
+    # Scale merge_min_cluster_diameter / deblend_max_child_diameter with the
+    # expected obstacle size if the obstacles are not ~0.4 m across; the rule
+    # is "clearly bigger than one tracked object", not a fixed cylinder.
+    deblend_enabled: true
+    merge_min_cluster_diameter: 0.55   # m: above every observed single object
+    merge_track_radius: 0.35           # m: seed-to-nearest-cluster-point claim
+    deblend_min_points: 3              # == cluster_min_points; a child must be
+                                       # an acceptable measurement on its own
+    deblend_max_child_diameter: 0.50   # m: a child must look like one object
+    deblend_min_child_separation: 0.30 # m: between the two child centroids
+    deblend_min_gap: 0.16              # m: REQUIRED empty space between the two
+                                       # point sets; above the 0.161 m worst
+                                       # within-object spacing, so a solid blob
+                                       # can never be sliced in two
+    deblend_use_mahalanobis: true      # ownership uses predicted covariance + R
+
+    # --- Stage-4G4: conservative bounded-motion reachability -----------
+    # An ADDITIONAL future-motion representation, published in the new
+    # TrackedObject.reachability_predictions field. The Stage-4C constant-
+    # velocity Gaussian prediction above is completely unchanged, so every
+    # Stage-4D / 4E / 4F result remains reproducible; set reachability_enabled
+    # to false to return to a byte-identical Stage-4G3 message payload.
+    #
+    # These are PHYSICAL bounds on obstacle motion, chosen from what the
+    # obstacle can do, not from what makes navigation look good:
+    #
+    # max_acceleration 0.5 m/s^2 is the bound the Stage-4G4 scenario driver
+    #   COMMANDS for its ramped manoeuvres (scenarios.json "accel" field), so
+    #   the model and the world share one declared bound. Measured honestly and
+    #   recorded here: the same Gazebo VelocityControl plugin can also apply a
+    #   STEP velocity change -- |a| of 5-9.5 m/s^2 was measured in the retained
+    #   Stage-4G3 GT odometry at segment boundaries -- and NO finite
+    #   acceleration bound covers a step change at short horizon. The step
+    #   scenarios are kept as an out-of-model stress test and reported as such.
+    # max_speed 0.8 m/s: scenario obstacles run at 0.15-0.50 m/s; this leaves
+    #   headroom without licensing motion the models never perform. The cap can
+    #   only shrink the reachable radius, never grow it.
+    # base_safety_margin 0.0: deterministic body allowance, deliberately zero
+    #   so the published region measures the motion model alone. Giving
+    #   reachability a free additive margin would make the comparison against
+    #   the CV covariance ellipse unfair; the costmap layer applies its own.
+    # covariance_sigma_level 2.0: matches the Stage-4D layer's sigma_level, so
+    #   the statistical term of the reachable region and the CV ellipse it is
+    #   compared against use the SAME k on the SAME covariance.
+    # max_observation_age 1.0 s: equals track_timeout below, so a region never
+    #   outlives the track that produced it.
+    # FINAL PRODUCTION (Stage-4G8): reachability publication is OFF. Production
+    # uses CV covariance prediction only (Stage-4G7 decision), so computing and
+    # publishing reachable sets would cost 0.35-0.98 ms per scan for a field no
+    # production consumer reads. Turning it off cannot change the CV output:
+    # stage4g4_reachability asserts cv_prediction_bit_identical with the flag in
+    # either state. Set to true to re-enable the research mode.
+    reachability_enabled: false
+    max_acceleration: 0.5          # m/s^2, isotropic |a| bound
+    max_speed: 0.8                 # m/s, |v| bound
+    reachability_horizon: 3.0      # s, mirrors prediction_horizon
+    reachability_time_step: 0.5    # s, mirrors prediction_time_step
+    base_safety_margin: 0.0        # m, deterministic; 0 => model-only region
+    max_observation_age: 1.0       # s, == track_timeout
+    covariance_sigma_level: 2.0    # k for the STATISTICAL term only
+
+    # Gated nearest-neighbour association + track lifecycle.
+    association_gate: 0.6
+    track_timeout: 1.0
+    max_missed_scans: 5
+    min_observations_to_publish: 3
+    velocity_history_size: 5
+
+    publish_candidate_markers: true
+    velocity_marker_scale: 1.0
+    tf_lookup_timeout: 0.1
+
+    # --- Stage-4C: constant-velocity Kalman filter ---
+    # 1-sigma unmodeled-acceleration noise (m/s^2), drives Q(dt). Generic
+    # slow-indoor-obstacle default (see node comments); not tuned to one run.
+    kf_process_accel_noise: 0.5
+    # 1-sigma position measurement noise (m), drives R.
+    kf_measurement_noise: 0.05
+    kf_initial_position_variance: 0.01      # m^2
+    kf_initial_velocity_variance: 4.0       # (m/s)^2 -- large: velocity unknown at track birth
+    kf_min_dt: 0.001                        # s, numerical safety floor
+    kf_max_dt: 1.0                          # s, numerical safety ceiling (== track_timeout)
+    min_observations_for_kalman_velocity: 2 # observations before velocity is trusted
+
+    # --- Stage-4C: future trajectory prediction ---
+    prediction_horizon: 3.0        # s
+    prediction_time_step: 0.5      # s -> samples at 0.5, 1.0, ..., 3.0 s
+    uncertainty_ellipse_sigma: 2.0 # ellipse semi-axis = sigma * sqrt(eigenvalue of P_pos)

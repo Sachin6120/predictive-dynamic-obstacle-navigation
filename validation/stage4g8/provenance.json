@@ -1,0 +1,96 @@
+{
+ "stage4g7_checkpoint": "3b52d5a92530cb054facdd70b09bac68d0bf1b5b",
+ "tags": {
+  "stage4f-validated": "68b2bf2ee1efb774ba563438a4c621b0052f61d5",
+  "stage4g5-hybrid": "76ee6b0dc6ead8dc19b51780d56860eb6915258f",
+  "stage4g6-decision": "5281f2340075d112852c9132b7d61652ce80af66",
+  "stage4g7-cv-final": "3b52d5a92530cb054facdd70b09bac68d0bf1b5b"
+ },
+ "note": "Stage-4G8 is FINAL ROBUSTNESS VALIDATION. No prediction mathematics, association, deblending or static rejection changed; every algorithm file is byte-identical to Stage-4G5/4G7. New: an explicit production configuration, three test-only launch hooks (tracker params file, tracker scan topic, initial-pose offset), a seeded scan-noise relay, scenario definitions and analysis tooling.",
+ "final_production_configuration": {
+  "nav2_params": "src/predictive_nav_bringup/config/production_nav2_params.yaml",
+  "tracker_params": "src/predictive_nav_tracking/config/production_tracker_params.yaml",
+  "prediction_mode": "cv_covariance",
+  "reachability_enabled": false,
+  "derived_from": {
+   "nav2": "nav2_stage4f_params.yaml (unchanged)",
+   "tracker": "tracker_params.yaml (unchanged)"
+  },
+  "only_differences": [
+   "predicted_obstacle_layer.prediction_mode stated explicitly",
+   "reachability_enabled true -> false"
+  ]
+ },
+ "algorithm_files_unchanged_since_stage4g5": {
+  "src/predictive_nav_costmap/src/predicted_obstacle_layer.cpp": {
+   "stage4g5": "e3bf0660da66f3bb46e44880ecba91a828848400c2440ac44522baf61f8b2106",
+   "now": "e3bf0660da66f3bb46e44880ecba91a828848400c2440ac44522baf61f8b2106",
+   "unchanged": true
+  },
+  "src/predictive_nav_costmap/include/predictive_nav_costmap/predicted_obstacle_layer.hpp": {
+   "stage4g5": "c19a2b3c5e6d92682ab331cc04ea5eaad524c30951e242c6641748d3f2d7e733",
+   "now": "c19a2b3c5e6d92682ab331cc04ea5eaad524c30951e242c6641748d3f2d7e733",
+   "unchanged": true
+  },
+  "src/predictive_nav_costmap/test/stage4g5_hybrid_layer.cpp": {
+   "stage4g5": "8c78925f9386fa76cff621602ca5356cc456b0adb4302c74c82c255ded13e187",
+   "now": "8c78925f9386fa76cff621602ca5356cc456b0adb4302c74c82c255ded13e187",
+   "unchanged": true
+  },
+  "src/predictive_nav_tracking/src/lidar_obstacle_tracker_node.cpp": {
+   "stage4g5": "a47177254088b93274b2da180250b2db5f176c05ad2d88bee10069c8ba11ad07",
+   "now": "a47177254088b93274b2da180250b2db5f176c05ad2d88bee10069c8ba11ad07",
+   "unchanged": true
+  },
+  "src/predictive_nav_tracking/include/predictive_nav_tracking/reachability.hpp": {
+   "stage4g5": "2272aeddf38f1eef52a6159b85cd6b0290a0da56cc93e53ab3c1502dc706cd60",
+   "now": "2272aeddf38f1eef52a6159b85cd6b0290a0da56cc93e53ab3c1502dc706cd60",
+   "unchanged": true
+  },
+  "src/predictive_nav_tracking/config/tracker_params.yaml": {
+   "stage4g5": "53d7594066789d72f3e4b5821e296249664cc52c31669a4a766622d186234f3e",
+   "now": "53d7594066789d72f3e4b5821e296249664cc52c31669a4a766622d186234f3e",
+   "unchanged": true
+  },
+  "src/predictive_nav_msgs/msg/ReachabilityPrediction.msg": {
+   "stage4g5": "459d8395688664d064c57959aceec8f4e3ce5376674d34b91c98dd2f3c683d2f",
+   "now": "459d8395688664d064c57959aceec8f4e3ce5376674d34b91c98dd2f3c683d2f",
+   "unchanged": true
+  },
+  "src/predictive_nav_msgs/msg/TrackedObject.msg": {
+   "stage4g5": "a5633bc72e364e1148280e7a3670abb4843876b4e5fee7a79d02b7541b21f7a7",
+   "now": "a5633bc72e364e1148280e7a3670abb4843876b4e5fee7a79d02b7541b21f7a7",
+   "unchanged": true
+  },
+  "src/predictive_nav_tracking/include/predictive_nav_tracking/kalman_filter.hpp": {
+   "stage4g5": "a7588026ebba8bad83c45e0b9cc4d5bf8651d6724d19a3d0b65d84ff78e214db",
+   "now": "a7588026ebba8bad83c45e0b9cc4d5bf8651d6724d19a3d0b65d84ff78e214db",
+   "unchanged": true
+  },
+  "src/predictive_nav_bringup/config/nav2_stage4f_params.yaml": {
+   "stage4g5": "471a5b38b874a01d11db56b5d0701c9f6d2e51689d5d929f047e7493fbc1b4e5",
+   "now": "471a5b38b874a01d11db56b5d0701c9f6d2e51689d5d929f047e7493fbc1b4e5",
+   "unchanged": true
+  }
+ },
+ "all_algorithm_files_unchanged": true,
+ "production_config_sha256": {
+  "src/predictive_nav_bringup/config/production_nav2_params.yaml": "697b136367eda055ef2c06a3789f6da60b63b0c5362b4fa89e80b1a2966d8be5",
+  "src/predictive_nav_tracking/config/production_tracker_params.yaml": "f9e07f2b78ae18eaafd78e7dbcc11773c9d06725697930d9886ec877520ebdb0"
+ },
+ "frozen_parameters": {
+  "static_reject_radius": 0.15,
+  "cluster_distance": 0.35,
+  "association_gate": 0.6,
+  "track_timeout": 1.0,
+  "max_missed_scans": 5,
+  "kf_accel_noise": 0.5,
+  "kf_measurement_noise": 0.05,
+  "prediction_horizon": 3.0,
+  "sigma_level": 1.5,
+  "temporal_decay": 0.35,
+  "max_cost": 250,
+  "max_influence_radius": 0.55,
+  "retuned_for_stage4g8": false
+ }
+}
