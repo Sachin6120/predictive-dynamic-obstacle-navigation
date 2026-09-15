@@ -1,0 +1,73 @@
+{
+ "stage4g6_checkpoint": "5281f2340075d112852c9132b7d61652ce80af66",
+ "stage4f_reference": "68b2bf2ee1efb774ba563438a4c621b0052f61d5",
+ "note": "Stage-4G7 is EVALUATION + WORLD BUILDING ONLY. No tracker, predictor, hybrid-policy or costmap source changed. New: two occlusion worlds and their maps (generated together), scenario definitions, and analysis tooling. run.py gained the ability to launch a scenario-selected world/map pair.",
+ "decision_rule_sha256": "446f53e08573ee329751d63a85313537d5cdbbdaf14c7612c508b80748da4ea8",
+ "algorithm_files_unchanged_since_stage4g5": {
+  "src/predictive_nav_costmap/src/predicted_obstacle_layer.cpp": {
+   "expected": "e3bf0660da66f3bb46e44880ecba91a828848400c2440ac44522baf61f8b2106",
+   "now": "e3bf0660da66f3bb46e44880ecba91a828848400c2440ac44522baf61f8b2106",
+   "unchanged": true
+  },
+  "src/predictive_nav_costmap/include/predictive_nav_costmap/predicted_obstacle_layer.hpp": {
+   "expected": "c19a2b3c5e6d92682ab331cc04ea5eaad524c30951e242c6641748d3f2d7e733",
+   "now": "c19a2b3c5e6d92682ab331cc04ea5eaad524c30951e242c6641748d3f2d7e733",
+   "unchanged": true
+  },
+  "src/predictive_nav_costmap/test/stage4g5_hybrid_layer.cpp": {
+   "expected": "8c78925f9386fa76cff621602ca5356cc456b0adb4302c74c82c255ded13e187",
+   "now": "8c78925f9386fa76cff621602ca5356cc456b0adb4302c74c82c255ded13e187",
+   "unchanged": true
+  },
+  "src/predictive_nav_tracking/src/lidar_obstacle_tracker_node.cpp": {
+   "expected": "a47177254088b93274b2da180250b2db5f176c05ad2d88bee10069c8ba11ad07",
+   "now": "a47177254088b93274b2da180250b2db5f176c05ad2d88bee10069c8ba11ad07",
+   "unchanged": true
+  },
+  "src/predictive_nav_tracking/include/predictive_nav_tracking/reachability.hpp": {
+   "expected": "2272aeddf38f1eef52a6159b85cd6b0290a0da56cc93e53ab3c1502dc706cd60",
+   "now": "2272aeddf38f1eef52a6159b85cd6b0290a0da56cc93e53ab3c1502dc706cd60",
+   "unchanged": true
+  },
+  "src/predictive_nav_tracking/config/tracker_params.yaml": {
+   "expected": "53d7594066789d72f3e4b5821e296249664cc52c31669a4a766622d186234f3e",
+   "now": "53d7594066789d72f3e4b5821e296249664cc52c31669a4a766622d186234f3e",
+   "unchanged": true
+  },
+  "src/predictive_nav_msgs/msg/ReachabilityPrediction.msg": {
+   "expected": "459d8395688664d064c57959aceec8f4e3ce5376674d34b91c98dd2f3c683d2f",
+   "now": "459d8395688664d064c57959aceec8f4e3ce5376674d34b91c98dd2f3c683d2f",
+   "unchanged": true
+  },
+  "src/predictive_nav_msgs/msg/TrackedObject.msg": {
+   "expected": "a5633bc72e364e1148280e7a3670abb4843876b4e5fee7a79d02b7541b21f7a7",
+   "now": "a5633bc72e364e1148280e7a3670abb4843876b4e5fee7a79d02b7541b21f7a7",
+   "unchanged": true
+  },
+  "src/predictive_nav_tracking/include/predictive_nav_tracking/kalman_filter.hpp": {
+   "expected": "a7588026ebba8bad83c45e0b9cc4d5bf8651d6724d19a3d0b65d84ff78e214db",
+   "now": "a7588026ebba8bad83c45e0b9cc4d5bf8651d6724d19a3d0b65d84ff78e214db",
+   "unchanged": true
+  },
+  "src/predictive_nav_bringup/config/nav2_stage4f_params.yaml": {
+   "expected": "471a5b38b874a01d11db56b5d0701c9f6d2e51689d5d929f047e7493fbc1b4e5",
+   "now": "471a5b38b874a01d11db56b5d0701c9f6d2e51689d5d929f047e7493fbc1b4e5",
+   "unchanged": true
+  }
+ },
+ "all_algorithm_files_unchanged": true,
+ "worlds": {
+  "src/predictive_nav_bringup/worlds/stage4g7_c30.sdf.xacro": "6b1d69641eb75139417af447fca21c432a3796151f9e046560800b778ec4d182",
+  "src/predictive_nav_bringup/worlds/stage4g7_c45.sdf.xacro": "c9e22f1f23a1639a5ecfe8a5f6a919f81ea97f0018c31d5f5ae9f7c8bd39b535",
+  "src/predictive_nav_bringup/worlds/stage4g7_door.sdf.xacro": "70d9373c097cc524e58d44db5a86cf6a69c6f72d083f5c8ba23b3a4e3e858039"
+ },
+ "frozen_policy": {
+  "fresh_threshold_s": 0.1,
+  "max_acceleration": 0.5,
+  "max_speed": 0.8,
+  "sigma_level": 1.5,
+  "temporal_decay": 0.35,
+  "track_timeout": 1.0,
+  "retuned_for_stage4g7": false
+ }
+}

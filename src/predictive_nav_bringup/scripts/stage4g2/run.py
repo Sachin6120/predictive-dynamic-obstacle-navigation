@@ -88,6 +88,7 @@ def run(args, scenarios):
                 'head': subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
                 'stage4f_reference': subprocess.check_output(['git','rev-parse','stage4f-validated^{commit}'],cwd=ROOT,text=True).strip(),
                 'definition': scenarios[name], 'layer_mode': args.layer_mode,
+                'world': scenarios[name].get('world', 'stage4f_benchmark'),
                 'ros_domain_id': env['ROS_DOMAIN_ID'], 'gz_partition': env['GZ_PARTITION'],
                 'sha256': {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
                     for p in [Path(__file__).resolve(), HERE/'score.py',
@@ -99,11 +100,20 @@ def run(args, scenarios):
             worker = None
             try:
                 with (trial_dir / 'launch.log').open('w') as log:
-                    launch = subprocess.Popen([
+                    # Stage-4G7: a scenario may name its own static world. The
+                    # world and its map are always taken as a PAIR from one
+                    # generator, so they cannot describe different rooms.
+                    launch_args = [
                         'ros2', 'launch', 'predictive_nav_bringup',
                         'stage4f_bringup.launch.py', 'spawn_obstacle:=False',
-                        'run_trial:=False', 'headless:=True', 'use_rviz:=False'],
-                        env=env, stdout=log, stderr=subprocess.STDOUT,
+                        'run_trial:=False', 'headless:=True', 'use_rviz:=False']
+                    world = scenarios[name].get('world')
+                    if world:
+                        launch_args += [
+                            f'world:={ROOT}/src/predictive_nav_bringup/worlds/{world}.sdf.xacro',
+                            f'map:={ROOT}/src/predictive_nav_bringup/maps/{world}.yaml']
+                    launch = subprocess.Popen(
+                        launch_args, env=env, stdout=log, stderr=subprocess.STDOUT,
                         start_new_session=True)
                     with (trial_dir / 'worker.log').open('w') as wlog:
                         worker = subprocess.Popen([
@@ -402,7 +412,7 @@ def worker(args, scenario):
             status=result_future.result().status if result_future and result_future.done() else None,
             robot_distance=math.hypot(odoms[-1][1]-odoms[0][1],odoms[-1][2]-odoms[0][2]) if odoms else 0)
         raw = dict(scenario=args.worker, definition=scenario, t0=t0, end=t0+scenario['duration'],
-            layer_mode=layer_mode,
+            layer_mode=layer_mode, world=scenario.get('world', 'stage4f_benchmark'),
             gt=gt, arrays=arrays, clusters=clusters, scans=scans, grids=grids, nav=nav)
         with (out/'raw.json').open('x') as f:
             json.dump(raw,f)

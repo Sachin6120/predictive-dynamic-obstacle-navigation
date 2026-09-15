@@ -1461,5 +1461,194 @@
     ]
    }
   ]
+ },
+ "g7_gap06": {
+  "duration": 32,
+  "navigate": true,
+  "world": "stage4g7_c30",
+  "objects": [
+   {
+    "start": [
+     -0.25,
+     3.0
+    ],
+    "velocity": [
+     0.0,
+     -0.68
+    ]
+   }
+  ]
+ },
+ "g7_gap08": {
+  "duration": 32,
+  "navigate": true,
+  "world": "stage4g7_c30",
+  "objects": [
+   {
+    "start": [
+     -0.25,
+     3.4
+    ],
+    "velocity": [
+     0.0,
+     -0.68
+    ]
+   }
+  ]
+ },
+ "g7_gap10": {
+  "duration": 32,
+  "navigate": true,
+  "world": "stage4g7_c45",
+  "objects": [
+   {
+    "start": [
+     -0.25,
+     3.4
+    ],
+    "velocity": [
+     0.0,
+     -0.68
+    ]
+   }
+  ]
+ },
+ "g7_turn": {
+  "duration": 32,
+  "navigate": true,
+  "world": "stage4g7_c30",
+  "objects": [
+   {
+    "start": [
+     -0.25,
+     3.4
+    ],
+    "segments": [
+     [
+      3.9,
+      0.0,
+      -0.68
+     ],
+     [
+      32.0,
+      -0.3,
+      -0.45
+     ]
+    ],
+    "accel": 0.5
+   }
+  ]
+ },
+ "g7_turnstep": {
+  "duration": 32,
+  "navigate": true,
+  "world": "stage4g7_c30",
+  "objects": [
+   {
+    "start": [
+     -0.25,
+     3.4
+    ],
+    "segments": [
+     [
+      3.9,
+      0.0,
+      -0.68
+     ],
+     [
+      32.0,
+      -0.3,
+      -0.45
+     ]
+    ]
+   }
+  ]
+ },
+ "g7_door": {
+  "duration": 32,
+  "navigate": true,
+  "world": "stage4g7_door",
+  "objects": [
+   {
+    "start": [
+     -0.1,
+     3.4
+    ],
+    "velocity": [
+     0.0,
+     -0.3
+    ]
+   }
+  ]
+ },
+ "g7_visible": {
+  "duration": 32,
+  "navigate": true,
+  "world": "stage4g7_c30",
+  "objects": [
+   {
+    "start": [
+     -0.25,
+     -3.4
+    ],
+    "velocity": [
+     0.0,
+     0.68
+    ]
+   }
+  ]
+ },
+ "g7_noconflict": {
+  "duration": 32,
+  "navigate": true,
+  "world": "stage4g7_c30",
+  "objects": [
+   {
+    "start": [
+     -0.25,
+     3.4
+    ],
+    "segments": [
+     [
+      3.9,
+      0.0,
+      -0.68
+     ],
+     [
+      32.0,
+      0.35,
+      0.0
+     ]
+    ],
+    "accel": 0.5
+   }
+  ]
+ },
+ "g7_multi": {
+  "duration": 32,
+  "navigate": true,
+  "world": "stage4g7_c30",
+  "objects": [
+   {
+    "start": [
+     -0.25,
+     3.4
+    ],
+    "velocity": [
+     0.0,
+     -0.68
+    ]
+   },
+   {
+    "start": [
+     1.9,
+     -2.8
+    ],
+    "velocity": [
+     0.0,
+     0.16
+    ]
+   }
+  ]
  }
 }
