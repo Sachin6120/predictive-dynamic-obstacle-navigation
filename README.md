@@ -12,6 +12,10 @@ pass, and is frozen at tag `predictive-nav-v1.0`. Every number in this
 README is taken directly from that validation evidence — see
 [Validation & Evidence](#validation--evidence) for exactly where.
 
+![Predictive dynamic-obstacle navigation in RViz](docs/images/predictive_navigation_hero.png)
+
+*RViz view of the production CV-predictive navigation stack: tracked obstacle ID and Kalman velocity estimate, future uncertainty corridor, and the resulting Nav2 avoidance trajectory.*
+
 ## Why this exists
 
 Reactive obstacle avoidance only sees a moving obstacle once it enters
