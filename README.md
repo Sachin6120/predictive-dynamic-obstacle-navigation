@@ -34,48 +34,9 @@ navigation time.
 
 ## System architecture
 
-```
-2D LiDAR (/scan)
-      │
-      ▼
-Range-aware static-map rejection      (predictive_nav_tracking, Stage-4G1)
-      │   reject points within r_reject(range) of a mapped occupied cell;
-      │   r_reject grows with range to absorb yaw-error-induced beam drift
-      ▼
-Euclidean clustering                  (Stage-4B)
-      │   connected-component clustering of surviving points
-      ▼
-Track-aware cluster deblending        (Stage-4G3)
-      │   splits one merged cluster back into two objects using the
-      │   tracker's own Kalman-predicted positions as split seeds
-      ▼
-Multi-object association              (Stage-4B/4G2)
-      │   gated nearest-neighbour association, per-track lifecycle
-      │   (creation / coasting / expiry)
-      ▼
-Constant-velocity Kalman filter [x, y, vx, vy]   (Stage-4C)
-      │   per track; raw finite-difference measurement kept alongside
-      │   the filtered state for RAW-vs-KALMAN evaluation
-      ▼
-Future trajectory + covariance        (Stage-4C)
-      │   state propagated forward to a fixed horizon without mutating
-      │   the live filter; covariance grows with propagation time
-      │
-      │   (research-only branch, disabled in production — see below)
-      ├──▶ Conservative bounded-motion reachability sets   (Stage-4G4/4G5)
-      │
-      ▼
-Custom uncertainty-aware Nav2 costmap layer   (predictive_nav_costmap, Stage-4D)
-      │   PredictedObstacleLayer: turns the predicted trajectory +
-      │   covariance into a time-decaying, range-bounded soft cost region,
-      │   combined into the local costmap via max-composition so it can
-      │   only raise cost, never suppress sensed obstacles
-      ▼
-MPPI (nav2_mppi_controller, stock, reweighted CostCritic)
-      │
-      ▼
-Predictive dynamic-obstacle avoidance
-```
+![Predictive dynamic-obstacle navigation architecture](docs/images/predictive_nav_architecture.svg)
+
+*Production ROS 2 / Nav2 pipeline: LiDAR tracking and CV prediction feed future obstacle occupancy through a custom costmap layer into the stock Nav2 MPPI controller. Reachability-based modes are retained only as research variants.*
 
 Everything above the costmap layer runs as a standalone C++ tracker node
 (`predictive_nav_tracking`) publishing `predictive_nav_msgs/TrackedObjectArray`
