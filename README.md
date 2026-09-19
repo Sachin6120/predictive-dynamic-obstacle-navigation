@@ -156,6 +156,12 @@ course, navigation time differs by **9 ms** and path length by **10 mm**
 between arms — the predictive layer detects a specific conflict, it does not
 penalise every tracked object generically.
 
+<p align="center">
+  <img src="docs/images/gazebo_simulation_environment.png" alt="Gazebo simulation environment" width="650">
+</p>
+
+*Gazebo simulation environment used for dynamic-obstacle navigation and robustness validation.*
+
 ## Robustness validation summary
 
 Stage-4G8 ran **448 trials across 46 condition groups** against the frozen
