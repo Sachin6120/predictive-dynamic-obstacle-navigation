@@ -32,6 +32,12 @@ clearance improves **5–6×** at crossing speeds of 0.50–0.75 m/s (0.133 m �
 **6 reactive collisions become 0** predictive collisions, with comparable
 navigation time.
 
+## Demo
+
+![Predictive dynamic-obstacle avoidance demo](docs/media/predictive_navigation_demo.gif)
+
+*Predictive perpendicular-crossing trial using the production CV configuration. The tracker estimates the moving obstacle state with a Kalman filter, propagates its future motion and uncertainty into the predictive costmap, and Nav2 MPPI adjusts the robot trajectory before the crossing conflict.*
+
 ## System architecture
 
 ![Predictive dynamic-obstacle navigation architecture](docs/images/predictive_nav_architecture.svg)
