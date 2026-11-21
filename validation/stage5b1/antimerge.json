@@ -1,0 +1,175 @@
+{
+ "what": "Stage-5B.1 anti-merge regression on the Stage-4G3 close-object geometry, replayed in Gazebo with the compound stage off and on",
+ "tracker_profile": "tracker_params.yaml (FROZEN navigation profile)",
+ "scenarios": [
+  "crossing",
+  "near_crossing",
+  "parallel",
+  "opposing"
+ ],
+ "false_compound_associations": 0,
+ "per_scenario": [
+  {
+   "scenario": "crossing",
+   "max_tracks_off": 2,
+   "max_tracks_on": 2,
+   "mean_tracks_off": 2.0,
+   "mean_tracks_on": 2.0,
+   "compound_on": 0,
+   "two_objects_resolved_off": true,
+   "two_objects_resolved_on": true
+  },
+  {
+   "scenario": "near_crossing",
+   "max_tracks_off": 2,
+   "max_tracks_on": 2,
+   "mean_tracks_off": 2.0,
+   "mean_tracks_on": 2.0,
+   "compound_on": 0,
+   "two_objects_resolved_off": true,
+   "two_objects_resolved_on": true
+  },
+  {
+   "scenario": "parallel",
+   "max_tracks_off": 2,
+   "max_tracks_on": 2,
+   "mean_tracks_off": 2.0,
+   "mean_tracks_on": 2.0,
+   "compound_on": 0,
+   "two_objects_resolved_off": true,
+   "two_objects_resolved_on": true
+  },
+  {
+   "scenario": "opposing",
+   "max_tracks_off": 2,
+   "max_tracks_on": 2,
+   "mean_tracks_off": 2.0,
+   "mean_tracks_on": 2.0,
+   "compound_on": 0,
+   "two_objects_resolved_off": true,
+   "two_objects_resolved_on": true
+  }
+ ],
+ "arms": [
+  {
+   "scenario": "crossing",
+   "arm": "compound_off",
+   "compound_enabled": false,
+   "frames": 50,
+   "compound_observations": 0,
+   "frames_with_compound": 0,
+   "track_count_distribution": {
+    "2": 50
+   },
+   "max_tracks": 2,
+   "mean_tracks": 2.0,
+   "distinct_ids": 2
+  },
+  {
+   "scenario": "crossing",
+   "arm": "compound_on",
+   "compound_enabled": true,
+   "frames": 50,
+   "compound_observations": 0,
+   "frames_with_compound": 0,
+   "track_count_distribution": {
+    "2": 50
+   },
+   "max_tracks": 2,
+   "mean_tracks": 2.0,
+   "distinct_ids": 2
+  },
+  {
+   "scenario": "near_crossing",
+   "arm": "compound_off",
+   "compound_enabled": false,
+   "frames": 50,
+   "compound_observations": 0,
+   "frames_with_compound": 0,
+   "track_count_distribution": {
+    "2": 50
+   },
+   "max_tracks": 2,
+   "mean_tracks": 2.0,
+   "distinct_ids": 2
+  },
+  {
+   "scenario": "near_crossing",
+   "arm": "compound_on",
+   "compound_enabled": true,
+   "frames": 50,
+   "compound_observations": 0,
+   "frames_with_compound": 0,
+   "track_count_distribution": {
+    "2": 50
+   },
+   "max_tracks": 2,
+   "mean_tracks": 2.0,
+   "distinct_ids": 2
+  },
+  {
+   "scenario": "parallel",
+   "arm": "compound_off",
+   "compound_enabled": false,
+   "frames": 50,
+   "compound_observations": 0,
+   "frames_with_compound": 0,
+   "track_count_distribution": {
+    "2": 50
+   },
+   "max_tracks": 2,
+   "mean_tracks": 2.0,
+   "distinct_ids": 2
+  },
+  {
+   "scenario": "parallel",
+   "arm": "compound_on",
+   "compound_enabled": true,
+   "frames": 50,
+   "compound_observations": 0,
+   "frames_with_compound": 0,
+   "track_count_distribution": {
+    "2": 50
+   },
+   "max_tracks": 2,
+   "mean_tracks": 2.0,
+   "distinct_ids": 2
+  },
+  {
+   "scenario": "opposing",
+   "arm": "compound_off",
+   "compound_enabled": false,
+   "frames": 50,
+   "compound_observations": 0,
+   "frames_with_compound": 0,
+   "track_count_distribution": {
+    "2": 50
+   },
+   "max_tracks": 2,
+   "mean_tracks": 2.0,
+   "distinct_ids": 2
+  },
+  {
+   "scenario": "opposing",
+   "arm": "compound_on",
+   "compound_enabled": true,
+   "frames": 50,
+   "compound_observations": 0,
+   "frames_with_compound": 0,
+   "track_count_distribution": {
+    "2": 50
+   },
+   "max_tracks": 2,
+   "mean_tracks": 2.0,
+   "distinct_ids": 2
+  }
+ ],
+ "checks": {
+  "all_arms_produced_frames": true,
+  "zero_false_compound_associations": true,
+  "both_arms_present": true,
+  "two_objects_still_resolved_with_stage_on": true,
+  "resolution_not_degraded_by_stage": true
+ },
+ "pass": true
+}

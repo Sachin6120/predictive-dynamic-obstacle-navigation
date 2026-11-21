@@ -1,0 +1,325 @@
+==============================================================================
+STAGE-5B CLASSIFICATION METRICS
+==============================================================================
+raw files : 5
+rows read : 2549
+rows in scenarios that actually ran (ground-truth verified): 2549
+
+------------------------------------------------------------------------------
+1. DETECTION COVERAGE -- did the frozen pipeline track the actor at all?
+------------------------------------------------------------------------------
+  A scenario with 0 tracked scans produced NO classification sample. It is
+  a detection failure of the clustering envelope, not a classifier error,
+  and is excluded from the matrices below and reported only here.
+
+                     actor     pattern   scenarios  with a track
+  --------------------------------------------------------------
+                actor_bike    crossing           3             3
+                actor_bike     oblique           3             3
+          actor_pedestrian    approach           3             3
+          actor_pedestrian    crossing           3             3
+          actor_pedestrian     oblique           3             3
+          actor_pedestrian      recede           3             3
+             actor_planter    approach           3             3
+             actor_planter    crossing           3             3
+             actor_planter     oblique           3             3
+             actor_planter      recede           3             3
+             actor_vehicle    approach           3             3
+             actor_vehicle    crossing           3             3
+             actor_vehicle     oblique           3             3
+             actor_vehicle      recede           3             3
+     actor_vehicle_compact    approach           3             3
+     actor_vehicle_compact    crossing           3             3
+     actor_vehicle_compact     oblique           3             3
+     actor_vehicle_compact      recede           3             3
+
+  NEVER DETECTED (6 of 60 scenarios) -- no cluster survived, so no track and no label:
+    actor_bike__approach__v0.25  (gt=BIKE)
+    actor_bike__approach__v0.50  (gt=BIKE)
+    actor_bike__approach__v0.75  (gt=BIKE)
+    actor_bike__recede__v0.25  (gt=BIKE)
+    actor_bike__recede__v0.50  (gt=BIKE)
+    actor_bike__recede__v0.75  (gt=BIKE)
+
+------------------------------------------------------------------------------
+2. PER-DETECTION CLASSIFICATION (unsmoothed, one sample per scan)
+------------------------------------------------------------------------------
+  samples: 2525 (scans on which the track was associated and real
+           cluster geometry existed; coasting scans carry no geometry)
+
+  CONFUSION MATRIX -- per detection
+  rows = GROUND TRUTH, columns = PREDICTED
+
+    true \\ pred  PEDESTRIAN        BIKE     VEHICLE     UNKNOWN
+  --------------------------------------------------------------
+      PEDESTRIAN         299           0           0         271   (n=570)
+            BIKE          25         269           0           5   (n=299)
+         VEHICLE         309           0         332         348   (n=989)
+         UNKNOWN           0           0         173         494   (n=667)
+
+  METRICS -- per detection
+
+                 Precision    Recall      F1   Support
+  ----------------------------------------------------
+    PEDESTRIAN       0.472     0.525   0.497       570
+          BIKE       1.000     0.900   0.947       299
+       VEHICLE       0.657     0.336   0.444       989
+       UNKNOWN       0.442     0.741   0.554       667
+
+  samples per ground-truth class: PEDESTRIAN=570, BIKE=299, VEHICLE=989, UNKNOWN=667
+
+------------------------------------------------------------------------------
+3. PER-TRACK STABLE CLASSIFICATION  <-- HEADLINE RESULT
+------------------------------------------------------------------------------
+  tracks: 61
+
+  CONFUSION MATRIX -- per stable track
+  rows = GROUND TRUTH, columns = PREDICTED
+
+    true \\ pred  PEDESTRIAN        BIKE     VEHICLE     UNKNOWN
+  --------------------------------------------------------------
+      PEDESTRIAN           8           0           0           4   (n=12)
+            BIKE           1           7           0           5   (n=13)
+         VEHICLE           6           0          11           7   (n=24)
+         UNKNOWN           0           0           1          11   (n=12)
+
+  METRICS -- per stable track
+
+                 Precision    Recall      F1   Support
+  ----------------------------------------------------
+    PEDESTRIAN       0.533     0.667   0.593        12
+          BIKE       1.000     0.538   0.700        13
+       VEHICLE       0.917     0.458   0.611        24
+       UNKNOWN       0.407     0.917   0.564        12
+
+  tracks per ground-truth class: PEDESTRIAN=12, BIKE=13, VEHICLE=24, UNKNOWN=12
+
+------------------------------------------------------------------------------
+4. UNKNOWN RATE -- how often the classifier declines to label
+------------------------------------------------------------------------------
+  per detection      overall: 1118/2525 = 0.443
+                       true PEDESTRIAN : 271/570 = 0.475
+                       true BIKE       : 5/299 = 0.017
+                       true VEHICLE    : 348/989 = 0.352
+                       true UNKNOWN    : 494/667 = 0.741
+  per stable track   overall: 27/61 = 0.443
+                       true PEDESTRIAN : 4/12 = 0.333
+                       true BIKE       : 5/13 = 0.385
+                       true VEHICLE    : 7/24 = 0.292
+                       true UNKNOWN    : 11/12 = 0.917
+
+------------------------------------------------------------------------------
+5. FAILURE ANALYSIS -- the measured geometry behind each confusion
+------------------------------------------------------------------------------
+  For every (true, predicted) pair that actually occurred, the median of
+  the features the decision was made on. This is what explains a
+  confusion: the classifier is a conjunction of intervals on these.
+
+             true -> predicted      n     len   thick    fill     gap    pts   range   speed
+  ----------------------------------------------------------------------------------------
+            UNKNOWN -> UNKNOWN    494    0.78    0.23    1.00    0.14     14    3.45    0.23
+            VEHICLE -> UNKNOWN    348    1.00    0.04    1.00    0.07     21    3.13    0.22
+            VEHICLE -> VEHICLE    332    1.68    0.36    1.00    0.18     29    3.03    0.20
+         VEHICLE -> PEDESTRIAN    309    0.44    0.03    1.00    0.07      8    3.85    0.23
+      PEDESTRIAN -> PEDESTRIAN    299    0.38    0.08    0.78    0.25      5    3.33    0.25
+         PEDESTRIAN -> UNKNOWN    271    0.35    0.06    1.00    0.29      4    4.05    0.27
+                  BIKE -> BIKE    269    1.56    0.04    0.72    0.53     19    3.40    0.25
+            UNKNOWN -> VEHICLE    173    0.85    0.32    1.00    0.18     15    3.09    0.24
+            BIKE -> PEDESTRIAN     25    0.52    0.03    1.00    0.11      7    3.76    0.36
+               BIKE -> UNKNOWN      5    0.44    0.03    1.00    0.21      4    4.82    0.69
+
+  CLUSTER FRAGMENTATION -- how many distinct tracks one actor produced.
+  More than one track for a single physical object means the frozen
+  single-link clustering split it, and the classifier then sees FRAGMENTS
+  rather than the object. cluster_distance bounds this: a gap in an
+  object wider than cluster_distance becomes a cluster boundary.
+
+                     actor   scenarios   median tracks   max tracks
+  -----------------------------------------------------------------
+                actor_bike           6               2            5
+          actor_pedestrian          12               1            1
+             actor_planter          12               1            1
+             actor_vehicle          12               1            1
+     actor_vehicle_compact          12               1            1
+
+  PER-ACTOR, PER-ASPECT geometry and labels. Pooling by class hides the
+  aspect dependence, which is the whole story for a 2D slice.
+
+                     actor   pattern     n    len  thick  fill   gap  pts   rng  instant labels
+  --------------------------------------------------------------------------------------------------------
+                actor_bike  crossing   147   1.56   0.04  0.72  0.54   18  3.46  BIKE:143 PEDESTRIAN:4
+                actor_bike   oblique   152   1.56   0.04  0.73  0.52   18  3.25  BIKE:126 PEDESTRIAN:21 UNKNOWN:5
+          actor_pedestrian  approach   102   0.34   0.09  1.00  0.30    4  4.63  UNKNOWN:79 PEDESTRIAN:23
+          actor_pedestrian  crossing   183   0.38   0.06  0.75  0.26    5  3.51  PEDESTRIAN:93 UNKNOWN:90
+          actor_pedestrian   oblique   144   0.40   0.06  0.67  0.23    5  3.30  PEDESTRIAN:110 UNKNOWN:34
+          actor_pedestrian    recede   141   0.35   0.08  0.88  0.29    5  3.12  PEDESTRIAN:73 UNKNOWN:68
+             actor_planter  approach   176   0.78   0.23  1.00  0.16   10  4.99  UNKNOWN:146 VEHICLE:30
+             actor_planter  crossing   171   0.80   0.26  1.00  0.15   15  3.16  UNKNOWN:126 VEHICLE:45
+             actor_planter   oblique   145   0.81   0.28  1.00  0.15   16  2.99  UNKNOWN:82 VEHICLE:63
+             actor_planter    recede   175   0.80   0.26  1.00  0.14   15  3.48  UNKNOWN:140 VEHICLE:35
+             actor_vehicle  approach    99   1.65   0.04  1.00  0.07   32  2.98  UNKNOWN:83 VEHICLE:16
+             actor_vehicle  crossing    65   3.73   0.05  1.00  0.09   74  2.53  VEHICLE:65
+             actor_vehicle   oblique    62   3.76   0.91  1.00  0.29   56  2.78  VEHICLE:62
+             actor_vehicle    recede    99   1.66   0.04  1.00  0.06   38  2.43  UNKNOWN:72 VEHICLE:27
+     actor_vehicle_compact  approach   175   0.42   0.02  1.00  0.09    6  4.81  PEDESTRIAN:134 UNKNOWN:41
+     actor_vehicle_compact  crossing   169   0.99   0.20  1.00  0.14   18  3.29  UNKNOWN:96 VEHICLE:73
+     actor_vehicle_compact   oblique   145   0.99   0.36  1.00  0.14   19  3.05  VEHICLE:89 UNKNOWN:56
+     actor_vehicle_compact    recede   175   0.45   0.03  1.00  0.06   10  3.39  PEDESTRIAN:175
+
+  UNKNOWN vs range, per true class (per-detection). Shows where the
+  sensor stops supporting a decision at all:
+      true class     range bin       n   UNKNOWN    rate
+  ------------------------------------------------------
+      PEDESTRIAN         0-2 m      25         0    0.00
+      PEDESTRIAN         2-3 m      87        12    0.14
+      PEDESTRIAN         3-4 m     298       116    0.39
+      PEDESTRIAN         4-5 m     111        94    0.85
+      PEDESTRIAN          5+ m      49        49    1.00
+            BIKE         2-3 m      41         0    0.00
+            BIKE         3-4 m     245         0    0.00
+            BIKE         4-5 m      13         5    0.38
+         VEHICLE         0-2 m      74        25    0.34
+         VEHICLE         2-3 m     312       113    0.36
+         VEHICLE         3-4 m     415       169    0.41
+         VEHICLE         4-5 m      85         0    0.00
+         VEHICLE          5+ m     103        41    0.40
+         UNKNOWN         0-2 m      29        24    0.83
+         UNKNOWN         2-3 m     140        85    0.61
+         UNKNOWN         3-4 m     295       221    0.75
+         UNKNOWN         4-5 m      91        66    0.73
+         UNKNOWN          5+ m     112        98    0.88
+
+  fill_ratio distribution, to confirm the estimator stays within its
+  definitional bound of 1.0:
+    n=2525  min=0.429  median=1.000  max=1.000  above 1.0: 0
+
+  Measured speed by true class (per-detection), which is why speed
+  carries almost no discriminative information in this dataset:
+      true class       n     min  median     max
+  ----------------------------------------------
+      PEDESTRIAN     570    0.00    0.25    0.80
+            BIKE     299    0.00    0.26    1.84
+         VEHICLE     989    0.00    0.22    0.76
+         UNKNOWN     667    0.00    0.23    0.77
+
+------------------------------------------------------------------------------
+6. STAGE-5B.1 COMPOUND-OBSERVATION RECOVERY
+------------------------------------------------------------------------------
+  A COMPOUND OBSERVATION is the pooled geometry of two primary
+  clusters that the gap-aware stage judged to be two slices of ONE
+  rigid object. `from_compound` is read straight off the message, so
+  true and FALSE compound associations are both counted, never
+  inferred from the resulting geometry.
+
+  compound detections : 269 of 2525
+
+  BY TRUE CLASS -- a compound association on anything but BIKE is
+  a FALSE compound association, which is the quantity the
+  anti-merge requirement bounds.
+      true class  detections  compound    rate               verdict
+  --------------------------------------------------------------------
+      PEDESTRIAN         570         0   0.000        none (correct)
+            BIKE         299       269   0.900  recovered (intended)
+         VEHICLE         989         0   0.000        none (correct)
+         UNKNOWN         667         0   0.000        none (correct)
+
+  FALSE compound detections (true class != BIKE): 0
+
+  BIKE RECOVERY PER SCENARIO. `frag` counts scans on which the
+  actor was still reported as two separate fragment tracks, i.e.
+  compound association had not yet reached its support threshold
+  or did not fire.
+                            scenario  scans  compound   frag  tracks               stable labels
+  ----------------------------------------------------------------------------------------------
+         actor_bike__crossing__v0.25     78        74      4       2BIKE:75 UNKNOWN:2 PEDESTRIAN:1
+         actor_bike__crossing__v0.50     40        40      0       1                     BIKE:40
+         actor_bike__crossing__v0.75     29        29      0       1                     BIKE:29
+          actor_bike__oblique__v0.25     77        65     12       5BIKE:68 UNKNOWN:5 PEDESTRIAN:4
+          actor_bike__oblique__v0.50     43        37      6       2BIKE:38 PEDESTRIAN:3 UNKNOWN:2
+          actor_bike__oblique__v0.75     32        24      8       2BIKE:26 PEDESTRIAN:3 UNKNOWN:3
+
+  GEOMETRY OF THE RECOVERED COMPOUND OBSERVATIONS. This is the
+  evidence that the BIKE label comes from a bicycle-shaped
+  measurement and not from relabelling a pedestrian track.
+                 feature      min   median      max
+  -------------------------------------------------
+                length m    1.433    1.563    1.634
+             thickness m    0.016    0.039    0.078
+              fill_ratio    0.667    0.720    0.834
+               max_gap m    0.462    0.532    0.628
+             point_count   11.000   19.000   23.000
+                 range m    2.925    3.400    4.145
+
+  For reference, the SAME actor before compound association
+  (one wheel fragment): length 0.51 m, thickness 0.03 m,
+  fill_ratio 1.00, max_gap 0.07 m -- pedestrian-sized and
+  solid, which is exactly why it classified PEDESTRIAN.
+
+  STABLE LABEL ON COMPOUND DETECTIONS: {'BIKE': 266, 'UNKNOWN': 2, 'PEDESTRIAN': 1}
+
+------------------------------------------------------------------------------
+7. PER-TRACK DETAIL
+------------------------------------------------------------------------------
+                                        scenario   id       truth      stable  scans
+  ----------------------------------------------------------------------------------
+                     actor_bike__crossing__v0.25    4        BIKE        BIKE     71
+                     actor_bike__crossing__v0.25    5        BIKE        BIKE     12
+                     actor_bike__crossing__v0.50    7        BIKE        BIKE     40
+                     actor_bike__crossing__v0.75    9        BIKE        BIKE     29
+                      actor_bike__oblique__v0.25   11        BIKE        BIKE     72
+                      actor_bike__oblique__v0.25   12        BIKE     UNKNOWN      6   <-- MISMATCH
+                      actor_bike__oblique__v0.25   13        BIKE  PEDESTRIAN      8   <-- MISMATCH
+                      actor_bike__oblique__v0.25   14        BIKE     UNKNOWN      4   <-- MISMATCH
+                      actor_bike__oblique__v0.25   15        BIKE     UNKNOWN      1   <-- MISMATCH
+                      actor_bike__oblique__v0.50   17        BIKE        BIKE     41
+                      actor_bike__oblique__v0.50   18        BIKE     UNKNOWN      2   <-- MISMATCH
+                      actor_bike__oblique__v0.75   20        BIKE        BIKE     29
+                      actor_bike__oblique__v0.75   22        BIKE     UNKNOWN      3   <-- MISMATCH
+               actor_pedestrian__approach__v0.25    5  PEDESTRIAN     UNKNOWN     56   <-- MISMATCH
+               actor_pedestrian__approach__v0.50    6  PEDESTRIAN     UNKNOWN     28   <-- MISMATCH
+               actor_pedestrian__approach__v0.75    7  PEDESTRIAN     UNKNOWN     18   <-- MISMATCH
+               actor_pedestrian__crossing__v0.25    2  PEDESTRIAN  PEDESTRIAN     97
+               actor_pedestrian__crossing__v0.50    3  PEDESTRIAN  PEDESTRIAN     50
+               actor_pedestrian__crossing__v0.75    4  PEDESTRIAN  PEDESTRIAN     36
+                actor_pedestrian__oblique__v0.25   11  PEDESTRIAN  PEDESTRIAN     76
+                actor_pedestrian__oblique__v0.50   12  PEDESTRIAN  PEDESTRIAN     40
+                actor_pedestrian__oblique__v0.75   13  PEDESTRIAN  PEDESTRIAN     29
+                 actor_pedestrian__recede__v0.25    8  PEDESTRIAN     UNKNOWN     63   <-- MISMATCH
+                 actor_pedestrian__recede__v0.50    9  PEDESTRIAN  PEDESTRIAN     49
+                 actor_pedestrian__recede__v0.75   10  PEDESTRIAN  PEDESTRIAN     33
+                  actor_planter__approach__v0.25    5     UNKNOWN     UNKNOWN     93
+                  actor_planter__approach__v0.50    6     UNKNOWN     UNKNOWN     49
+                  actor_planter__approach__v0.75    7     UNKNOWN     UNKNOWN     34
+                  actor_planter__crossing__v0.25    2     UNKNOWN     UNKNOWN     90
+                  actor_planter__crossing__v0.50    3     UNKNOWN     UNKNOWN     47
+                  actor_planter__crossing__v0.75    4     UNKNOWN     UNKNOWN     34
+                   actor_planter__oblique__v0.25   11     UNKNOWN     UNKNOWN     76
+                   actor_planter__oblique__v0.50   12     UNKNOWN     UNKNOWN     41
+                   actor_planter__oblique__v0.75   13     UNKNOWN     VEHICLE     28   <-- MISMATCH
+                    actor_planter__recede__v0.25    8     UNKNOWN     UNKNOWN     92
+                    actor_planter__recede__v0.50    9     UNKNOWN     UNKNOWN     49
+                    actor_planter__recede__v0.75   10     UNKNOWN     UNKNOWN     34
+                  actor_vehicle__approach__v0.25    5     VEHICLE     UNKNOWN     51   <-- MISMATCH
+                  actor_vehicle__approach__v0.50    6     VEHICLE     UNKNOWN     28   <-- MISMATCH
+                  actor_vehicle__approach__v0.75    7     VEHICLE     UNKNOWN     20   <-- MISMATCH
+                  actor_vehicle__crossing__v0.25    2     VEHICLE     VEHICLE     32
+                  actor_vehicle__crossing__v0.50    3     VEHICLE     VEHICLE     19
+                  actor_vehicle__crossing__v0.75    4     VEHICLE     VEHICLE     14
+                   actor_vehicle__oblique__v0.25   11     VEHICLE     VEHICLE     31
+                   actor_vehicle__oblique__v0.50   12     VEHICLE     VEHICLE     18
+                   actor_vehicle__oblique__v0.75   13     VEHICLE     VEHICLE     13
+                    actor_vehicle__recede__v0.25    8     VEHICLE     UNKNOWN     51   <-- MISMATCH
+                    actor_vehicle__recede__v0.50    9     VEHICLE     UNKNOWN     28   <-- MISMATCH
+                    actor_vehicle__recede__v0.75   10     VEHICLE     UNKNOWN     20   <-- MISMATCH
+          actor_vehicle_compact__approach__v0.25    5     VEHICLE  PEDESTRIAN     93   <-- MISMATCH
+          actor_vehicle_compact__approach__v0.50    6     VEHICLE  PEDESTRIAN     49   <-- MISMATCH
+          actor_vehicle_compact__approach__v0.75    7     VEHICLE  PEDESTRIAN     33   <-- MISMATCH
+          actor_vehicle_compact__crossing__v0.25    2     VEHICLE     UNKNOWN     89   <-- MISMATCH
+          actor_vehicle_compact__crossing__v0.50    3     VEHICLE     VEHICLE     47
+          actor_vehicle_compact__crossing__v0.75    4     VEHICLE     VEHICLE     33
+           actor_vehicle_compact__oblique__v0.25   11     VEHICLE     VEHICLE     76
+           actor_vehicle_compact__oblique__v0.50   12     VEHICLE     VEHICLE     41
+           actor_vehicle_compact__oblique__v0.75   13     VEHICLE     VEHICLE     28
+            actor_vehicle_compact__recede__v0.25    8     VEHICLE  PEDESTRIAN     92   <-- MISMATCH
+            actor_vehicle_compact__recede__v0.50    9     VEHICLE  PEDESTRIAN     49   <-- MISMATCH
+            actor_vehicle_compact__recede__v0.75   10     VEHICLE  PEDESTRIAN     34   <-- MISMATCH

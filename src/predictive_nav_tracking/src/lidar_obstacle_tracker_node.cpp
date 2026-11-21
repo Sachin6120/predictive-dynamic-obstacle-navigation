@@ -59,12 +59,22 @@
 #include "predictive_nav_msgs/msg/tracked_object_prediction.hpp"
 #include "predictive_nav_msgs/msg/reachability_prediction.hpp"
 #include "predictive_nav_tracking/kalman_filter.hpp"
+#include "predictive_nav_tracking/compound_observation.hpp"
+#include "predictive_nav_tracking/obstacle_classification.hpp"
 #include "predictive_nav_tracking/reachability.hpp"
 
 using std::placeholders::_1;
 using predictive_nav_tracking::ConstantVelocityKalmanFilter2D;
 using predictive_nav_tracking::ReachabilityBounds;
 using predictive_nav_tracking::ReachabilityRegion;
+using predictive_nav_tracking::ClassificationParams;
+using predictive_nav_tracking::ClassificationResult;
+using predictive_nav_tracking::ClassLabelStabilizer;
+using predictive_nav_tracking::ClusterFeatures;
+using predictive_nav_tracking::CompoundEvidence;
+using predictive_nav_tracking::CompoundHypothesisTracker;
+using predictive_nav_tracking::CompoundParams;
+using predictive_nav_tracking::ObstacleClass;
 
 namespace
 {
@@ -80,6 +90,28 @@ struct Observation
   rclcpp::Time stamp;
   double x{0.0};
   double y{0.0};
+};
+
+/// Stage-5B: one association-ready measurement. `centroid` is exactly the
+/// quantity the frozen pipeline has always associated on -- association,
+/// gating and the Kalman update read nothing else, so their behaviour is
+/// unchanged. `features` is the scan-plane geometry of the cluster the
+/// centroid came from, carried along purely so classification can attach to
+/// the track the centroid updates. `features.valid` is false when no
+/// trustworthy geometry exists for this measurement.
+struct Measurement
+{
+  Point2D centroid;
+  ClusterFeatures features;
+  /// Stage-5B.1: true when this measurement is a COMPOUND OBSERVATION -- the
+  /// pooled geometry of two primary clusters that the compound stage judged
+  /// to be two slices of one rigid object. PROVENANCE ONLY: association,
+  /// gating and the Kalman filter read `centroid` and never this flag, so it
+  /// cannot change any track state. It exists so that a recovered object is
+  /// auditable after the fact -- the validation set reports true and FALSE
+  /// compound associations from this, rather than inferring them from the
+  /// resulting geometry.
+  bool compound{false};
 };
 
 // One future state sample produced by peeking a track's Kalman filter
@@ -131,6 +163,19 @@ struct Track
   uint32_t missed_count{0};
   rclcpp::Time last_update;
   std::deque<Observation> history;
+
+  // --- Stage-5B: classification state, METADATA ONLY --------------------
+  // Attached to this track's identity and therefore destroyed with it: a new
+  // ID starts from UNKNOWN with no inherited evidence. Nothing in this block
+  // is read by the Kalman filter, the CV prediction or the reachable sets.
+  ClassLabelStabilizer class_state;
+  /// This scan's unsmoothed decision (UNKNOWN on a coasting scan).
+  ClassificationResult class_instant;
+  /// The geometry `class_instant` was derived from (invalid when coasting).
+  ClusterFeatures class_features;
+  /// Stage-5B.1: true when THIS scan's associated measurement was a compound
+  /// observation. Provenance only, reset on every coasting scan.
+  bool class_from_compound{false};
 };
 
 }  // namespace
@@ -229,6 +274,47 @@ private:
     this->declare_parameter<double>("deblend_min_gap", 0.16);
     this->declare_parameter<bool>("deblend_use_mahalanobis", true);
 
+    // --- Stage-5B.1: gap-aware compound-observation recovery -------------
+    // A SECONDARY association stage that re-links primary clusters which are
+    // two slices of one rigid object (the measured case: a bicycle's two
+    // wheel chords, 1.04 m apart with a 0.48-0.54 m hole between them, which
+    // single-link clustering at 0.35 m necessarily splits).
+    //
+    // cluster_distance IS NOT TOUCHED. This stage only ever inspects pairs
+    // of clusters that primary clustering already chose to keep apart, so
+    // the Stage-4G3 close-object geometry -- whose inter-object gaps are
+    // 0.12-0.35 m, i.e. BELOW cluster_distance -- never reaches it as a pair
+    // at all. Every bound's derivation and measured margin is documented at
+    // its point of definition in compound_observation.hpp.
+    //
+    // DEFAULT false. With this false the stage is a provable no-op and the
+    // whole pipeline is bit-identical to the Stage-5B checkpoint; the
+    // Stage-5B classification config turns it on.
+    const CompoundParams compound_def;
+    this->declare_parameter<bool>("compound_enabled", compound_def.enabled);
+    this->declare_parameter<double>(
+      "compound_fragment_length_min", compound_def.fragment_length_min);
+    this->declare_parameter<double>(
+      "compound_fragment_length_max", compound_def.fragment_length_max);
+    this->declare_parameter<double>(
+      "compound_fragment_thickness_max", compound_def.fragment_thickness_max);
+    this->declare_parameter<double>("compound_alignment_min", compound_def.alignment_min);
+    this->declare_parameter<double>("compound_separation_min", compound_def.separation_min);
+    this->declare_parameter<double>("compound_separation_max", compound_def.separation_max);
+    this->declare_parameter<double>("compound_gap_min", compound_def.gap_min);
+    this->declare_parameter<double>("compound_gap_max", compound_def.gap_max);
+    this->declare_parameter<double>("compound_union_length_min", compound_def.union_length_min);
+    this->declare_parameter<double>("compound_union_length_max", compound_def.union_length_max);
+    this->declare_parameter<double>(
+      "compound_union_thickness_max", compound_def.union_thickness_max);
+    this->declare_parameter<double>("compound_union_fill_max", compound_def.union_fill_max);
+    this->declare_parameter<int>(
+      "compound_min_support", static_cast<int>(compound_def.min_support));
+    this->declare_parameter<double>(
+      "compound_separation_tolerance", compound_def.separation_tolerance);
+    this->declare_parameter<double>("compound_match_radius", compound_def.match_radius);
+    this->declare_parameter<double>("compound_max_gap_seconds", compound_def.max_gap_seconds);
+
     this->declare_parameter<double>("association_gate", 0.6);
     this->declare_parameter<double>("track_timeout", 1.0);
     this->declare_parameter<int>("max_missed_scans", 5);
@@ -309,6 +395,113 @@ private:
     this->declare_parameter<double>("base_safety_margin", 0.0);
     this->declare_parameter<double>("max_observation_age", 1.0);
     this->declare_parameter<double>("covariance_sigma_level", 2.0);
+
+    // --- Stage-5B: dynamic obstacle classification -----------------------
+    // Geometry/motion classification of tracked objects into
+    // PEDESTRIAN / BIKE / VEHICLE / UNKNOWN. OBSERVATION ONLY: the label is
+    // published in the additive TrackedObject.classification* fields and is
+    // read by nothing in the prediction or costmap path, so disabling it
+    // returns a byte-identical Stage-4G4 payload in every other field.
+    //
+    // Every threshold below is an interval on a physically measurable
+    // dimension of the ~0.16 m LiDAR scan plane. Their derivation, units and
+    // the reason each bound has the value it does are documented at the
+    // point of definition in obstacle_classification.hpp -- the defaults
+    // here mirror ClassificationParams and exist so a scenario can override
+    // them without recompiling.
+    this->declare_parameter<bool>("classification_enabled", true);
+    const ClassificationParams cp_def;
+    this->declare_parameter<int>(
+      "classification_min_points", static_cast<int>(cp_def.min_points));
+    this->declare_parameter<double>("classification_max_range", cp_def.max_range);
+    this->declare_parameter<int>(
+      "classification_min_observations", static_cast<int>(cp_def.min_observations));
+    this->declare_parameter<double>("classification_min_accept_score", cp_def.min_accept_score);
+    this->declare_parameter<double>("classification_min_margin", cp_def.min_margin);
+    this->declare_parameter<double>("classification_thickness_floor", cp_def.thickness_floor);
+
+    const ClassLabelStabilizer st_def;
+    this->declare_parameter<double>("classification_smoothing", st_def.smoothing);
+    this->declare_parameter<double>("classification_enter_threshold", st_def.enter_threshold);
+    this->declare_parameter<double>("classification_exit_threshold", st_def.exit_threshold);
+    this->declare_parameter<double>("classification_switch_margin", st_def.switch_margin);
+
+    // Per-ASPECT geometric boxes, [lo, hi] in the units named in
+    // ClusterFeatures: length/thickness/gap in m, fill dimensionless,
+    // speed_max in m/s. A class with several aspects exposes one parameter
+    // group per aspect, named for the view it describes.
+    declare_class_model(aspect_names(), cp_def);
+  }
+
+  /// The parameter-group name of every (class, aspect) pair, in the order the
+  /// aspects appear in ClassificationParams. Single-aspect classes use the
+  /// bare class name so their parameters stay stable.
+  static std::vector<std::vector<std::string>> aspect_names()
+  {
+    return {{"pedestrian"}, {"bike"}, {"vehicle_flank", "vehicle_corner"}};
+  }
+
+  void declare_class_model(
+    const std::vector<std::vector<std::string>> & names, const ClassificationParams & d)
+  {
+    const std::vector<const predictive_nav_tracking::ClassModel *> models{
+      &d.pedestrian, &d.bike, &d.vehicle};
+    for (size_t c = 0; c < models.size(); ++c) {
+      for (size_t a = 0; a < models[c]->aspects.size() && a < names[c].size(); ++a) {
+        declare_class_box(names[c][a], models[c]->aspects[a]);
+      }
+    }
+  }
+
+  void read_class_model(
+    const std::vector<std::vector<std::string>> & names, ClassificationParams & d)
+  {
+    const std::vector<predictive_nav_tracking::ClassModel *> models{
+      &d.pedestrian, &d.bike, &d.vehicle};
+    for (size_t c = 0; c < models.size(); ++c) {
+      for (size_t a = 0; a < models[c]->aspects.size() && a < names[c].size(); ++a) {
+        read_class_box(names[c][a], models[c]->aspects[a]);
+      }
+    }
+  }
+
+  /// Declares the four interval pairs plus the speed veto of one aspect box
+  /// under the prefix "classification_<name>_*".
+  void declare_class_box(
+    const std::string & name, const predictive_nav_tracking::ClassBox & d)
+  {
+    const std::string k = "classification_" + name + "_";
+    this->declare_parameter<double>(k + "length_lo", d.length_lo);
+    this->declare_parameter<double>(k + "length_hi", d.length_hi);
+    this->declare_parameter<double>(k + "length_soft", d.length_soft);
+    this->declare_parameter<double>(k + "thickness_lo", d.thickness_lo);
+    this->declare_parameter<double>(k + "thickness_hi", d.thickness_hi);
+    this->declare_parameter<double>(k + "thickness_soft", d.thickness_soft);
+    this->declare_parameter<double>(k + "fill_lo", d.fill_lo);
+    this->declare_parameter<double>(k + "fill_hi", d.fill_hi);
+    this->declare_parameter<double>(k + "fill_soft", d.fill_soft);
+    this->declare_parameter<double>(k + "gap_lo", d.gap_lo);
+    this->declare_parameter<double>(k + "gap_hi", d.gap_hi);
+    this->declare_parameter<double>(k + "gap_soft", d.gap_soft);
+    this->declare_parameter<double>(k + "speed_max", d.speed_max);
+  }
+
+  void read_class_box(const std::string & name, predictive_nav_tracking::ClassBox & b)
+  {
+    const std::string k = "classification_" + name + "_";
+    b.length_lo = this->get_parameter(k + "length_lo").as_double();
+    b.length_hi = this->get_parameter(k + "length_hi").as_double();
+    b.length_soft = this->get_parameter(k + "length_soft").as_double();
+    b.thickness_lo = this->get_parameter(k + "thickness_lo").as_double();
+    b.thickness_hi = this->get_parameter(k + "thickness_hi").as_double();
+    b.thickness_soft = this->get_parameter(k + "thickness_soft").as_double();
+    b.fill_lo = this->get_parameter(k + "fill_lo").as_double();
+    b.fill_hi = this->get_parameter(k + "fill_hi").as_double();
+    b.fill_soft = this->get_parameter(k + "fill_soft").as_double();
+    b.gap_lo = this->get_parameter(k + "gap_lo").as_double();
+    b.gap_hi = this->get_parameter(k + "gap_hi").as_double();
+    b.gap_soft = this->get_parameter(k + "gap_soft").as_double();
+    b.speed_max = this->get_parameter(k + "speed_max").as_double();
   }
 
   void read_parameters()
@@ -345,6 +538,35 @@ private:
       this->get_parameter("deblend_min_child_separation").as_double();
     deblend_min_gap_ = this->get_parameter("deblend_min_gap").as_double();
     deblend_use_mahalanobis_ = this->get_parameter("deblend_use_mahalanobis").as_bool();
+
+    // --- Stage-5B.1: compound-observation recovery ----------------------
+    compound_params_.enabled = this->get_parameter("compound_enabled").as_bool();
+    compound_params_.fragment_length_min =
+      this->get_parameter("compound_fragment_length_min").as_double();
+    compound_params_.fragment_length_max =
+      this->get_parameter("compound_fragment_length_max").as_double();
+    compound_params_.fragment_thickness_max =
+      this->get_parameter("compound_fragment_thickness_max").as_double();
+    compound_params_.alignment_min = this->get_parameter("compound_alignment_min").as_double();
+    compound_params_.separation_min = this->get_parameter("compound_separation_min").as_double();
+    compound_params_.separation_max = this->get_parameter("compound_separation_max").as_double();
+    compound_params_.gap_min = this->get_parameter("compound_gap_min").as_double();
+    compound_params_.gap_max = this->get_parameter("compound_gap_max").as_double();
+    compound_params_.union_length_min =
+      this->get_parameter("compound_union_length_min").as_double();
+    compound_params_.union_length_max =
+      this->get_parameter("compound_union_length_max").as_double();
+    compound_params_.union_thickness_max =
+      this->get_parameter("compound_union_thickness_max").as_double();
+    compound_params_.union_fill_max = this->get_parameter("compound_union_fill_max").as_double();
+    compound_params_.min_support =
+      static_cast<uint32_t>(this->get_parameter("compound_min_support").as_int());
+    compound_params_.separation_tolerance =
+      this->get_parameter("compound_separation_tolerance").as_double();
+    compound_params_.match_radius = this->get_parameter("compound_match_radius").as_double();
+    compound_params_.max_gap_seconds =
+      this->get_parameter("compound_max_gap_seconds").as_double();
+    compound_tracker_.setParams(compound_params_);
 
     association_gate_ = this->get_parameter("association_gate").as_double();
     track_timeout_ = this->get_parameter("track_timeout").as_double();
@@ -384,6 +606,31 @@ private:
     max_observation_age_ = this->get_parameter("max_observation_age").as_double();
     num_reachability_samples_ = (reachability_time_step_ > 1e-6) ?
       static_cast<size_t>(std::lround(reachability_horizon_ / reachability_time_step_)) : 0;
+
+    // --- Stage-5B: classification --------------------------------------
+    classification_enabled_ = this->get_parameter("classification_enabled").as_bool();
+    classification_params_.min_points = static_cast<uint32_t>(
+      this->get_parameter("classification_min_points").as_int());
+    classification_params_.max_range =
+      this->get_parameter("classification_max_range").as_double();
+    classification_params_.min_observations = static_cast<uint32_t>(
+      this->get_parameter("classification_min_observations").as_int());
+    classification_params_.min_accept_score =
+      this->get_parameter("classification_min_accept_score").as_double();
+    classification_params_.min_margin =
+      this->get_parameter("classification_min_margin").as_double();
+    classification_params_.thickness_floor =
+      this->get_parameter("classification_thickness_floor").as_double();
+    read_class_model(aspect_names(), classification_params_);
+
+    stabilizer_prototype_.smoothing =
+      this->get_parameter("classification_smoothing").as_double();
+    stabilizer_prototype_.enter_threshold =
+      this->get_parameter("classification_enter_threshold").as_double();
+    stabilizer_prototype_.exit_threshold =
+      this->get_parameter("classification_exit_threshold").as_double();
+    stabilizer_prototype_.switch_margin =
+      this->get_parameter("classification_switch_margin").as_double();
   }
 
   // ---------------------------------------------------------------------
@@ -574,6 +821,17 @@ private:
       return;
     }
 
+    // Stage-5B: the sensor origin in the map frame and the beam spacing are
+    // needed to express cluster geometry relative to the observer (range,
+    // angular span, fill ratio). Both are taken from THIS scan and its
+    // transform -- never assumed -- so a re-configured LiDAR is handled
+    // automatically. Nothing else reads them.
+    sensor_origin_.x = transform.transform.translation.x;
+    sensor_origin_.y = transform.transform.translation.y;
+    if (std::isfinite(msg->angle_increment) && std::abs(msg->angle_increment) > 0.0) {
+      classification_params_.angle_increment = std::abs(msg->angle_increment);
+    }
+
     const std::vector<Point2D> dynamic_points = extract_dynamic_points(*msg, transform);
     const auto cluster_start = std::chrono::steady_clock::now();
     std::vector<Cluster> clusters = build_clusters(dynamic_points);
@@ -587,10 +845,21 @@ private:
     // sees one measurement per believed object.
     const auto deblend_start = std::chrono::steady_clock::now();
     const size_t splits_before = deblend_split_count_;
-    const std::vector<Point2D> centroids = measurements_from_clusters(clusters, stamp);
+    std::vector<size_t> measurement_origins;
+    const std::vector<Measurement> primary_measurements =
+      measurements_from_clusters(clusters, stamp, &measurement_origins);
     const auto deblend_end = std::chrono::steady_clock::now();
+    // Stage-5B.1: the compound stage sits HERE -- after primary clustering and
+    // Stage-4G3 deblending, before association -- so association still
+    // receives one measurement per believed object. With
+    // compound_enabled=false it returns `primary_measurements` unchanged.
+    const auto compound_start = std::chrono::steady_clock::now();
+    const size_t compounds_before = compound_emitted_count_;
+    const std::vector<Measurement> measurements = apply_compound_association(
+      clusters, measurement_origins, primary_measurements, stamp);
+    const auto compound_end = std::chrono::steady_clock::now();
     const auto association_start = std::chrono::steady_clock::now();
-    associate_and_update(centroids, stamp);
+    associate_measurements_and_update(measurements, stamp);
     const auto association_end = std::chrono::steady_clock::now();
     prune_stale_tracks(stamp);
     // Stage-4G4: reachability is computed inside publish_tracks and accumulated
@@ -600,6 +869,11 @@ private:
     const auto publish_start = std::chrono::steady_clock::now();
     publish_tracks(stamp);
     const auto publish_end = std::chrono::steady_clock::now();
+    std::vector<Point2D> centroids;
+    centroids.reserve(measurements.size());
+    for (const auto & m : measurements) {
+      centroids.push_back(m.centroid);
+    }
     publish_markers(stamp, centroids);
     const auto callback_end = std::chrono::steady_clock::now();
     if (get_parameter("profile_scans").as_bool()) {
@@ -607,16 +881,18 @@ private:
           return std::chrono::duration<double, std::micro>(b - a).count();
         };
       RCLCPP_INFO(get_logger(),
-        "G2_PERF %.9f scan_us=%.3f cluster_us=%.3f deblend_us=%.3f association_us=%.3f "
-        "reach_us=%.3f publish_us=%.3f "
-        "callback_us=%.3f clusters=%zu measurements=%zu tracks=%zu splits=%zu ambiguous=%zu",
+        "G2_PERF %.9f scan_us=%.3f cluster_us=%.3f deblend_us=%.3f compound_us=%.3f "
+        "association_us=%.3f reach_us=%.3f publish_us=%.3f "
+        "callback_us=%.3f clusters=%zu measurements=%zu tracks=%zu splits=%zu ambiguous=%zu "
+        "compound_candidates=%zu compounds=%zu",
         stamp.seconds(), us(callback_start, cluster_start), us(cluster_start, cluster_end),
-        us(deblend_start, deblend_end),
+        us(deblend_start, deblend_end), us(compound_start, compound_end),
         us(association_start, association_end),
         reachability_total_us_, us(publish_start, publish_end),
         us(callback_start, callback_end),
-        clusters.size(), centroids.size(), tracks_.size(),
-        deblend_split_count_ - splits_before, ambiguous_merge_count_);
+        clusters.size(), measurements.size(), tracks_.size(),
+        deblend_split_count_ - splits_before, ambiguous_merge_count_,
+        compound_candidate_count_, compound_emitted_count_ - compounds_before);
     }
   }
 
@@ -976,31 +1252,76 @@ private:
 
   /// Cluster centroids after deblending. With deblending disabled this is
   /// exactly the checkpoint's list of one centroid per accepted cluster.
-  std::vector<Point2D> measurements_from_clusters(
-    std::vector<Cluster> & clusters, const rclcpp::Time & stamp)
+  ///
+  /// Stage-5B: each centroid now travels with the scan-plane geometry of the
+  /// cluster it came from. The CENTROIDS THEMSELVES ARE UNCHANGED -- the
+  /// split decision, the gap test and every returned position are computed
+  /// exactly as before -- so association and the filter see the same
+  /// measurements they always did.
+  ///
+  /// A DEBLENDED CHILD IS DELIBERATELY GIVEN INVALID FEATURES. Its point set
+  /// was partitioned using the tracker's own Kalman predictions as seeds, so
+  /// its apparent length, thickness and fill ratio are partly a function of
+  /// the tracker's hypothesis rather than of the object. Classifying on that
+  /// geometry would feed the tracker's belief back in as evidence. During a
+  /// merge the affected tracks therefore contribute no new class evidence and
+  /// hold their existing stabilised label while it decays, which is exactly
+  /// what the hysteresis is for.
+  /// Sentinel for "this measurement is not one whole primary cluster", used
+  /// in the `origins` vector below.
+  static constexpr size_t kNoClusterOrigin = std::numeric_limits<size_t>::max();
+
+  std::vector<Measurement> measurements_from_clusters(
+    std::vector<Cluster> & clusters, const rclcpp::Time & stamp,
+    std::vector<size_t> * origins = nullptr)
   {
-    std::vector<Point2D> measurements;
+    // Stage-5B.1: `origins` records, per emitted measurement, WHICH primary
+    // cluster it is the whole of -- or kNoClusterOrigin for a deblended
+    // child, which is only a PART of one. The compound stage must never pair
+    // a deblended child: its point set was partitioned using the tracker's
+    // own Kalman predictions as seeds, so its geometry is partly a function
+    // of the tracker's hypothesis, and building a second hypothesis on top of
+    // it would compound two inferences. Recording the origin here, where the
+    // distinction is already known, is what lets the compound stage enforce
+    // that without re-deriving it.
+    std::vector<Measurement> measurements;
     measurements.reserve(clusters.size() + 1);
+    if (origins != nullptr) {
+      origins->clear();
+      origins->reserve(clusters.size() + 1);
+    }
+    const auto note_origin = [&origins](size_t idx) {
+        if (origins != nullptr) {
+          origins->push_back(idx);
+        }
+      };
+
     if (!deblend_enabled_) {
-      for (const auto & c : clusters) {
-        measurements.push_back(c.centroid);
+      for (size_t i = 0; i < clusters.size(); ++i) {
+        measurements.push_back({clusters[i].centroid, features_of(clusters[i])});
+        note_origin(i);
       }
       return measurements;
     }
 
     const std::vector<DeblendSeed> seeds = deblend_seeds(stamp);
     std::vector<Point2D> children;
-    for (auto & c : clusters) {
+    for (size_t i = 0; i < clusters.size(); ++i) {
+      Cluster & c = clusters[i];
       bool ambiguous = false;
       if (try_deblend(c, seeds, children, ambiguous)) {
-        measurements.insert(measurements.end(), children.begin(), children.end());
+        for (const auto & child : children) {
+          measurements.push_back({child, ClusterFeatures{}});
+          note_origin(kNoClusterOrigin);
+        }
         ++deblend_split_count_;
       } else {
         // Unsplit merged clusters keep their single blended centroid, which
         // greedy association gives to exactly ONE track (its assignment is
         // one-to-one). The other track receives nothing and coasts. No centroid
         // is ever used to update two filters.
-        measurements.push_back(c.centroid);
+        measurements.push_back({c.centroid, features_of(c)});
+        note_origin(i);
         c.ambiguous_merge = ambiguous;
         if (ambiguous) {
           ++ambiguous_merge_count_;
@@ -1011,6 +1332,162 @@ private:
   }
 
   // ---------------------------------------------------------------------
+  // Stage-5B.1: gap-aware compound-observation recovery
+  // ---------------------------------------------------------------------
+  /// Replaces strongly-compatible FRAGMENT PAIRS with one compound
+  /// observation, leaving every other measurement exactly as it was.
+  ///
+  /// WHAT THIS DOES NOT DO:
+  ///   * it does not change cluster_distance or re-run clustering;
+  ///   * it does not touch a Kalman filter, a track, or a class label;
+  ///   * it does not look at any object's true class or model name;
+  ///   * it never pairs a Stage-4G3 deblended child (see `origins` above);
+  ///   * it never pairs two clusters whose gap is within the primary link
+  ///     distance -- structurally impossible for two separate clusters, and
+  ///     checked anyway by evaluateCompoundPair().
+  ///
+  /// A pair must satisfy nine geometric bounds AND hold them across
+  /// `compound_min_support` consecutive scans with a stable separation. On
+  /// acceptance the two fragment measurements are REPLACED by a single
+  /// measurement carrying the pooled points' geometry, so association sees
+  /// one measurement for one physical object -- which is the invariant the
+  /// rest of the tracker is built on.
+  ///
+  /// The raw clusters are left untouched: `clusters` is const here, so the
+  /// original measurements remain reconstructible and the decision auditable.
+  std::vector<Measurement> apply_compound_association(
+    const std::vector<Cluster> & clusters, const std::vector<size_t> & origins,
+    const std::vector<Measurement> & measurements, const rclcpp::Time & stamp)
+  {
+    if (!compound_params_.enabled) {
+      return measurements;           // provable no-op
+    }
+    if (measurements.size() < 2 || origins.size() != measurements.size()) {
+      return measurements;
+    }
+
+    // Eligible: a whole primary cluster with usable shape statistics.
+    std::vector<size_t> eligible;
+    for (size_t i = 0; i < measurements.size(); ++i) {
+      if (origins[i] != kNoClusterOrigin && measurements[i].features.valid) {
+        eligible.push_back(i);
+      }
+    }
+    if (eligible.size() < 2) {
+      return measurements;
+    }
+
+    std::vector<CompoundHypothesisTracker::Candidate> candidates;
+    for (size_t a = 0; a < eligible.size(); ++a) {
+      for (size_t b = a + 1; b < eligible.size(); ++b) {
+        const size_t ia = eligible[a];
+        const size_t ib = eligible[b];
+        // Cheap necessary condition first, from the summary features only.
+        // screenCompoundPair() applies a SUBSET of the same bounds, so a pair
+        // it rejects could not have been accepted; skipping it changes no
+        // outcome and avoids the O(|A|*|B|) nearest-gap measurement and the
+        // pooled-geometry extraction for the vast majority of pairs.
+        if (predictive_nav_tracking::screenCompoundPair(
+            measurements[ia].features, measurements[ib].features,
+            compound_params_) != predictive_nav_tracking::kCompoundAccept)
+        {
+          continue;
+        }
+        const CompoundEvidence e = predictive_nav_tracking::evaluateCompoundPair(
+          measurements[ia].features, measurements[ib].features,
+          clusters[origins[ia]].points, clusters[origins[ib]].points,
+          sensor_origin_.x, sensor_origin_.y, cluster_distance_,
+          compound_params_, classification_params_);
+        if (!e.geometry_ok) {
+          continue;
+        }
+        CompoundHypothesisTracker::Candidate c;
+        c.index_a = ia;
+        c.index_b = ib;
+        c.evidence = e;
+        candidates.push_back(c);
+      }
+    }
+    compound_candidate_count_ += candidates.size();
+    if (candidates.empty()) {
+      // Still advance the temporal state so that stale hypotheses expire and
+      // support cannot survive a scan on which the geometry failed.
+      compound_tracker_.update(stamp.seconds(), candidates);
+      return measurements;
+    }
+
+    const std::vector<bool> emit = compound_tracker_.update(stamp.seconds(), candidates);
+
+    // A cluster may belong to at most ONE compound observation. Strongest
+    // evidence first, by collinearity then by stable index, so the outcome is
+    // deterministic and independent of pair enumeration order.
+    std::vector<size_t> order;
+    for (size_t i = 0; i < candidates.size(); ++i) {
+      if (emit[i]) {
+        order.push_back(i);
+      }
+    }
+    std::sort(
+      order.begin(), order.end(),
+      [&candidates](size_t l, size_t r) {
+        if (candidates[l].evidence.alignment != candidates[r].evidence.alignment) {
+          return candidates[l].evidence.alignment > candidates[r].evidence.alignment;
+        }
+        return l < r;
+      });
+
+    std::vector<bool> consumed(measurements.size(), false);
+    std::vector<Measurement> compounds;
+    for (const size_t k : order) {
+      const auto & c = candidates[k];
+      if (consumed[c.index_a] || consumed[c.index_b]) {
+        continue;
+      }
+      consumed[c.index_a] = true;
+      consumed[c.index_b] = true;
+      Measurement m;
+      m.centroid.x = c.evidence.union_features.centroid_x;
+      m.centroid.y = c.evidence.union_features.centroid_y;
+      m.features = c.evidence.union_features;
+      m.compound = true;
+      compounds.push_back(m);
+      ++compound_emitted_count_;
+      RCLCPP_DEBUG(
+        get_logger(),
+        "G5B1_COMPOUND %.9f sep=%.3f align=%.3f gap=%.3f ulen=%.3f uthk=%.3f ufill=%.2f",
+        stamp.seconds(), c.evidence.separation, c.evidence.alignment, c.evidence.gap,
+        c.evidence.union_length, c.evidence.union_thickness, c.evidence.union_fill);
+    }
+    if (compounds.empty()) {
+      return measurements;
+    }
+
+    std::vector<Measurement> out;
+    out.reserve(measurements.size());
+    for (size_t i = 0; i < measurements.size(); ++i) {
+      if (!consumed[i]) {
+        out.push_back(measurements[i]);
+      }
+    }
+    for (auto & m : compounds) {
+      out.push_back(std::move(m));
+    }
+    return out;
+  }
+
+  /// Scan-plane geometry of one accepted cluster, relative to this scan's
+  /// sensor origin. Returns an invalid feature set when classification is
+  /// disabled, so the whole feature path costs nothing in that case.
+  ClusterFeatures features_of(const Cluster & c) const
+  {
+    if (!classification_enabled_) {
+      return ClusterFeatures{};
+    }
+    return predictive_nav_tracking::extractFeatures(
+      c.points, sensor_origin_.x, sensor_origin_.y, classification_params_);
+  }
+
+  // ---------------------------------------------------------------------
   // Association / track maintenance
   // ---------------------------------------------------------------------
   double clamp_dt(double dt) const
@@ -1018,10 +1495,32 @@ private:
     return std::clamp(dt, kf_min_dt_, kf_max_dt_);
   }
 
+  /// Position-only association. FROZEN SIGNATURE: this is the entry point
+  /// the Stage-4G2/4G3/4G4 tests drive, and its behaviour is unchanged --
+  /// bare centroids simply carry no cluster geometry, so the associated
+  /// tracks receive no new class evidence on this call. A deliberately
+  /// DISTINCT NAME is used for the feature-carrying form below rather than an
+  /// overload, because `{{x, y}}` call sites would otherwise become
+  /// ambiguous between the two parameter types.
   void associate_and_update(const std::vector<Point2D> & centroids, const rclcpp::Time & stamp)
   {
+    std::vector<Measurement> measurements;
+    measurements.reserve(centroids.size());
+    for (const auto & c : centroids) {
+      measurements.push_back({c, ClusterFeatures{}});
+    }
+    associate_measurements_and_update(measurements, stamp);
+  }
+
+  /// Stage-5B: association on measurements that carry their cluster geometry.
+  /// Identical to the position-only form in every step that touches gating,
+  /// assignment or the Kalman filter -- it reads `centroid` for all of those
+  /// -- and additionally hands `features` to the classifier.
+  void associate_measurements_and_update(
+    const std::vector<Measurement> & measurements, const rclcpp::Time & stamp)
+  {
     const size_t n_tracks = tracks_.size();
-    const size_t n_dets = centroids.size();
+    const size_t n_dets = measurements.size();
 
     // Gating uses the Kalman-predicted position (F(dt) * x), not a manual
     // vx*dt formula -- for an established track this is the filtered
@@ -1047,7 +1546,8 @@ private:
     for (size_t t = 0; t < n_tracks; ++t) {
       for (size_t d = 0; d < n_dets; ++d) {
         const double dist = std::hypot(
-          predicted[t].x - centroids[d].x, predicted[t].y - centroids[d].y);
+          predicted[t].x - measurements[d].centroid.x,
+          predicted[t].y - measurements[d].centroid.y);
         if (dist <= association_gate_) {
           candidates.push_back({dist, t, d});
         }
@@ -1065,27 +1565,50 @@ private:
       }
       track_assigned[c.track_idx] = true;
       det_assigned[c.det_idx] = true;
-      update_track(tracks_[c.track_idx], centroids[c.det_idx], stamp);
+      update_track(tracks_[c.track_idx], measurements[c.det_idx], stamp);
     }
 
     for (size_t t = 0; t < n_tracks; ++t) {
       if (!track_assigned[t]) {
         tracks_[t].missed_count += 1;
         tracks_[t].age += 1;
+        // Stage-5B: a coasting scan carries no geometry, so it contributes no
+        // class evidence -- but it still DECAYS the accumulated scores, so a
+        // label fades out while an object stays unobserved instead of
+        // persisting on stale evidence.
+        if (classification_enabled_) {
+          tracks_[t].class_features = ClusterFeatures{};
+          tracks_[t].class_instant = ClassificationResult{};
+          tracks_[t].class_from_compound = false;
+          tracks_[t].class_state.update(tracks_[t].class_instant);
+        }
       }
     }
 
     for (size_t d = 0; d < n_dets; ++d) {
       if (!det_assigned[d]) {
-        tracks_.push_back(make_new_track(centroids[d], stamp, next_track_id_++));
+        tracks_.push_back(make_new_track(measurements[d], stamp, next_track_id_++));
       }
     }
   }
 
-  Track make_new_track(const Point2D & det, const rclcpp::Time & stamp, uint32_t id) const
+  Track make_new_track(
+    const Measurement & meas, const rclcpp::Time & stamp, uint32_t id) const
   {
+    const Point2D & det = meas.centroid;
     Track track;
     track.id = id;
+
+    // Stage-5B: a brand-new ID starts from UNKNOWN with zero accumulated
+    // evidence. The stabiliser is configured from the node's parameters but
+    // inherits nothing from any previous track. With classification disabled
+    // the geometry is not recorded either, so the published class_* fields are
+    // exactly their defaults.
+    track.class_state = stabilizer_prototype_;
+    if (classification_enabled_) {
+      track.class_features = meas.features;
+      track.class_from_compound = meas.compound;
+    }
 
     track.kf_x << det.x, det.y, 0.0, 0.0;
     track.kf_P.setZero();
@@ -1108,8 +1631,9 @@ private:
     return track;
   }
 
-  void update_track(Track & track, const Point2D & det, const rclcpp::Time & stamp)
+  void update_track(Track & track, const Measurement & meas, const rclcpp::Time & stamp)
   {
+    const Point2D & det = meas.centroid;
     // --- Stage-4B raw finite-difference baseline (unchanged) --------------
     track.history.push_back({stamp, det.x, det.y});
     while (track.history.size() > velocity_history_size_) {
@@ -1156,6 +1680,30 @@ private:
     if (track.observations >= min_observations_for_kalman_velocity_) {
       track.kalman_initialized = true;
     }
+
+    // --- Stage-5B: classification (metadata only) -------------------------
+    // Runs AFTER the filter update so the speed veto sees this scan's
+    // filtered velocity, and writes only to the track's class_* fields. It
+    // cannot affect kf_x, kf_P, the predictions or the reachable sets.
+    if (classification_enabled_) {
+      classify_track(track, meas);
+    }
+  }
+
+  /// Folds one scan's geometry into `track`'s classification state.
+  void classify_track(Track & track, const Measurement & meas) const
+  {
+    predictive_nav_tracking::TrackMotion motion;
+    motion.speed = track.kalman_initialized ?
+      std::hypot(track.kf_x(2), track.kf_x(3)) : std::hypot(track.raw_vx, track.raw_vy);
+    motion.speed_valid = track.kalman_initialized;
+    motion.observations = track.observations;
+
+    track.class_features = meas.features;
+    track.class_from_compound = meas.compound;
+    track.class_instant = predictive_nav_tracking::classifyInstant(
+      meas.features, motion, classification_params_);
+    track.class_state.update(track.class_instant);
   }
 
   void prune_stale_tracks(const rclcpp::Time & stamp)
@@ -1301,6 +1849,27 @@ private:
       obj.observations = t.observations;
       obj.missed_count = t.missed_count;
       obj.stamp = t.last_update;
+
+      // --- Stage-5B: additive classification metadata --------------------
+      // The published label is the STABILISED one; the raw per-scan guess is
+      // carried alongside it so an evaluation can separate per-detection
+      // accuracy from stable per-track accuracy. Every field below is new in
+      // Stage-5B and is read by no existing consumer.
+      obj.classification = static_cast<uint8_t>(t.class_state.label());
+      obj.classification_confidence = t.class_state.confidence();
+      obj.classification_instant = static_cast<uint8_t>(t.class_instant.label);
+      obj.classification_instant_confidence = t.class_instant.confidence;
+
+      obj.classification_features_valid = t.class_features.valid;
+      obj.cluster_length = t.class_features.length;
+      obj.cluster_thickness = t.class_features.thickness;
+      obj.cluster_elongation = t.class_features.elongation;
+      obj.cluster_point_count = t.class_features.point_count;
+      obj.cluster_range = t.class_features.range;
+      obj.cluster_angular_span = t.class_features.angular_span;
+      obj.cluster_fill_ratio = t.class_features.fill_ratio;
+      obj.cluster_max_gap = t.class_features.max_gap;
+      obj.classification_from_compound = t.class_from_compound;
 
       for (const auto & s : predict_future(t)) {
         predictive_nav_msgs::msg::TrackedObjectPrediction pred;
@@ -1660,6 +2229,15 @@ private:
   size_t deblend_split_count_{0};
   size_t ambiguous_merge_count_{0};
 
+  // --- Stage-5B.1: gap-aware compound-observation recovery ---
+  // Operates strictly between primary clustering and association. Holds no
+  // track state and reads no class label.
+  CompoundParams compound_params_{};
+  CompoundHypothesisTracker compound_tracker_{};
+  /// Diagnostic counters, published only through the G2_PERF log line.
+  size_t compound_candidate_count_{0};   ///< pairs that passed the geometry
+  size_t compound_emitted_count_{0};     ///< pairs that also passed the temporal gate
+
   // --- Stage-4G4: bounded-motion reachability ---
   bool reachability_enabled_{true};
   ReachabilityBounds reachability_bounds_{};
@@ -1668,6 +2246,17 @@ private:
   double max_observation_age_{1.0};
   size_t num_reachability_samples_{6};
   double reachability_total_us_{0.0};
+
+  // --- Stage-5B: dynamic obstacle classification ---
+  // OBSERVATION ONLY. Nothing in this block is read by the filter, the CV
+  // prediction, the reachable sets or the costmap layer.
+  bool classification_enabled_{true};
+  ClassificationParams classification_params_{};
+  /// Stabiliser settings a NEW track is born with; never itself updated.
+  ClassLabelStabilizer stabilizer_prototype_{};
+  /// This scan's LiDAR origin in the map frame, from the scan's own
+  /// transform. All range-relative cluster features are measured from here.
+  Point2D sensor_origin_{};
 
   double association_gate_{0.6};
   double track_timeout_{1.0};

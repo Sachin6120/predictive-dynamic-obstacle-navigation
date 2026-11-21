@@ -1,0 +1,216 @@
+{
+ "trial_id": "stage5b_integration",
+ "mode": "predictive",
+ "scenario": "perpendicular",
+ "wall_time": "2026-11-20T22:45:46",
+ "error": null,
+ "config": {
+  "trial_id": "stage5b_integration",
+  "mode": "predictive",
+  "scenario": "perpendicular",
+  "start_x": -3.0,
+  "start_y": 0.0,
+  "start_yaw": 0.0,
+  "goal_x": 3.0,
+  "goal_y": 0.0,
+  "goal_yaw": 0.0,
+  "cross_x": 0.0,
+  "cross_y": 0.0,
+  "obstacle_start_x": 0.0,
+  "obstacle_start_y": -3.0,
+  "obstacle_speed": 0.5,
+  "obstacle_heading": 1.5707963,
+  "obstacle_travel": 5.0,
+  "obstacle_trigger_delay": 0.0,
+  "policy_max_prediction_horizon": 3.0,
+  "policy_sigma_level": 1.5,
+  "policy_temporal_decay": 0.35,
+  "policy_max_cost": 250,
+  "policy_min_cost": 0,
+  "policy_max_influence_radius": 0.55,
+  "nominal_speed": 0.48,
+  "speed_reaction_fraction": 0.6,
+  "reaction_sustain_s": 0.25,
+  "yaw_reaction_threshold": 0.3,
+  "lateral_reaction_threshold": 0.15,
+  "stop_speed_threshold": 0.05,
+  "crossing_zone_radius": 0.35,
+  "settle_timeout": 180.0,
+  "nav_timeout": 60.0,
+  "record_hz": 20.0,
+  "post_goal_record_s": 1.0
+ },
+ "metrics": {
+  "cruise_established_t": 0.9015,
+  "reactions": {
+   "R1_speed_reduction": {
+    "t": 4.001,
+    "robot": [
+     -1.5135,
+     0.0255
+    ],
+    "obstacle": [
+     -0.0,
+     -1.0939
+    ],
+    "robot_dist_to_crossing": 1.514,
+    "obstacle_dist_to_crossing": 1.094,
+    "separation": 1.8824,
+    "v_nav": 0.2872
+   },
+   "R2_angular": {
+    "t": 8.901,
+    "robot": [
+     -1.1024,
+     0.0146
+    ],
+    "obstacle": [
+     -0.0,
+     1.2651
+    ],
+    "robot_dist_to_crossing": 1.102,
+    "obstacle_dist_to_crossing": 1.265,
+    "separation": 1.667,
+    "v_nav": 0.0571
+   },
+   "R3_lateral_deviation": null,
+   "R4_stop": {
+    "t": 6.402,
+    "robot": [
+     -1.0692,
+     0.035
+    ],
+    "obstacle": [
+     -0.0,
+     0.0612
+    ],
+    "robot_dist_to_crossing": 1.07,
+    "obstacle_dist_to_crossing": 0.061,
+    "separation": 1.0695,
+    "v_nav": 0.0454
+   }
+  },
+  "primary_reaction_time": 4.0014,
+  "advance_warning": {
+   "first_predictive_cost_t": 0.9015,
+   "first_predictive_cost_at_crossing_t": 1.1517,
+   "first_obstacle_at_crossing_t": 5.5516,
+   "lead_s": 4.4
+  },
+  "min_center_separation": 1.0648,
+  "min_clearance": 0.7936,
+  "collision": false,
+  "min_planning_radius_margin": 0.6448,
+  "path_length": 5.8779,
+  "stops": [
+   [
+    6.402,
+    2.3
+   ],
+   [
+    18.501,
+    1.005
+   ]
+  ],
+  "n_stops": 2,
+  "stop_duration_total": 3.305,
+  "min_v_nav_approach": -0.1066,
+  "mean_v_nav_approach": 0.2615,
+  "max_abs_w_nav_approach": 0.4435,
+  "max_lateral_dev_approach": 0.04,
+  "cmd_variation": 0.00566,
+  "max_pred_cells": 919,
+  "max_pred_frac_window": 0.0638,
+  "mean_pred_frac_window": 0.0481,
+  "max_pred_peak_near_cross": 83,
+  "max_pred_peak_ahead": 83,
+  "first_predictive_cost_ahead_t": 2.552,
+  "max_master_peak_ahead": 254,
+  "max_master_hi_ahead": 101,
+  "mean_master_mean_ahead_approach": 72.0,
+  "first_master_hi_ahead_t": 5.9516,
+  "max_pred_peak": 83,
+  "max_pred_near_cross": 154,
+  "frames_with_pred_cost": 373,
+  "max_tracks": 1,
+  "frames_tracked": 373,
+  "frames_kf_converged": 373,
+  "tracked_speed_mean": 0.2615,
+  "tracked_speed_max": 0.5181,
+  "plan_publications": 18,
+  "global_path_changes": 4,
+  "collision_monitor_interventions": 0,
+  "max_abs_lateral_offset_approach": 0.04,
+  "signed_peak_lateral_offset_approach": -0.04,
+  "integrated_abs_lateral_approach": 0.237,
+  "response_class": "stop_yield",
+  "prediction_quality": {
+   "n_prediction_sets": 99,
+   "tracking_position_error_m": {
+    "n": 98,
+    "mean": 0.1966,
+    "median": 0.184,
+    "max": 0.2682
+   },
+   "tracking_velocity_error_mps": {
+    "n": 99,
+    "mean": 0.0587,
+    "median": 0.0373,
+    "max": 0.4616
+   },
+   "displacement_error_by_horizon_m": {
+    "0.5": {
+     "n": 95,
+     "mean": 0.1963,
+     "median": 0.19,
+     "max": 0.2841
+    },
+    "1.0": {
+     "n": 93,
+     "mean": 0.2065,
+     "median": 0.1977,
+     "max": 0.4068
+    },
+    "1.5": {
+     "n": 90,
+     "mean": 0.228,
+     "median": 0.2056,
+     "max": 0.6321
+    },
+    "2.0": {
+     "n": 88,
+     "mean": 0.2594,
+     "median": 0.2249,
+     "max": 0.8647
+    },
+    "2.5": {
+     "n": 85,
+     "mean": 0.3057,
+     "median": 0.2475,
+     "max": 1.1007
+    },
+    "3.0": {
+     "n": 83,
+     "mean": 0.3591,
+     "median": 0.2733,
+     "max": 1.3375
+    }
+   },
+   "ADE_m": {
+    "n": 95,
+    "mean": 0.2506,
+    "median": 0.2185,
+    "max": 0.7618
+   },
+   "FDE_m": {
+    "n": 95,
+    "mean": 0.3348,
+    "median": 0.2546,
+    "max": 1.3375
+   }
+  },
+  "nav_status": "SUCCEEDED",
+  "nav_time": 18.502,
+  "success": true
+ }
+}

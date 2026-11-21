@@ -1,0 +1,79 @@
+STAGE-5B -- EVIDENCE FOR THE fill_ratio ESTIMATOR DEFECT
+========================================================================
+
+This is the retained evidence from the FIRST Stage-5B recording, made
+before the fill_ratio clamp documented in obstacle_classification.hpp was
+applied. The full raw JSONL (2.2 MB) was not kept; this summary is the
+part that matters. The reported Stage-5B metrics come from a SEPARATE,
+clean re-recording made after the fix -- not from this data.
+
+THE DEFECT
+------------------------------------------------------------------------
+fill_ratio is defined as the fraction of the beams crossing a cluster that
+returned, so it cannot exceed 1. It was computed as
+    point_count / (angular_span / angle_increment + 1)
+and in practice exceeded 1 on a third of all detections:
+
+  detections            : 2816
+  min / median / max    : 0.429 / 1.011 / 1.375
+  above 1.00            : 1425 (50.6%)
+  above 1.05 (the bound : 977 (34.7%)
+    every class used)
+
+ROOT CAUSE, CONFIRMED NUMERICALLY
+------------------------------------------------------------------------
+The angular span is measured from the returns own bearings, while
+angle_increment is the driver nominal spacing. This LiDAR reports 360
+samples over 6.28 rad rather than 2*pi, so its first and last beams are
+2*pi - 6.28 = 0.0032 rad apart -- 0.18 of one 0.01749 rad increment. A
+cluster straddling that direction (anything straight ahead of the sensor,
+which is where these actors are) therefore contributes one extra return
+while adding only 0.18 increments of span, so expected_beams is deflated
+by ~0.82 beams and the quotient rises above 1.
+
+Predicted span deficit from that mechanism : 1 - 0.18 = 0.82 increments
+Measured, as (point_count - 1) - angular_span/angle_increment :
+
+    points       n   median span/inc   (n-1)   deficit  median fill
+         3      42              3.19       2     -1.19         0.72
+         4     256              2.19       3      0.81         1.26
+         5     180              6.01       4     -2.01         0.71
+         6     238              4.19       5      0.81         1.16
+         7      98              6.01       6     -0.01         1.00
+         8     220              6.20       7      0.80         1.11
+         9     163              8.02       8     -0.02         1.00
+        10     248              8.20       9      0.80         1.09
+        11     106             10.02      10     -0.02         1.00
+        12     104             10.21      11      0.79         1.07
+
+Reading the table: a POSITIVE deficit means the measured span is SHORTER
+than (n-1) increments, which is geometrically impossible for n distinct
+beams at the nominal spacing -- it can only happen if two returns sit at
+nearly the same bearing. Every such row sits at 0.79-0.81, matching the
+0.82 the near-duplicate beam pair predicts, and every one of those rows
+reports a median fill_ratio above 1.
+
+The NEGATIVE rows are the correct, healthy case: those clusters span more
+increments than they have returns because they have genuine internal holes
+(a pedestrian between its legs, a bicycle between its wheels), beams that
+crossed the silhouette and returned nothing near it. Those report
+fill_ratio at or below 1, as the definition requires.
+
+CONSEQUENCE
+------------------------------------------------------------------------
+Every class box bounds fill_ratio from above (fill_hi 0.90-1.05). An
+estimator artefact was therefore being read as "this object is impossibly
+solid", and the affected detections were refused a label. Labels assigned
+in this pre-fix recording, for reference:
+
+  true PEDESTRIAN  n=574   UNKNOWN:314  PEDESTRIAN:260
+  true BIKE        n=582   PEDESTRIAN:551  UNKNOWN:31
+  true VEHICLE     n=993   UNKNOWN:443  VEHICLE:337  PEDESTRIAN:213
+  true UNKNOWN     n=667   UNKNOWN:500  VEHICLE:167
+
+THE FIX
+------------------------------------------------------------------------
+fill_ratio is clamped to 1.0, which is its definitional maximum. The
+clamp and this measurement are documented at ClusterFeatures::fill_ratio,
+and pinned by a unit test that sweeps every actor geometry, aspect and
+range and requires fill_ratio <= 1.0 throughout.
