@@ -1,0 +1,31 @@
+{
+  "stage": "5C.1",
+  "subject": "reachability max_speed validity contract",
+  "configured": {"max_speed_mps": 0.800, "max_acceleration_mps2": 0.500,
+    "max_speed_tolerance_mps": 1.0e-06, "enforce_observed_speed": true,
+    "max_total_time_s": 4.0},
+  "boundary_cases": [
+    {"s0_mps": 0.000000, "label": "zero speed", "contradicted": false, "status": "SATISFIED", "effective_max_speed_mps": 0.800000},
+    {"s0_mps": 0.300000, "label": "clearly below the cap", "contradicted": false, "status": "SATISFIED", "effective_max_speed_mps": 0.800000},
+    {"s0_mps": 0.750000, "label": "fastest existing simulation obstacle", "contradicted": false, "status": "SATISFIED", "effective_max_speed_mps": 0.800000},
+    {"s0_mps": 0.799000, "label": "just below the cap", "contradicted": false, "status": "SATISFIED", "effective_max_speed_mps": 0.800000},
+    {"s0_mps": 0.800000, "label": "exactly the configured premise (equality satisfies it)", "contradicted": false, "status": "SATISFIED", "effective_max_speed_mps": 0.800000},
+    {"s0_mps": 0.800000, "label": "inside the reporting tolerance", "contradicted": false, "status": "SATISFIED", "effective_max_speed_mps": 0.800000},
+    {"s0_mps": 0.800001, "label": "exactly at the tolerance (strict >, so not yet)", "contradicted": false, "status": "SATISFIED", "effective_max_speed_mps": 0.800000},
+    {"s0_mps": 0.800002, "label": "just outside the reporting tolerance", "contradicted": true, "status": "OBSERVED_SPEED_EXCEEDS_CAP", "effective_max_speed_mps": 0.800002},
+    {"s0_mps": 0.801000, "label": "just above the cap", "contradicted": true, "status": "OBSERVED_SPEED_EXCEEDS_CAP", "effective_max_speed_mps": 0.801000},
+    {"s0_mps": 0.931000, "label": "worst in-domain filtered peak measured at Stage-5C", "contradicted": true, "status": "OBSERVED_SPEED_EXCEEDS_CAP", "effective_max_speed_mps": 0.931000},
+    {"s0_mps": 1.400000, "label": "Stage-5C out-of-domain capability", "contradicted": true, "status": "OBSERVED_SPEED_EXCEEDS_CAP", "effective_max_speed_mps": 1.400000},
+    {"s0_mps": 2.400000, "label": "far above the cap", "contradicted": true, "status": "OBSERVED_SPEED_EXCEEDS_CAP", "effective_max_speed_mps": 2.400000}
+  ],
+  "degenerate_inputs_handled": true,
+  "in_domain_equivalence": {"samples_compared": 1104, "bit_differences": 0, "bit_identical": true},
+  "out_of_contract": {"samples": 1280, "flagged": 1280, "shrunk": 0, "dropped": 0, "worst_radius_growth_m": 0.053300},
+  "repair_is_real": {"trials": 128, "legacy_escapes": 4, "worst_legacy_escape_m": 0.050000, "contract_escapes": 0, "worst_contract_slack_m": -2.377e-11},
+  "tolerance_rationale": {"in_domain_scenarios": 11, "scenarios_whose_filtered_peak_is_flagged": 5, "worst_in_domain_filtered_overshoot_above_cap_mps": 0.131, "worst_region_growth_from_a_transient_m": 0.0533, "response_is_rejection": false},
+  "unobservable_residual": {"observed_s0_mps": 0.000, "configured_cap_mps": 0.800, "physical_capability_mps": 1.400, "total_time_s": 4.0, "model_bound_m": 2.5600, "true_reach_m": 3.6400, "escape_m": 1.0800, "reported_status": "SATISFIED", "runtime_enforceable": false,
+    "note": "future capability is not observable; this half of the premise stays a declared configuration assumption and is NOT closed by Stage-5C.1"},
+  "through_production_node": {"in_domain_samples": 6, "in_domain_satisfied": 6, "out_of_contract_samples": 6, "out_of_contract_flagged": 6, "out_of_contract_still_valid": 6, "per_track_independent": true},
+  "failures": 0,
+  "pass": true
+}

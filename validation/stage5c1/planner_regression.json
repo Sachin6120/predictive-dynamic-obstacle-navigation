@@ -1,0 +1,369 @@
+{
+  "note": "Stage-5C.1 bounded planner regression summary.\n\nAggregates the two arms. The arms differ ONLY in\npredicted_obstacle_layer.prediction_mode; everything else -- map, start, goal,\nobstacle trajectories, tracker, Kalman filter, CV predictor, reachability\nmathematics, MPPI, Nav2 configuration, sensor model, classifier, compound\nclustering and costmap resolution -- is byte-identical, and the tracker\npublishes reachability in BOTH arms so the costmap input is the same and only\nconsumption differs.",
+  "arms": {
+    "cv_covariance": {
+      "layer_mode_observed": [
+        "cv_covariance"
+      ],
+      "trials": 9,
+      "succeeded": 9,
+      "collisions": 0,
+      "collision_monitor_interventions": 0,
+      "min_clearance_m": {
+        "n": 9,
+        "mean": 0.6688,
+        "min": 0.0169,
+        "max": 1.1148
+      },
+      "nav_time_s": {
+        "n": 9,
+        "mean": 16.5741,
+        "min": 13.251,
+        "max": 20.3
+      },
+      "path_length_m": {
+        "n": 9,
+        "mean": 5.8745,
+        "min": 5.6349,
+        "max": 6.2206
+      },
+      "max_pred_cells": {
+        "n": 9,
+        "mean": 934.8889,
+        "min": 911.0,
+        "max": 951.0
+      },
+      "predictive_cells_written": {
+        "n": 50,
+        "mean": 381.56,
+        "min": 0.0,
+        "max": 947.0
+      },
+      "layer_updateCosts_us": {
+        "mean_of_means": 23.23,
+        "max": 113.0,
+        "n_stat_lines": 50
+      },
+      "reachability_contract_warnings": 0,
+      "per_trial": [
+        {
+          "trial": "headon_predictive_01",
+          "condition": "headon",
+          "success": true,
+          "nav_status": "SUCCEEDED",
+          "collision": false,
+          "min_clearance_m": 0.0169,
+          "nav_time_s": 20.3,
+          "path_length_m": 6.2206,
+          "max_pred_cells": 933,
+          "mean_pred_frac_window": 0.0303,
+          "response_class": "lateral_detour+yield",
+          "primary_reaction_time_s": 4.101,
+          "collision_monitor_interventions": 0
+        },
+        {
+          "trial": "headon_predictive_02",
+          "condition": "headon",
+          "success": true,
+          "nav_status": "SUCCEEDED",
+          "collision": false,
+          "min_clearance_m": 0.151,
+          "nav_time_s": 17.101,
+          "path_length_m": 6.1675,
+          "max_pred_cells": 947,
+          "mean_pred_frac_window": 0.0297,
+          "response_class": "lateral_detour+yield",
+          "primary_reaction_time_s": 4.0011,
+          "collision_monitor_interventions": 0
+        },
+        {
+          "trial": "headon_predictive_03",
+          "condition": "headon",
+          "success": true,
+          "nav_status": "SUCCEEDED",
+          "collision": false,
+          "min_clearance_m": 0.155,
+          "nav_time_s": 16.458,
+          "path_length_m": 6.0662,
+          "max_pred_cells": 951,
+          "mean_pred_frac_window": 0.0304,
+          "response_class": "lateral_detour+yield",
+          "primary_reaction_time_s": 4.0009,
+          "collision_monitor_interventions": 0
+        },
+        {
+          "trial": "noconflict_predictive_01",
+          "condition": "noconflict",
+          "success": true,
+          "nav_status": "SUCCEEDED",
+          "collision": false,
+          "min_clearance_m": 1.1143,
+          "nav_time_s": 13.351,
+          "path_length_m": 5.6667,
+          "max_pred_cells": 933,
+          "mean_pred_frac_window": 0.0311,
+          "response_class": "none",
+          "primary_reaction_time_s": null,
+          "collision_monitor_interventions": 0
+        },
+        {
+          "trial": "noconflict_predictive_02",
+          "condition": "noconflict",
+          "success": true,
+          "nav_status": "SUCCEEDED",
+          "collision": false,
+          "min_clearance_m": 1.1007,
+          "nav_time_s": 13.352,
+          "path_length_m": 5.6907,
+          "max_pred_cells": 922,
+          "mean_pred_frac_window": 0.0313,
+          "response_class": "none",
+          "primary_reaction_time_s": null,
+          "collision_monitor_interventions": 0
+        },
+        {
+          "trial": "noconflict_predictive_03",
+          "condition": "noconflict",
+          "success": true,
+          "nav_status": "SUCCEEDED",
+          "collision": false,
+          "min_clearance_m": 1.1148,
+          "nav_time_s": 13.251,
+          "path_length_m": 5.6349,
+          "max_pred_cells": 944,
+          "mean_pred_frac_window": 0.031,
+          "response_class": "none",
+          "primary_reaction_time_s": null,
+          "collision_monitor_interventions": 0
+        },
+        {
+          "trial": "perp_050_predictive_01",
+          "condition": "perp_050",
+          "success": true,
+          "nav_status": "SUCCEEDED",
+          "collision": false,
+          "min_clearance_m": 0.7912,
+          "nav_time_s": 18.901,
+          "path_length_m": 5.7983,
+          "max_pred_cells": 911,
+          "mean_pred_frac_window": 0.0482,
+          "response_class": "stop_yield",
+          "primary_reaction_time_s": 4.0016,
+          "collision_monitor_interventions": 0
+        },
+        {
+          "trial": "perp_050_predictive_02",
+          "condition": "perp_050",
+          "success": true,
+          "nav_status": "SUCCEEDED",
+          "collision": false,
+          "min_clearance_m": 0.7917,
+          "nav_time_s": 18.401,
+          "path_length_m": 5.8557,
+          "max_pred_cells": 933,
+          "mean_pred_frac_window": 0.0482,
+          "response_class": "stop_yield",
+          "primary_reaction_time_s": 4.3008,
+          "collision_monitor_interventions": 0
+        },
+        {
+          "trial": "perp_050_predictive_03",
+          "condition": "perp_050",
+          "success": true,
+          "nav_status": "SUCCEEDED",
+          "collision": false,
+          "min_clearance_m": 0.7832,
+          "nav_time_s": 18.052,
+          "path_length_m": 5.7695,
+          "max_pred_cells": 940,
+          "mean_pred_frac_window": 0.0485,
+          "response_class": "stop_yield",
+          "primary_reaction_time_s": 4.2017,
+          "collision_monitor_interventions": 0
+        }
+      ]
+    },
+    "reachability": {
+      "layer_mode_observed": [
+        "reachability"
+      ],
+      "trials": 9,
+      "succeeded": 9,
+      "collisions": 0,
+      "collision_monitor_interventions": 0,
+      "min_clearance_m": {
+        "n": 9,
+        "mean": 0.6872,
+        "min": 0.0864,
+        "max": 1.1503
+      },
+      "nav_time_s": {
+        "n": 9,
+        "mean": 16.0534,
+        "min": 13.302,
+        "max": 18.901
+      },
+      "path_length_m": {
+        "n": 9,
+        "mean": 5.8431,
+        "min": 5.6756,
+        "max": 6.0634
+      },
+      "max_pred_cells": {
+        "n": 9,
+        "mean": 1037.8889,
+        "min": 1007.0,
+        "max": 1083.0
+      },
+      "predictive_cells_written": {
+        "n": 50,
+        "mean": 389.9,
+        "min": 23.0,
+        "max": 1039.0
+      },
+      "layer_updateCosts_us": {
+        "mean_of_means": 25.67,
+        "max": 93.0,
+        "n_stat_lines": 50
+      },
+      "reachability_contract_warnings": 0,
+      "per_trial": [
+        {
+          "trial": "headon_predictive_01",
+          "condition": "headon",
+          "success": true,
+          "nav_status": "SUCCEEDED",
+          "collision": false,
+          "min_clearance_m": 0.0864,
+          "nav_time_s": 17.151,
+          "path_length_m": 6.0634,
+          "max_pred_cells": 1025,
+          "mean_pred_frac_window": 0.0329,
+          "response_class": "lateral_detour",
+          "primary_reaction_time_s": 3.9013,
+          "collision_monitor_interventions": 0
+        },
+        {
+          "trial": "headon_predictive_02",
+          "condition": "headon",
+          "success": true,
+          "nav_status": "SUCCEEDED",
+          "collision": false,
+          "min_clearance_m": 0.1433,
+          "nav_time_s": 15.601,
+          "path_length_m": 5.9719,
+          "max_pred_cells": 1047,
+          "mean_pred_frac_window": 0.0341,
+          "response_class": "lateral_detour+yield",
+          "primary_reaction_time_s": 4.0514,
+          "collision_monitor_interventions": 0
+        },
+        {
+          "trial": "headon_predictive_03",
+          "condition": "headon",
+          "success": true,
+          "nav_status": "SUCCEEDED",
+          "collision": false,
+          "min_clearance_m": 0.1942,
+          "nav_time_s": 15.752,
+          "path_length_m": 6.0296,
+          "max_pred_cells": 1083,
+          "mean_pred_frac_window": 0.0343,
+          "response_class": "lateral_detour+yield",
+          "primary_reaction_time_s": 3.8501,
+          "collision_monitor_interventions": 0
+        },
+        {
+          "trial": "noconflict_predictive_01",
+          "condition": "noconflict",
+          "success": true,
+          "nav_status": "SUCCEEDED",
+          "collision": false,
+          "min_clearance_m": 1.1503,
+          "nav_time_s": 13.411,
+          "path_length_m": 5.6914,
+          "max_pred_cells": 1047,
+          "mean_pred_frac_window": 0.0342,
+          "response_class": "none",
+          "primary_reaction_time_s": null,
+          "collision_monitor_interventions": 0
+        },
+        {
+          "trial": "noconflict_predictive_02",
+          "condition": "noconflict",
+          "success": true,
+          "nav_status": "SUCCEEDED",
+          "collision": false,
+          "min_clearance_m": 1.0955,
+          "nav_time_s": 13.302,
+          "path_length_m": 5.6756,
+          "max_pred_cells": 1025,
+          "mean_pred_frac_window": 0.0346,
+          "response_class": "none",
+          "primary_reaction_time_s": null,
+          "collision_monitor_interventions": 0
+        },
+        {
+          "trial": "noconflict_predictive_03",
+          "condition": "noconflict",
+          "success": true,
+          "nav_status": "SUCCEEDED",
+          "collision": false,
+          "min_clearance_m": 1.1236,
+          "nav_time_s": 13.411,
+          "path_length_m": 5.6929,
+          "max_pred_cells": 1065,
+          "mean_pred_frac_window": 0.0344,
+          "response_class": "none",
+          "primary_reaction_time_s": null,
+          "collision_monitor_interventions": 0
+        },
+        {
+          "trial": "perp_050_predictive_01",
+          "condition": "perp_050",
+          "success": true,
+          "nav_status": "SUCCEEDED",
+          "collision": false,
+          "min_clearance_m": 0.7985,
+          "nav_time_s": 18.901,
+          "path_length_m": 5.8161,
+          "max_pred_cells": 1007,
+          "mean_pred_frac_window": 0.0516,
+          "response_class": "stop_yield",
+          "primary_reaction_time_s": 4.1005,
+          "collision_monitor_interventions": 0
+        },
+        {
+          "trial": "perp_050_predictive_02",
+          "condition": "perp_050",
+          "success": true,
+          "nav_status": "SUCCEEDED",
+          "collision": false,
+          "min_clearance_m": 0.8016,
+          "nav_time_s": 18.351,
+          "path_length_m": 5.8307,
+          "max_pred_cells": 1007,
+          "mean_pred_frac_window": 0.0525,
+          "response_class": "stop_yield",
+          "primary_reaction_time_s": 4.2014,
+          "collision_monitor_interventions": 0
+        },
+        {
+          "trial": "perp_050_predictive_03",
+          "condition": "perp_050",
+          "success": true,
+          "nav_status": "SUCCEEDED",
+          "collision": false,
+          "min_clearance_m": 0.7916,
+          "nav_time_s": 18.601,
+          "path_length_m": 5.8162,
+          "max_pred_cells": 1035,
+          "mean_pred_frac_window": 0.0521,
+          "response_class": "stop_yield",
+          "primary_reaction_time_s": 4.1517,
+          "collision_monitor_interventions": 0
+        }
+      ]
+    }
+  }
+}

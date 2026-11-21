@@ -533,18 +533,37 @@ void PredictedObstacleLayer::rasterizeReachableSet(
   double center_x, double center_y, double semi_major, double semi_minor, double yaw,
   double time_from_now, WorldBounds & written)
 {
-  // Same costmap-policy bound as CV mode: this is not a statement about the
-  // model, only about how far this layer will paint per sample.
-  if (max_influence_radius_ > 0.0) {
-    semi_major = std::min(semi_major, max_influence_radius_);
-    semi_minor = std::min(semi_minor, max_influence_radius_);
-  }
-
   const double c = std::cos(yaw);
   const double sn = std::sin(yaw);
-  // Axis-aligned bounding box of a rotated ellipse.
-  const double half_x = std::hypot(semi_major * c, semi_minor * sn);
-  const double half_y = std::hypot(semi_major * sn, semi_minor * c);
+  // Axis-aligned bounding box of the rotated ellipse AS PUBLISHED.
+  double half_x = std::hypot(semi_major * c, semi_minor * sn);
+  double half_y = std::hypot(semi_major * sn, semi_minor * c);
+
+  // STAGE-5C.1 FIDELITY FIX. The same costmap-policy bound as CV mode -- not a
+  // statement about the model, only about how far this layer will paint per
+  // sample -- but applied where CV applies it: to the ITERATION WINDOW, never
+  // to the geometry.
+  //
+  // Until Stage-5C.1 this clamp was applied to `semi_major` / `semi_minor`
+  // themselves, and because the membership test below divides by those same
+  // variables, the region the planner received was not the published ellipse
+  // clipped to the window -- it was a SMALLER ellipse. At the production
+  // geometry (max_influence_radius 0.55 m, resolution 0.05 m) every horizon
+  // from 1.5 s on has semi-axes far above the bound, so CV filled its whole
+  // clamped window (23x23 = 529 cells) while reachability collapsed to the
+  // disc inscribed in that same window (377 cells) -- the measured Stage-5C
+  // ratio 0.713 ~= pi/4, with reachability painting FEWER planner-visible
+  // cells than CV despite a mathematically 2.16x larger region.
+  //
+  // Clamping the half-extents instead bounds the work identically while the
+  // membership test keeps using the published semi-axes, so no cell inside the
+  // qualified region and inside the window is dropped for a geometric reason.
+  // Where the bound does not bind, half_x/half_y are already the true bounding
+  // box and this is a no-op.
+  if (max_influence_radius_ > 0.0) {
+    half_x = std::min(half_x, max_influence_radius_);
+    half_y = std::min(half_y, max_influence_radius_);
+  }
 
   const double temporal_weight = std::exp(-temporal_decay_ * time_from_now);
   const double cost_span = static_cast<double>(max_cost_ - min_cost_);
@@ -571,6 +590,9 @@ void PredictedObstacleLayer::rasterizeReachableSet(
 
       const double dx = wx - center_x;
       const double dy = wy - center_y;
+      // Membership against the semi-axes AS PUBLISHED (Stage-5C.1): the window
+      // above may be smaller than the region, but the region is never smaller
+      // than it was published.
       const double u = (dx * c + dy * sn) / semi_major;
       const double v = (-dx * sn + dy * c) / semi_minor;
       if (u * u + v * v > 1.0) {

@@ -81,6 +81,18 @@ if(BUILD_TESTING)
   ament_target_dependencies(stage4g5_hybrid_layer ${dependencies})
   add_test(NAME stage4g5_hybrid_layer COMMAND stage4g5_hybrid_layer)
   set_tests_properties(stage4g5_hybrid_layer PROPERTIES ENVIRONMENT "ROS_DOMAIN_ID=98" TIMEOUT 60)
+  # Stage-5C.1: reachability rasterization FIDELITY -- deterministic geometric
+  # golden set, plus mechanistic before/after reproduction of the Stage-5C
+  # planner-visible-cell anomaly.
+  add_executable(stage5c1_raster_fidelity test/stage5c1_raster_fidelity.cpp)
+  target_link_libraries(stage5c1_raster_fidelity predictive_nav_costmap_layers)
+  target_include_directories(stage5c1_raster_fidelity PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../predictive_nav_tracking/include)
+  ament_target_dependencies(stage5c1_raster_fidelity ${dependencies})
+  add_test(NAME stage5c1_raster_fidelity COMMAND stage5c1_raster_fidelity)
+  set_tests_properties(stage5c1_raster_fidelity PROPERTIES
+    ENVIRONMENT "ROS_DOMAIN_ID=96" TIMEOUT 180)
+
   find_package(ament_lint_auto REQUIRED)
   set(ament_cmake_copyright_FOUND TRUE)
   set(ament_cmake_cpplint_FOUND TRUE)

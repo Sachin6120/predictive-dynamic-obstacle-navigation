@@ -119,6 +119,29 @@ lidar_obstacle_tracker:
     # max_speed 0.8 m/s: scenario obstacles run at 0.15-0.50 m/s; this leaves
     #   headroom without licensing motion the models never perform. The cap can
     #   only shrink the reachable radius, never grow it.
+    #
+    #   STAGE-5C.1 -- THIS IS A VALIDITY PREMISE, NOT A TUNING KNOB. The
+    #   reachable set is a BOUND only while |v(s)| <= max_speed holds for the
+    #   entire prediction window. Setting this value is ASSERTING that no
+    #   tracked obstacle in the deployment can exceed it. Stage-5C measured the
+    #   cost of that assertion being wrong: observed s0 = 0, cap 0.8 m/s, true
+    #   capability 1.4 m/s gives a model reach of 2.56 m at t = 4.0 s against a
+    #   true reach of 3.64 m -- a 1.08 m escape (worst tested 1.44 m) INSIDE the
+    #   production total-time window of max_observation_age + reachability_
+    #   horizon = 4.0 s. Current simulation obstacles reach 0.75 m/s, so 0.8 m/s
+    #   holds for the qualified experiments; a faster obstacle class REQUIRES
+    #   this value to be raised, not merely re-tuned.
+    #
+    #   WHAT RUNTIME ENFORCES, AND WHAT IT CANNOT. The premise quantifies over
+    #   the FUTURE, so no runtime check can verify it, and none is claimed. The
+    #   observable half is the contradiction: a filtered speed above the cap
+    #   proves the obstacle is capable of that speed and therefore DISPROVES the
+    #   premise. That is detected, published in
+    #   ReachabilityPrediction.contract_status, warned about, and answered by
+    #   raising the cap to the weakest observation-consistent value. The
+    #   UNOBSERVABLE residual -- true capability above the cap while the
+    #   filtered speed stays below it -- is NOT enforceable at runtime and
+    #   remains a declared assumption of this file.
     # base_safety_margin 0.0: deterministic body allowance, deliberately zero
     #   so the published region measures the motion model alone. Giving
     #   reachability a free additive margin would make the comparison against
@@ -142,6 +165,25 @@ lidar_obstacle_tracker:
     base_safety_margin: 0.0        # m, deterministic; 0 => model-only region
     max_observation_age: 1.0       # s, == track_timeout
     covariance_sigma_level: 2.0    # k for the STATISTICAL term only
+    # --- Stage-5C.1 validity contract ---------------------------------------
+    # reachability_enforce_observed_speed: on an OBSERVABLE breach, recompute
+    #   with v_eff = max(max_speed, observed_speed) -- the weakest premise
+    #   observation does not contradict. Monotone-safe: it can only enlarge the
+    #   region, never drop or shrink it, and in domain it is a no-op whose
+    #   output is bit-identical to Stage-5C. false restores the pre-Stage-5C.1
+    #   arithmetic and exists only so the regression test can reproduce the old
+    #   behaviour -- it lets a disproved bound keep being published as if it
+    #   held, so it is NOT a production setting.
+    # reachability_max_speed_tolerance: numeric dead-band, deliberately at
+    #   float scale. NOT widened to absorb estimator transients: the Stage-5C
+    #   recordings show the filtered speed exceeding this cap by up to
+    #   0.131 m/s on tracks that are genuinely in domain, while Stage-5C's
+    #   adversary measured real escapes for s0 in [0.80, 0.95] -- a dead-band
+    #   wide enough for the former would mask the latter. Transients are made
+    #   harmless by the response above being monotone-safe instead. The
+    #   under-coverage conceded is at most 1e-6 m/s * 4.0 s = 4e-6 m.
+    reachability_enforce_observed_speed: true
+    reachability_max_speed_tolerance: 1.0e-6   # m/s
 
     # Gated nearest-neighbour association + track lifecycle.
     association_gate: 0.6

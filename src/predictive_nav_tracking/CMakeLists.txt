@@ -115,6 +115,16 @@ if(BUILD_TESTING)
   add_test(NAME stage5b1_compound_integration COMMAND stage5b1_compound_integration)
   set_tests_properties(stage5b1_compound_integration PROPERTIES
     ENVIRONMENT "ROS_DOMAIN_ID=98" TIMEOUT 40)
+  # Stage-5C.1: the reachability max_speed VALIDITY CONTRACT -- the observable
+  # invalidity condition, in-domain bit-identity, and the unobservable residual.
+  add_executable(stage5c1_contract test/stage5c1_contract.cpp)
+  target_compile_options(stage5c1_contract PRIVATE -fno-access-control)
+  target_include_directories(stage5c1_contract PRIVATE include ${EIGEN3_INCLUDE_DIR})
+  ament_target_dependencies(stage5c1_contract rclcpp sensor_msgs nav_msgs geometry_msgs
+    tf2 tf2_ros tf2_geometry_msgs visualization_msgs predictive_nav_msgs)
+  add_test(NAME stage5c1_contract COMMAND stage5c1_contract)
+  set_tests_properties(stage5c1_contract PROPERTIES ENVIRONMENT "ROS_DOMAIN_ID=99" TIMEOUT 60)
+
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
   # comment the line when a copyright and license is added to all source files

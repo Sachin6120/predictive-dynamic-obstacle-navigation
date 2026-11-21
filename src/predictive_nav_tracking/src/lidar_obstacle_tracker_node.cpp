@@ -396,6 +396,48 @@ private:
     this->declare_parameter<double>("max_observation_age", 1.0);
     this->declare_parameter<double>("covariance_sigma_level", 2.0);
 
+    // --- Stage-5C.1: the max_speed VALIDITY CONTRACT ---------------------
+    // max_speed above is a FUTURE CAPABILITY premise, not a tuning weight:
+    // the reachable set is a bound only while |v(s)| <= max_speed holds for
+    // the whole window. Stage-5C measured the cost of that being false --
+    // observed s0 = 0, configured cap 0.8 m/s, true capability 1.4 m/s gives
+    // a model reach of 2.56 m at t = 4.0 s against a true reach of 3.64 m, a
+    // 1.08 m escape (worst tested 1.44 m) INSIDE the production total-time
+    // window of max_observation_age + reachability_horizon = 4.0 s.
+    //
+    // WHAT IS ENFORCED HERE, AND WHAT CANNOT BE. The premise quantifies over
+    // the FUTURE, so no runtime check can verify it and none is claimed. The
+    // observable half is the contradiction: a filtered speed above the cap
+    // proves the obstacle is capable of that speed and therefore disproves
+    // the premise. That is detected, reported in
+    // ReachabilityPrediction.contract_status, and answered by raising the cap
+    // to the weakest observation-consistent value. The UNOBSERVABLE residual
+    // -- true capability above the cap while the filtered speed stays below it
+    // -- is NOT enforceable at runtime and remains a declared assumption of
+    // this configuration: setting max_speed is asserting that no tracked
+    // obstacle in the deployment can exceed it. Current simulation obstacles
+    // run at <= 0.75 m/s, so 0.8 m/s holds for the qualified experiments.
+    //
+    // reachability_enforce_observed_speed: when true (default) a disproved
+    //   premise is replaced by v_eff = max(max_speed, s0), which can only
+    //   enlarge the region -- never drop it, never shrink it. In domain
+    //   v_eff == max_speed and the output is bit-identical to Stage-5C.
+    //   False restores the pre-Stage-5C.1 arithmetic and exists so the
+    //   regression test can reproduce the old behaviour; it is not a
+    //   production setting.
+    // reachability_max_speed_tolerance: REPORTING dead-band only, so
+    //   float-level jitter at exactly the cap is not announced as a breach.
+    //   Deliberately numeric-scale (1e-6 m/s) and NOT wide enough to absorb
+    //   estimator transients: the Stage-5C recordings show the filtered speed
+    //   overshooting ground truth by up to 0.25 m/s and exceeding the cap by
+    //   up to 0.131 m/s on tracks that are genuinely in domain, while
+    //   Stage-5C's adversary measured real escapes for s0 in [0.80, 0.95]. A
+    //   dead-band wide enough for the former would mask the latter. It is not
+    //   needed for safety either, because the response above only ever
+    //   enlarges the region, so reacting to a transient costs nothing.
+    this->declare_parameter<bool>("reachability_enforce_observed_speed", true);
+    this->declare_parameter<double>("reachability_max_speed_tolerance", 1e-6);
+
     // --- Stage-5B: dynamic obstacle classification -----------------------
     // Geometry/motion classification of tracked objects into
     // PEDESTRIAN / BIKE / VEHICLE / UNKNOWN. OBSERVATION ONLY: the label is
@@ -601,6 +643,10 @@ private:
     reachability_bounds_.safety_margin = this->get_parameter("base_safety_margin").as_double();
     reachability_bounds_.covariance_sigma_level =
       this->get_parameter("covariance_sigma_level").as_double();
+    reachability_bounds_.enforce_observed_speed =
+      this->get_parameter("reachability_enforce_observed_speed").as_bool();
+    reachability_bounds_.max_speed_tolerance =
+      std::max(this->get_parameter("reachability_max_speed_tolerance").as_double(), 0.0);
     reachability_horizon_ = this->get_parameter("reachability_horizon").as_double();
     reachability_time_step_ = this->get_parameter("reachability_time_step").as_double();
     max_observation_age_ = this->get_parameter("max_observation_age").as_double();
@@ -884,7 +930,8 @@ private:
         "G2_PERF %.9f scan_us=%.3f cluster_us=%.3f deblend_us=%.3f compound_us=%.3f "
         "association_us=%.3f reach_us=%.3f publish_us=%.3f "
         "callback_us=%.3f clusters=%zu measurements=%zu tracks=%zu splits=%zu ambiguous=%zu "
-        "compound_candidates=%zu compounds=%zu",
+        "compound_candidates=%zu compounds=%zu "
+        "reach_contract_violations=%lu reach_contract_worst_speed=%.3f",
         stamp.seconds(), us(callback_start, cluster_start), us(cluster_start, cluster_end),
         us(deblend_start, deblend_end), us(compound_start, compound_end),
         us(association_start, association_end),
@@ -892,7 +939,9 @@ private:
         us(callback_start, callback_end),
         clusters.size(), measurements.size(), tracks_.size(),
         deblend_split_count_ - splits_before, ambiguous_merge_count_,
-        compound_candidate_count_, compound_emitted_count_ - compounds_before);
+        compound_candidate_count_, compound_emitted_count_ - compounds_before,
+        static_cast<unsigned long>(reachability_contract_violation_samples_),
+        contract_violation_worst_speed_);
     }
   }
 
@@ -1916,6 +1965,32 @@ private:
         reach.semi_major = r.semi_major;
         reach.semi_minor = r.semi_minor;
         reach.valid = r.valid;
+        // Stage-5C.1 validity-contract metadata. Published on every sample so
+        // that a consumer can never mistake an out-of-contract region for a
+        // qualified conservative bound.
+        reach.observed_speed = r.observed_speed;
+        reach.configured_max_speed = r.configured_max_speed;
+        reach.effective_max_speed = r.effective_max_speed;
+        reach.contract_status = static_cast<uint8_t>(r.contract_status);
+        if (r.contract_status ==
+          predictive_nav_tracking::ContractStatus::kObservedSpeedExceedsCap)
+        {
+          ++reachability_contract_violation_samples_;
+          contract_violation_worst_speed_ =
+            std::max(contract_violation_worst_speed_, r.observed_speed);
+          // Throttled, because a track above the cap stays above it for many
+          // scans and six horizon samples each.
+          RCLCPP_WARN_THROTTLE(
+            this->get_logger(), *this->get_clock(), 5000,
+            "reachability contract: track %u filtered speed %.3f m/s exceeds configured "
+            "max_speed %.3f m/s, which DISPROVES the model's capability premise. The cap "
+            "was raised to %.3f m/s for this sample (region enlarged, never dropped) and "
+            "contract_status=%u is published. Raise max_speed to this obstacle class's "
+            "real capability -- the published region is NOT a qualified conservative "
+            "bound at the configured value.",
+            t.id, r.observed_speed, r.configured_max_speed, r.effective_max_speed,
+            static_cast<unsigned>(r.contract_status));
+        }
         obj.reachability_predictions.push_back(reach);
       }
 
@@ -2246,6 +2321,13 @@ private:
   double max_observation_age_{1.0};
   size_t num_reachability_samples_{6};
   double reachability_total_us_{0.0};
+  // Stage-5C.1: how many published samples carried a DISPROVED capability
+  // premise, and the worst filtered speed that disproved it. Cumulative over
+  // the node's lifetime, reported in the throttled stats log, so a
+  // mis-parameterised max_speed leaves a measurable trace instead of only a
+  // warning that may be throttled away.
+  uint64_t reachability_contract_violation_samples_{0};
+  double contract_violation_worst_speed_{0.0};
 
   // --- Stage-5B: dynamic obstacle classification ---
   // OBSERVATION ONLY. Nothing in this block is read by the filter, the CV
