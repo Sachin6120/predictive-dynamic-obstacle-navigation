@@ -1,0 +1,444 @@
+# STAGE-5D.1 ORACLE-CONFIGURED ARM TRACKER PARAMETERS -- BIKE
+#
+# ANALYSIS / EVALUATION ONLY. NOT a production configuration. Not installed by
+# any package, not referenced by any launch default, and not reachable from
+# production_nav2_params.yaml or production_tracker_params.yaml.
+#
+# WHAT THIS IS, AND WHY IT IS NOT A GROUND-TRUTH LEAK
+# ---------------------------------------------------
+# Stage-5D.1's oracle arms (B and D) need the capability premise a PERFECT
+# classifier would be entitled to. This file supplies it the only way that
+# keeps ground truth out of every runtime path: it is a copy of
+# stage5d_global_tracker.yaml -- so `reachability_class_aware` stays FALSE and
+# the node takes the bit-identical Stage-5C.1 GLOBAL code path -- with exactly
+# two values changed, `max_speed` and `max_acceleration`, to the
+# BIKE entry of the Stage-5D capability table.
+#
+# The node therefore has NO class input at all. It reads two configured
+# constants, exactly as it has since Stage-4G4. The decision of WHICH of these
+# files to load is made OUTSIDE the robot, by the campaign runner, from the
+# scenario definition that spawns the obstacle body -- the runner already knows
+# which actor it is spawning because it spawns it. No label, no classifier
+# output and no ground-truth field crosses into the tracker, the costmap layer,
+# the planner or the controller.
+#
+# This also means the oracle arms are NOT a claim that such a configuration is
+# deployable: a real deployment does not know the class of an obstacle it has
+# not yet classified. The arm exists to measure the upper bound of what perfect
+# semantic class could buy, and nothing else.
+#
+# ONE LINE CHANGED PER VALUE, NOTHING ELSE
+# ----------------------------------------
+#   max_acceleration: 0.5 -> 7.0
+#   max_speed:        0.8 -> 12.0
+# Verified by diff against stage5d_global_tracker.yaml in STAGE5D1_README.md.
+# ===========================================================================
+# STAGE-5D GLOBAL-REACHABILITY ARM TRACKER PARAMETERS
+#
+# Derived from tracker_params.yaml, which stays byte-for-byte unchanged so
+# Stage-4B..5C.1 remain reproducible.
+#
+# THE TWO STAGE-5D ARM FILES -- stage5d_global_tracker.yaml and
+# stage5d_classaware_tracker.yaml -- DIFFER IN EXACTLY ONE LINE:
+#
+#     reachability_class_aware: false  (this file)
+#
+# Everything else in them, including profile_scans, is identical, and both set
+# reachability_enabled true exactly as tracker_params.yaml does. The costmap
+# side is shared too: both arms are launched with the UNMODIFIED Stage-4F nav2
+# params file and have prediction_mode switched to `reachability` at runtime,
+# identically. So MPPI, every critic weight, the planner, the costmap geometry
+# and resolution, the sensor model, AMCL, the Kalman filter, the CV predictor,
+# the Stage-5B classifier, compound clustering, the reachability mathematics
+# and the Stage-5C.1 contract cannot differ between the arms.
+#
+# THIS IS NOT A PRODUCTION FILE. Production is production_tracker_params.yaml
+# (reachability_enabled: false) with the costmap at
+# prediction_mode: cv_covariance. Stage-5D changes neither.
+# ===========================================================================
+lidar_obstacle_tracker:
+  ros__parameters:
+    scan_topic: "/scan"
+    map_topic: "/map"
+    map_frame: "map"
+
+    # --- Static rejection (Stage-4G1: range aware) ---------------------
+    # A transformed scan point is rejected as STATIC when its distance to the
+    # nearest static map cell is <= r_reject(range), where
+    #
+    #   r_reject(range) = clamp(base_static_margin
+    #                           + localization_margin
+    #                           + angular_sampling_scale * range,
+    #                           static_reject_radius,
+    #                           max_static_reject_radius)
+    #
+    # The distance itself comes from an exact Euclidean distance transform of
+    # the map, rebuilt once per map message, so the query is a single lookup.
+    #
+    # WHY the range term exists (measured, Stage-4G1 section 2): a pose yaw
+    # error of dtheta displaces a beam endpoint laterally by range * dtheta, so
+    # the mismatch between a wall return and the mapped wall GROWS WITH RANGE
+    # while a fixed radius does not. In the 10 x 8 m Stage-4F arena, with the
+    # robot driving, the measured residual-retention rate under the old fixed
+    # 0.15 m rule rose from 0.00% at 1-2 m to 2.48% at 5-6 m, which is what
+    # produced false dynamic tracks there. Stationary, the rate is 0% at every
+    # range -- the error is motion-induced, not sensor-intrinsic.
+    static_reject_radius: 0.15      # m: MINIMUM radius (and the only radius if
+                                    # range_aware_static_rejection is false).
+                                    # Unchanged from Stage-4B, so close-range
+                                    # behaviour is bit-for-bit the old one.
+    range_aware_static_rejection: true
+    base_static_margin: 0.06        # m: one 0.05 m map cell of discretisation
+                                    # plus ~3 sigma of the 0.01 m range noise.
+    localization_margin: 0.06       # m: translation component of the
+                                    # map->sensor pose error (measured p95
+                                    # 0.118 m while driving; only the part
+                                    # normal to a surface displaces a point
+                                    # off it).
+    angular_sampling_scale: 0.030   # rad: beam half-spacing (0.0087) + pose
+                                    # yaw uncertainty (measured p95 0.0262).
+    max_static_reject_radius: 0.40  # m: ceiling, so an anomalously long return
+                                    # can never blank out a region.
+    occupied_threshold: 65
+    unknown_cells_are_static: false
+
+    # Clustering of the surviving (non-static) points.
+    cluster_distance: 0.35
+    cluster_min_points: 3
+    cluster_max_points: 200
+    cluster_max_diameter: 1.2
+
+    # --- Stage-4G3: track-aware cluster deblending ---------------------
+    # Two obstacles passing close together fall into ONE 0.35 m-connected
+    # cluster. The blended centroid can then only feed one track (greedy
+    # association is one-to-one), the other track starves and expires, and
+    # the identity is lost. Measured at Stage-4G2: 4-5 merged scans per close
+    # crossing, 2 ID switches per trial.
+    #
+    # The fix splits such a cluster using the tracker's OWN Kalman predictions
+    # as seeds -- runtime state, never simulator ground truth -- and only when
+    # the raw returns show a gap to split on. If one object is physically
+    # occluded it contributes no returns, no gap exists, the split is refused
+    # and the unobserved track coasts on prediction exactly as before.
+    #
+    # The thresholds are measured from the 1,197 recorded Stage-4G2 frames,
+    # not derived from the simulator's cylinder size:
+    #   accepted clusters holding ONE object's returns : max diameter 0.468 m
+    #   accepted clusters holding TWO objects' returns : min diameter 0.785 m
+    #   largest gap between returns ON one object      : p95 0.147 m, max 0.161 m
+    #   smallest gap BETWEEN two merged objects        : 0.123 m (median 0.235 m)
+    # Point count is deliberately NOT used as merge evidence: the single-object
+    # (max 16) and merged (min 12) distributions overlap, so it does not
+    # discriminate. Diameter does, with a 0.32 m margin on either side.
+    #
+    # Scale merge_min_cluster_diameter / deblend_max_child_diameter with the
+    # expected obstacle size if the obstacles are not ~0.4 m across; the rule
+    # is "clearly bigger than one tracked object", not a fixed cylinder.
+    deblend_enabled: true
+    merge_min_cluster_diameter: 0.55   # m: above every observed single object
+    merge_track_radius: 0.35           # m: seed-to-nearest-cluster-point claim
+    deblend_min_points: 3              # == cluster_min_points; a child must be
+                                       # an acceptable measurement on its own
+    deblend_max_child_diameter: 0.50   # m: a child must look like one object
+    deblend_min_child_separation: 0.30 # m: between the two child centroids
+    deblend_min_gap: 0.16              # m: REQUIRED empty space between the two
+                                       # point sets; above the 0.161 m worst
+                                       # within-object spacing, so a solid blob
+                                       # can never be sliced in two
+    deblend_use_mahalanobis: true      # ownership uses predicted covariance + R
+
+    # --- Stage-4G4: conservative bounded-motion reachability -----------
+    # An ADDITIONAL future-motion representation, published in the new
+    # TrackedObject.reachability_predictions field. The Stage-4C constant-
+    # velocity Gaussian prediction above is completely unchanged, so every
+    # Stage-4D / 4E / 4F result remains reproducible; set reachability_enabled
+    # to false to return to a byte-identical Stage-4G3 message payload.
+    #
+    # These are PHYSICAL bounds on obstacle motion, chosen from what the
+    # obstacle can do, not from what makes navigation look good:
+    #
+    # max_acceleration 0.5 m/s^2 is the bound the Stage-4G4 scenario driver
+    #   COMMANDS for its ramped manoeuvres (scenarios.json "accel" field), so
+    #   the model and the world share one declared bound. Measured honestly and
+    #   recorded here: the same Gazebo VelocityControl plugin can also apply a
+    #   STEP velocity change -- |a| of 5-9.5 m/s^2 was measured in the retained
+    #   Stage-4G3 GT odometry at segment boundaries -- and NO finite
+    #   acceleration bound covers a step change at short horizon. The step
+    #   scenarios are kept as an out-of-model stress test and reported as such.
+    # max_speed 0.8 m/s: scenario obstacles run at 0.15-0.50 m/s; this leaves
+    #   headroom without licensing motion the models never perform. The cap can
+    #   only shrink the reachable radius, never grow it.
+    #
+    #   STAGE-5C.1 -- THIS IS A VALIDITY PREMISE, NOT A TUNING KNOB. The
+    #   reachable set is a BOUND only while |v(s)| <= max_speed holds for the
+    #   entire prediction window. Setting this value is ASSERTING that no
+    #   tracked obstacle in the deployment can exceed it. Stage-5C measured the
+    #   cost of that assertion being wrong: observed s0 = 0, cap 0.8 m/s, true
+    #   capability 1.4 m/s gives a model reach of 2.56 m at t = 4.0 s against a
+    #   true reach of 3.64 m -- a 1.08 m escape (worst tested 1.44 m) INSIDE the
+    #   production total-time window of max_observation_age + reachability_
+    #   horizon = 4.0 s. Current simulation obstacles reach 0.75 m/s, so 0.8 m/s
+    #   holds for the qualified experiments; a faster obstacle class REQUIRES
+    #   this value to be raised, not merely re-tuned.
+    #
+    #   WHAT RUNTIME ENFORCES, AND WHAT IT CANNOT. The premise quantifies over
+    #   the FUTURE, so no runtime check can verify it, and none is claimed. The
+    #   observable half is the contradiction: a filtered speed above the cap
+    #   proves the obstacle is capable of that speed and therefore DISPROVES the
+    #   premise. That is detected, published in
+    #   ReachabilityPrediction.contract_status, warned about, and answered by
+    #   raising the cap to the weakest observation-consistent value. The
+    #   UNOBSERVABLE residual -- true capability above the cap while the
+    #   filtered speed stays below it -- is NOT enforceable at runtime and
+    #   remains a declared assumption of this file.
+    # base_safety_margin 0.0: deterministic body allowance, deliberately zero
+    #   so the published region measures the motion model alone. Giving
+    #   reachability a free additive margin would make the comparison against
+    #   the CV covariance ellipse unfair; the costmap layer applies its own.
+    # covariance_sigma_level 2.0: matches the Stage-4D layer's sigma_level, so
+    #   the statistical term of the reachable region and the CV ellipse it is
+    #   compared against use the SAME k on the SAME covariance.
+    # max_observation_age 1.0 s: equals track_timeout below, so a region never
+    #   outlives the track that produced it.
+    reachability_enabled: true
+    max_acceleration: 7.0          # m/s^2, isotropic |a| bound -- STAGE-5D.1 ORACLE
+    max_speed: 12.0                # m/s, |v| bound -- STAGE-5D.1 ORACLE
+    reachability_horizon: 3.0      # s, mirrors prediction_horizon
+    reachability_time_step: 0.5    # s, mirrors prediction_time_step
+    base_safety_margin: 0.0        # m, deterministic; 0 => model-only region
+    max_observation_age: 1.0       # s, == track_timeout
+    covariance_sigma_level: 2.0    # k for the STATISTICAL term only
+    # --- Stage-5C.1 validity contract ---------------------------------------
+    # reachability_enforce_observed_speed: on an OBSERVABLE breach, recompute
+    #   with v_eff = max(max_speed, observed_speed) -- the weakest premise
+    #   observation does not contradict. Monotone-safe: it can only enlarge the
+    #   region, never drop or shrink it, and in domain it is a no-op whose
+    #   output is bit-identical to Stage-5C. false restores the pre-Stage-5C.1
+    #   arithmetic and exists only so the regression test can reproduce the old
+    #   behaviour -- it lets a disproved bound keep being published as if it
+    #   held, so it is NOT a production setting.
+    # reachability_max_speed_tolerance: numeric dead-band, deliberately at
+    #   float scale. NOT widened to absorb estimator transients: the Stage-5C
+    #   recordings show the filtered speed exceeding this cap by up to
+    #   0.131 m/s on tracks that are genuinely in domain, while Stage-5C's
+    #   adversary measured real escapes for s0 in [0.80, 0.95] -- a dead-band
+    #   wide enough for the former would mask the latter. Transients are made
+    #   harmless by the response above being monotone-safe instead. The
+    #   under-coverage conceded is at most 1e-6 m/s * 4.0 s = 4e-6 m.
+    reachability_enforce_observed_speed: true
+    reachability_max_speed_tolerance: 1.0e-6   # m/s
+
+    # --- Stage-5D: class-aware motion-capability profiles ------------------
+    # Replaces the ONE global (max_acceleration, max_speed, base_safety_margin)
+    # triple above with a per-class table plus the policy deciding which entry
+    # a track is entitled to. The reachability equation, the Stage-5C.1
+    # validity contract and the published region are unchanged functions of
+    # whichever profile is selected. Full derivation, the measured classifier
+    # evidence behind every default, and the proofs of the six invariants are
+    # in capability_profiles.hpp; the numbers are tabulated with citations in
+    # validation/stage5d/STAGE5D_README.md.
+    #
+    # reachability_class_aware: FALSE IS THE PRODUCTION SETTING for this
+    #   milestone. False returns the single global configuration verbatim, so
+    #   every published number is bit-identical to Stage-5C.1. Production
+    #   additionally keeps reachability_enabled false and the costmap's
+    #   prediction_mode cv_covariance.
+    #
+    # THE PROFILES BELOW ARE CONSERVATIVE CONFIGURED CAPABILITY PRIORS, NOT
+    # THE SIMULATION ENVELOPE, and the distinction is load-bearing. Three
+    # kinds of number must be kept apart here, and only the third is
+    # independent evidence:
+    #   (a) SIMULATION-QUALIFIED OPERATING ENVELOPE -- what the Gazebo actors
+    #       were commanded and observed to do (filtered speed never above
+    #       0.967 m/s, ramped 0.5 m/s^2). Tabulated separately in section 3.A
+    #       of STAGE5D_README.md. NOT used as a profile default.
+    #   (b) CONFIGURED CONSERVATIVE CAPABILITY PRIOR -- a declared premise
+    #       chosen to be hard to exceed, asserted rather than proved. The
+    #       max_speed column below is this, and nothing stronger.
+    #   (c) INDEPENDENTLY SOURCED PHYSICAL EVIDENCE -- an external measurement
+    #       this repository did not produce. The max_acceleration column below
+    #       is this, with citations.
+    # max_speed and
+    # max_acceleration are premises about an obstacle's FUTURE capability
+    # (see the Stage-5C.1 note above), so they must cover what the class CAN
+    # do. Every Stage-5B actor was commanded at 0.25/0.50/0.75 m/s whatever
+    # its class and the filtered speed never exceeded 0.967 m/s, so a
+    # simulation-fitted table would be CLASS-INDEPENDENT -- it would carry no
+    # semantic information at all -- and would under-bound a real bicycle by a
+    # factor of 15 and a car by 50. The simulation-qualified envelope is
+    # tabulated separately in STAGE5D_README.md section 3, and every Stage-5D
+    # result states which of the two domains it belongs to.
+    #
+    #   max_speed 2.5 / 12.0 / 40.0 m/s are CONSERVATIVE CONFIGURED
+    #     CAPABILITY PRIORS ALIGNED WITH THE CLASSIFIER'S PER-CLASS SPEED
+    #     GATES -- the SHIPPED Stage-5B per-class speed vetoes
+    #     (classification_{pedestrian,bike,vehicle*}_speed_max above). THEY
+    #     ARE NOT MEASURED VALUES AND NOT LITERATURE-PROVEN PHYSICAL MAXIMA:
+    #     no evidence inside or outside this repository establishes them as
+    #     the fastest a member of each class can travel, and Stage-5D does not
+    #     claim it. They are kept for two reasons -- they are conservative at
+    #     the geometry this system operates in, and aligning them with the
+    #     gate is self-consistency rather than a new constant: the
+    #     classifier already REFUSES a PEDESTRIAN label to anything observed
+    #     above 2.5 m/s, so a held PEDESTRIAN label already asserts |v| <= 2.5,
+    #     and premise (P2) with max_speed 2.5 asserts the same thing over the
+    #     prediction window. One number, not two that can disagree -- and the
+    #     classifier's veto and the observable-contradiction predicate
+    #     therefore fire at the same speed.
+    #   max_acceleration 2.5 / 7.0 / 10.0 m/s^2 are MEASURED EXTERNAL values,
+    #     because this repository holds no per-class acceleration evidence.
+    #     The bound is isotropic -- it covers braking, side-stepping and
+    #     turning alike -- so the governing figure is the largest magnitude
+    #     the class can produce in ANY direction, which for the wheeled
+    #     classes is braking, not propulsion.
+    #       PEDESTRIAN 2.5: measured crossing accelerations average 0.68 with
+    #         a maximum of 1.44 m/s^2 (arXiv:1610.00029), so this is 1.7x the
+    #         measured maximum and about 0.25 g of foot traction. DECLARED
+    #         RESIDUAL: an athletic standing start or side-step is traction
+    #         limited nearer 0.5 g and can exceed this transiently. That is an
+    #         out-of-profile case, measured and reported by the Stage-5D
+    #         out-of-domain probe, in the same spirit as the 5-9.5 m/s^2
+    #         Gazebo step-velocity residual documented above.
+    #       BIKE 7.0: bicycle braking is pitch-over limited at a calculated
+    #         5.4-7.0 m/s^2, and measured emergency front-or-both-brake
+    #         decelerations are 0.40-0.71 g = 3.9-7.0 m/s^2 (SAE 2020-01-0876).
+    #       VEHICLE 10.0: measured ABS decelerations for 20 late-model vehicles
+    #         on dry asphalt and concrete average 0.871-1.081 g =
+    #         8.5-10.6 m/s^2 (SAE 2023-01-0616).
+    #   margin 0.0 m for every class, inherited deliberately from
+    #     base_safety_margin: 0.0 above so the published region measures the
+    #     motion model alone and the global-vs-class-aware comparison is not
+    #     confounded by a free additive term. The field is per-class and
+    #     configurable; STAGE5D_README.md tabulates each actor's scan-plane
+    #     body half-extent as the value a deployment should set.
+    #
+    # UNKNOWN HAS NO PROFILE PARAMETERS, BY DESIGN. Its profile is DERIVED as
+    # the envelope over reachability_ambiguity_unknown, so it dominates every
+    # class it must cover by identity instead of by a chosen pair of numbers
+    # that could drift out of step. 382 of the 1,137 UNKNOWN detections in the
+    # Stage-5B recordings were ground-truth VEHICLE -- an UNKNOWN object in
+    # that dataset demonstrably IS a vehicle about a third of the time -- so
+    # reusing the old global 0.8 m/s for UNKNOWN would have under-bounded it
+    # by a factor of 50. Section 4 of the Stage-5D brief forbids exactly that.
+    reachability_class_aware: false
+    reachability_profile_pedestrian_max_speed: 2.5          # m/s
+    reachability_profile_pedestrian_max_acceleration: 2.5   # m/s^2
+    reachability_profile_pedestrian_margin: 0.0             # m
+    reachability_profile_bike_max_speed: 12.0               # m/s
+    reachability_profile_bike_max_acceleration: 7.0         # m/s^2
+    reachability_profile_bike_margin: 0.0                   # m
+    reachability_profile_vehicle_max_speed: 40.0            # m/s
+    reachability_profile_vehicle_max_acceleration: 10.0     # m/s^2
+    reachability_profile_vehicle_margin: 0.0                # m
+
+    # AMBIGUITY SETS -- what a LABEL is worth, as distinct from what a CLASS
+    # can do. The profile table above is physics and is the same whatever
+    # classifier produced the word; these sets are a property of THIS
+    # classifier and THIS sensor, measured at this operating point. Keeping
+    # them apart is the point: conflating them in one number is what makes a
+    # misclassification invalidate the bound instead of being survived by it.
+    #
+    # For a predicted label c the applied profile is the envelope over every
+    # class a c-labelled object might really be, so the bound stays valid for
+    # whichever of them it actually is. The label is forced into its own set
+    # in code, so omitting it here cannot weaken that.
+    #
+    # The defaults are the measured composition of each predicted label over
+    # the retained Stage-5B recordings (2,547 rows, 57 tracks):
+    #   predicted PEDESTRIAN n=715 : PEDESTRIAN 381, VEHICLE 306, BIKE 28
+    #   predicted BIKE       n=277 : BIKE 277 -- precision 1.000 per detection
+    #                                AND per track, 0 false BIKE predictions
+    #   predicted VEHICLE    n=418 : VEHICLE 301, UNKNOWN(planter) 117
+    #   predicted UNKNOWN    n=1137: UNKNOWN 550, VEHICLE 382, PEDESTRIAN 197,
+    #                                BIKE 8
+    #
+    # WHY A CONFIDENCE GATE CANNOT REPLACE THESE. The VEHICLE -> PEDESTRIAN
+    # confusion runs at min confidence 0.640 and MEDIAN 1.000, while correct
+    # PEDESTRIAN -> PEDESTRIAN runs at min 0.253 and median 0.856: the
+    # misclassification is reported MORE confidently than the correct answer,
+    # and its minimum sits above the correct answer's median. No threshold can
+    # separate them. The mechanism is physical -- a 1.0 x 0.5 m compact body
+    # viewed end-on returns a 0.42-0.45 m long, 0.02-0.03 m thick, fully
+    # filled slice in one horizontal plane, which is a pedestrian-sized
+    # return -- and is the same family of 2D-LiDAR observability limit already
+    # documented for the six head-on bicycle scenarios.
+    #
+    # CONSEQUENCE, STATED PLAINLY: because A(PEDESTRIAN) contains VEHICLE, a
+    # PEDESTRIAN label buys NO reduction under these defaults. BIKE is the one
+    # label whose measured precision earns a profile weaker than the fallback.
+    # That is a measurement of this classifier, reported rather than
+    # engineered around. A better classifier earns narrower sets -- and must
+    # then re-measure them to claim them.
+    #
+    # An UNRECOGNISED class name here is rejected CONSERVATIVELY: the whole
+    # set falls back to all four classes and an error is logged, because
+    # narrowing a set weakens the profile and a configuration the node cannot
+    # read must never buy a smaller reachable set.
+    reachability_ambiguity_unknown: ["unknown", "pedestrian", "bike", "vehicle"]
+    reachability_ambiguity_pedestrian: ["pedestrian", "bike", "vehicle"]
+    reachability_ambiguity_bike: ["bike"]
+    reachability_ambiguity_vehicle: ["vehicle", "unknown"]
+
+    # reachability_profile_min_confidence 0.60: the measured FLOOR of the
+    #   VEHICLE -> PEDESTRIAN confusion. Below it no label is trusted at all;
+    #   above it the ambiguity sets, not the confidence, are what keep the
+    #   selection conservative. The gate does the job it can do -- rejecting
+    #   weakly-held labels -- and is not asked to do the job it provably
+    #   cannot.
+    # reachability_profile_min_observations 5: the earliest observation at
+    #   which the Stage-5B stabiliser can hold a label built from two
+    #   consecutive confident scans (instant labels begin at observation 3;
+    #   two scans at confidence 1.0 cross enter_threshold 0.45 at 0.400 then
+    #   0.640), plus one, so a label must have survived a further scan.
+    #   Measured first-label observation over the Stage-5B tracks: min 4,
+    #   median 16 -- i.e. the median track is UNKNOWN, hence on the fallback,
+    #   for its first ~3.2 s.
+    # reachability_profile_transition_hold_scans 3: 0.6 s at the 5 Hz LDS, one
+    #   full classification_smoothing EWMA window (1/0.40 = 2.5 scans), so a
+    #   SHRINK cannot be published until the new label has outlived the
+    #   evidence window that produced the old one. 115 stable-label
+    #   transitions occurred over 36 of 57 Stage-5B tracks (63%), including
+    #   PEDESTRIAN -> BIKE, which under the defaults above is the one shrinking
+    #   direction -- so this is a frequent event, not a hypothetical.
+    reachability_profile_min_confidence: 0.60
+    reachability_profile_min_observations: 5
+    reachability_profile_transition_hold_scans: 3
+
+    # Gated nearest-neighbour association + track lifecycle.
+    association_gate: 0.6
+    track_timeout: 1.0
+    max_missed_scans: 5
+    min_observations_to_publish: 3
+    velocity_history_size: 5
+
+    # --- Stage-5D measurement -------------------------------------------
+    # profile_scans: MEASUREMENT ONLY -- it changes no behaviour, it only makes
+    # the tracker print its cumulative G2_PERF line, which is the single place
+    # the Stage-5D per-reason capability-profile counters (fallback rate,
+    # UNKNOWN-profile rate, transition rate) and the Stage-5C.1 contract-breach
+    # counters of a LIVE run can be read. It is set IDENTICALLY in both arm
+    # files, so it cannot be a difference between the arms, and it is set here
+    # rather than in tracker_params.yaml so that file stays byte-for-byte
+    # unchanged and every earlier stage stays reproducible.
+    profile_scans: true
+
+    publish_candidate_markers: true
+    velocity_marker_scale: 1.0
+    tf_lookup_timeout: 0.1
+
+    # --- Stage-4C: constant-velocity Kalman filter ---
+    # 1-sigma unmodeled-acceleration noise (m/s^2), drives Q(dt). Generic
+    # slow-indoor-obstacle default (see node comments); not tuned to one run.
+    kf_process_accel_noise: 0.5
+    # 1-sigma position measurement noise (m), drives R.
+    kf_measurement_noise: 0.05
+    kf_initial_position_variance: 0.01      # m^2
+    kf_initial_velocity_variance: 4.0       # (m/s)^2 -- large: velocity unknown at track birth
+    kf_min_dt: 0.001                        # s, numerical safety floor
+    kf_max_dt: 1.0                          # s, numerical safety ceiling (== track_timeout)
+    min_observations_for_kalman_velocity: 2 # observations before velocity is trusted
+
+    # --- Stage-4C: future trajectory prediction ---
+    prediction_horizon: 3.0        # s
+    prediction_time_step: 0.5      # s -> samples at 0.5, 1.0, ..., 3.0 s
+    uncertainty_ellipse_sigma: 2.0 # ellipse semi-axis = sigma * sqrt(eigenvalue of P_pos)
