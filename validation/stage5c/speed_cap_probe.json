@@ -1,0 +1,29 @@
+{
+  "configured_max_speed_mps": 0.80,
+  "configured_max_acceleration_mps2": 0.50,
+  "note": "escape_m is how far an admissible trajectory gets OUTSIDE the published deterministic bound; 0 means the bound held",
+  "sweep": [
+    {"true_speed_mps":0.68,"label":"stage4g sim max (g7/g8 scenarios)","trials":2400,"escape_rate":0.0000,"worst_escape_m":0.0000,"worst_escape_at_t_s":0.0,"worst_escape_by_horizon_m":[0.0000,0.0000,0.0000,0.0000,0.0000,0.0000]},
+    {"true_speed_mps":0.75,"label":"stage5b fastest commanded speed","trials":2400,"escape_rate":0.0000,"worst_escape_m":0.0000,"worst_escape_at_t_s":0.0,"worst_escape_by_horizon_m":[0.0000,0.0000,0.0000,0.0000,0.0000,0.0000]},
+    {"true_speed_mps":0.80,"label":"exactly at the configured cap","trials":2400,"escape_rate":0.0000,"worst_escape_m":0.0000,"worst_escape_at_t_s":0.0,"worst_escape_by_horizon_m":[0.0000,0.0000,0.0000,0.0000,0.0000,0.0000]},
+    {"true_speed_mps":0.90,"label":"12% over cap","trials":2400,"escape_rate":0.0000,"worst_escape_m":0.0000,"worst_escape_at_t_s":0.0,"worst_escape_by_horizon_m":[0.0000,0.0000,0.0000,0.0000,0.0000,0.0000]},
+    {"true_speed_mps":1.10,"label":"slow walk, real world","trials":2400,"escape_rate":0.0000,"worst_escape_m":0.0000,"worst_escape_at_t_s":0.0,"worst_escape_by_horizon_m":[0.0000,0.0000,0.0000,0.0000,0.0000,0.0000]},
+    {"true_speed_mps":1.40,"label":"typical pedestrian, real world","trials":2400,"escape_rate":0.0000,"worst_escape_m":0.0000,"worst_escape_at_t_s":0.0,"worst_escape_by_horizon_m":[0.0000,0.0000,0.0000,0.0000,0.0000,0.0000]},
+    {"true_speed_mps":2.00,"label":"fast walk / jog","trials":2400,"escape_rate":0.0000,"worst_escape_m":0.0000,"worst_escape_at_t_s":0.0,"worst_escape_by_horizon_m":[0.0000,0.0000,0.0000,0.0000,0.0000,0.0000]},
+    {"true_speed_mps":3.00,"label":"slow cyclist","trials":2400,"escape_rate":0.0000,"worst_escape_m":0.0000,"worst_escape_at_t_s":0.0,"worst_escape_by_horizon_m":[0.0000,0.0000,0.0000,0.0000,0.0000,0.0000]},
+    {"true_speed_mps":4.20,"label":"cyclist 15 km/h","trials":2400,"escape_rate":0.0000,"worst_escape_m":0.0000,"worst_escape_at_t_s":0.0,"worst_escape_by_horizon_m":[0.0000,0.0000,0.0000,0.0000,0.0000,0.0000]}
+  ],
+  "r_det_monotone_increasing_in_s0": true,
+  "implication": "overestimated filtered speed only enlarges the bound, so estimation overshoot is conservative, not a defect",
+  "min_max_speed_for_validity": [
+    {"true_speed_mps":0.68,"required_max_speed_mps":0.68,"r_det_at_1s_configured_m":0.2500,"r_det_at_1s_required_m":0.2500},
+    {"true_speed_mps":0.75,"required_max_speed_mps":0.75,"r_det_at_1s_configured_m":0.2500,"r_det_at_1s_required_m":0.2500},
+    {"true_speed_mps":0.80,"required_max_speed_mps":0.80,"r_det_at_1s_configured_m":0.2500,"r_det_at_1s_required_m":0.2500},
+    {"true_speed_mps":0.90,"required_max_speed_mps":0.90,"r_det_at_1s_configured_m":0.2500,"r_det_at_1s_required_m":0.2500},
+    {"true_speed_mps":1.10,"required_max_speed_mps":1.10,"r_det_at_1s_configured_m":0.2500,"r_det_at_1s_required_m":0.2500},
+    {"true_speed_mps":1.40,"required_max_speed_mps":1.40,"r_det_at_1s_configured_m":0.2500,"r_det_at_1s_required_m":0.2500},
+    {"true_speed_mps":2.00,"required_max_speed_mps":2.00,"r_det_at_1s_configured_m":0.2500,"r_det_at_1s_required_m":0.2500},
+    {"true_speed_mps":3.00,"required_max_speed_mps":3.00,"r_det_at_1s_configured_m":0.2500,"r_det_at_1s_required_m":0.2500},
+    {"true_speed_mps":4.20,"required_max_speed_mps":4.20,"r_det_at_1s_configured_m":0.2500,"r_det_at_1s_required_m":0.2500}
+  ]
+}
