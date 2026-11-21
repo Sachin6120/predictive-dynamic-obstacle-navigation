@@ -17,6 +17,13 @@ clean tree at start and finish apart from the new `validation/stage5c/` files.
 `2272aeddf38f1eef52a6159b85cd6b0290a0da56cc93e53ab3c1502dc706cd60`, a single
 commit (`b261994`) and never since modified.
 
+Qualification committed as `e1c101287cba94d22cc72882ec306c2a26d5005d`. One
+follow-up evidence correction was made after it, in a separate commit and with
+no change to production code or to any conclusion: `stage5c_speedcap.cpp` and
+`speed_cap_probe.json` were rewritten because the original probe conflated the
+adversary's physical speed capability with the model's observed `s0` input and
+so could not detect under-coverage. See the note at the head of §3.
+
 ---
 
 ## 1. What the implementation is, and where it sits
@@ -163,24 +170,95 @@ contained, worst slack 0.000 m" at ~7× the sample count.
 
 ## 3. The one model-validity boundary — `stage5c/speed_cap_probe.json`
 
+> **Evidence correction (after the qualification commit `e1c1012`).** The probe
+> behind this section has been rewritten. The superseded version passed the
+> adversary's *physical speed capability* into the model as its *observed* `s0`;
+> because `r_det` is monotone increasing in `s0`, that raised the model's own
+> bound in step with the threat, so it reported `escape = 0` at every speed —
+> 1.40 and 4.20 m/s included — and never tested the premise at all. It also
+> swept only `t ≤ 3.0 s`, short of the 4.0 s production window, and derived a
+> `min_max_speed_for_validity` field that was degenerate by construction. The
+> corrected probe keeps `s0`, the configured `max_speed` and the physical
+> capability as three independent quantities. Every number below is now directly
+> reproducible from `speed_cap_probe.json`; the conclusions are unchanged, and
+> one cell of the table was previously off by 0.0005 m.
+
 `r_det` is valid **only while the physical obstacle stays under `max_speed`.**
 The `|v(s) − v0| ≤ v_max + s0` premise is what produces the linear branch beyond
 `t_c`; if the obstacle can actually exceed `v_max`, that branch under-covers.
 Nothing in `reachability.hpp` or the tracker compares `max_speed` against the
 track's own measured speed — it is a configured constant, used unconditionally.
 
-Worst escape of an admissible trajectory, obstacle currently at `s0` but
-*capable* of `v_cap`, `a_max = 0.5`, `v_max = 0.8`:
+**Three quantities, held apart.** `s0` is the *observed* filtered speed at the
+last real observation and is a model **input** — it sets the CV nominal *and*
+enters the cap `v_max + s0`. `max_speed = 0.8 m/s` is a configured
+**assumption**. `v_phys` is the obstacle's *true* future speed ceiling, a
+property of the world that appears nowhere in the shipped code. The model bound
+is `reachRadius(t, s0, configured)`. The true reachable deviation is the same
+closed form with `v_phys` substituted for `max_speed`,
 
-| `s0` | `v_cap` | t = 2 s | t = 3 s | t = 4 s |
+```
+R(t) = ∫₀ᵗ min(a_max·s, v_phys + s0) ds
+```
+
+and the probe confirms this supremum is **attained** — by the 1-D full-reversal
+maneuver, to 4.0 × 10⁻¹⁰ m, with 0 of 4,000 randomized admissible trajectories
+exceeding it (worst overshoot 8.0 × 10⁻¹³ m). Closed form and forward
+simulation agree to **0.0 m** across all 368 grid rows.
+
+`escape_m = max(0, true_reach − model_bound)`, measured against the
+**deterministic term alone**, since the published region additionally carries
+`k√λ` that may absorb part of it in practice. This is the stricter reading of
+the bound's own validity claim.
+
+**In domain** (`v_phys ≤ 0.8 m/s`, `s0 ≤ v_phys`): 20,000 randomized admissible
+trials, **0 escapes**, worst slack −2.7 × 10⁻¹³ m; the worst-case reversal
+adversary over the whole grid gives −6.3 × 10⁻¹¹ m. All **128 in-domain grid
+rows** report `escape = 0.000`. The bound is valid and exactly tight.
+
+**Out of domain** (`v_phys > 0.8 m/s`), escape in metres:
+
+| `s0` | `v_phys` | t = 2 s | t = 3 s | t = 4 s |
 |---:|---:|---:|---:|---:|
-| any | **0.80** (= configured) | 0.000 | 0.000 | 0.000 |
-| 0.00 | 1.40 (pedestrian) | 0.040 | 0.480 | 1.080 |
-| 0.30 | 1.40 (pedestrian) | 0.000 | 0.160 | 0.720 |
-| 0.75 | 1.40 | 0.000 | 0.000 | 0.202 |
-| 0.00 | 4.20 (cyclist, 15 km/h) | 0.040 | 0.490 | 1.440 |
+| any | **0.80** (= configured) | 0.0000 | 0.0000 | 0.0000 |
+| 0.00 | 0.90 (12% over) | 0.0300 | 0.1300 | 0.2300 |
+| 0.00 | 1.40 (pedestrian) | 0.0400 | 0.4800 | 1.0800 |
+| 0.30 | 1.40 (pedestrian) | 0.0000 | 0.1600 | 0.7200 |
+| 0.75 | 1.40 | 0.0000 | 0.0000 | **0.2025** |
+| 0.00 | 4.20 (cyclist, 15 km/h) | 0.0400 | 0.4900 | 1.4400 |
 
-`t = 4.0 s` is reachable in production (`max_observation_age` 1.0 + horizon 3.0).
+**Under-coverage begins exactly at `t = (max_speed + s0) / a_max`**, independent
+of `v_phys`: before that instant the model is still in its quadratic branch and
+the two expressions are identically equal. That is **1.6 s** at `s0 = 0`, 2.2 s
+at 0.30, 2.6 s at 0.50, 3.1 s at 0.75 — confirmed numerically to within the
+1 ms scan step. Every onset lies **inside** the 4.0 s production window
+(`max_observation_age` 1.0 + horizon 3.0), so this is reachable in production,
+not hypothetical.
+
+**The escape saturates.** Once `v_phys ≥ a_max·t − s0` the *acceleration* bound
+rather than the speed bound is binding, and further capability buys the obstacle
+nothing: at `t = 4 s`, `s0 = 0` the escape is 1.4400 m for every capability
+≥ 2.0 m/s, so a jogger, a cyclist and an arbitrarily fast obstacle are
+indistinguishable. That 1.4400 m — **56.25%** of the 2.5600 m bound — is the
+largest escape anywhere in the probe.
+
+**How much `max_speed` would actually be needed.** Replacing the superseded
+degenerate field, `min_configured_max_speed_for_containment(T; s0, v_phys)` is
+defined as the smallest `bounds.max_speed` whose bound contains the true
+reachable deviation at **every** `total_time` in `(0, T]`. Containment at `t`
+needs `R(t; s0, v_cfg) ≥ R(t; s0, v_phys)`, and both equal `½ a_max t²` while
+`t ≤ (v_cfg + s0)/a_max`, so containment holds iff the model is still in its
+quadratic branch at `T` or its cap is not optimistic at all:
+
+```
+v_cfg_min(T) = min( v_phys , max(0, a_max·T − s0) )
+```
+
+verified against a bisection on the shipped `reachRadius()` to 3.1 × 10⁻⁵ m/s.
+Over the full `T = 4 s` window: **1.40 m/s** to cover a pedestrian first seen at
+rest, **2.00 m/s** to cover *any* obstacle however fast, and 1.25 m/s for a
+pedestrian already observed at 0.75 m/s. The production 0.8 m/s is sufficient
+for every tested capability ≤ 0.80 m/s and for none above it.
 
 **Not material to the current baseline:** every commanded obstacle speed in the
 repository is ≤ 0.75 m/s (`stage4g2/scenarios.json` max 0.68; Stage-5B speeds
@@ -192,7 +270,16 @@ A **separate and benign** effect, measured and distinguished: an *over-estimated
 filtered speed only enlarges the bound, because `r_det` is monotone increasing
 in `s0` (verified). Estimation overshoot is conservative, not a violation — the
 filtered speed reached 0.93 m/s on a 0.68 m/s obstacle in 0.4% of frames with no
-loss of containment.
+loss of containment. That same monotonicity is exactly why the superseded probe
+was blind: it fed the threat in through the one input that inflates the bound.
+
+Distinct from all of the above, `model_audit.json` → `part2_adversarial_containment`
+probes the **unbounded-capability** limit — `s0` above the cap with no physical
+speed ceiling at all — and finds 490 escapes in 20,000 (worst 0.136 m) and 3,334
+in 20,000 just above the cap (worst 0.155 m). That experiment already keeps `s0`
+as the observed speed and is unaffected by this correction; it is reported
+unchanged.
+
 
 ## 4. Existing tests — all functional tests pass
 
@@ -444,7 +531,16 @@ the layer's own logs.
 7. **The bound is isotropic**, so it over-covers laterally for a fast obstacle.
    A longitudinal/lateral split would tighten it.
 8. **The `max_speed` premise has no runtime guard** (§3) — the single concrete
-   gap found, and a prerequisite for Stage-5D.
+   gap found, and a prerequisite for Stage-5D. Quantified: under-coverage starts
+   at `t = (0.8 + s0)/0.5`, i.e. 1.6 s for a track observed at rest, well inside
+   the 4.0 s production window, and reaches 1.44 m (56% of the bound) at
+   `t = 4 s` against any capability ≥ 2.0 m/s.
+9. **The physical capability is unobservable from a single track.** The
+   corrected §3 probe shows the binding quantity is the obstacle's *future*
+   speed ceiling, which no amount of filtering reveals; a filtered speed above
+   the cap is only a symptom, and in the conservative direction. A guard can
+   therefore be sound only against a *declared* per-class capability, which is
+   why this is a Stage-5D prerequisite rather than a patch.
 
 ## 10. Decision
 
@@ -480,11 +576,27 @@ at the configured operating point — so the algorithm is correct as specified a
 the gap is a missing runtime guard. **Nothing was repaired**, so either label
 leaves the code identical and the audit trail complete.
 
+The §3 evidence correction sharpened this boundary without moving the
+classification: all three grounds for A are unchanged — the premise is still
+stated explicitly in the header, the parameter is still documented as a physical
+capability, and the bound is still *exactly tight* in domain (0 escapes in
+20,000 corrected trials, worst slack −2.7 × 10⁻¹³ m). What changed is that the
+out-of-domain cost is now quantified rather than asserted: under-coverage starts
+at 1.6 s and reaches 1.44 m by 4.0 s. A reviewer inclined to C now has a sharper
+number to argue from, and the prerequisite in §10.1 is correspondingly firmer.
+
 ### Recommended, NOT performed in Stage-5C
 
-1. Add a runtime guard comparing each track's filtered speed against
-   `max_speed`, invalidating or widening the region when the premise fails, and
-   extend `stage4g4_reachability` to sample `s0 > max_speed` (§3, §4).
+1. Define and enforce the `max_speed` validity contract. The corrected §3
+   probe retargets this: comparing the *filtered* speed against `max_speed`
+   catches only a symptom, and in the conservative direction, because `r_det` is
+   monotone in `s0`. What the bound actually needs is a declared *physical
+   capability* per obstacle class, with the region invalidated or widened when
+   the declared capability exceeds the configured `max_speed`. To stay valid
+   over the full 4.0 s window with no capability declaration at all requires
+   `max_speed ≥ 2.0 m/s` (§3, Part E). Also extend `stage4g4_reachability` to
+   sample `s0 > max_speed` and capability `> max_speed`, which it never does
+   (§4).
 2. Re-measure the Stage-4G4 runtime A/B before any future stage cites the
    0.35–0.98 ms figure (§7).
 3. Consider whether the `max_influence_radius` square-vs-disc asymmetry (§6) is
@@ -503,7 +615,8 @@ source /opt/ros/jazzy/setup.bash && colcon build --symlink-install
 source install/setup.bash
 OUT=/tmp/stage5c
 
-# Offline model audit + identical-input comparison (~70 s)
+# Offline model audit + identical-input comparison (~70 s), then the
+# corrected max_speed validity probe (~12 s)
 g++ -O2 -std=c++17 -I/usr/include/eigen3 -Isrc/predictive_nav_tracking/include \
     validation/stage5c/stage5c_audit.cpp -o $OUT/stage5c_audit && $OUT/stage5c_audit
 g++ -O2 -std=c++17 -I/usr/include/eigen3 -Isrc/predictive_nav_tracking/include \
@@ -531,10 +644,11 @@ for a in cv reach; do python3 src/predictive_nav_bringup/scripts/stage4g4/evalua
 |---|---|
 | `validation/STAGE5C_README.md` | this document |
 | `validation/stage5c/stage5c_audit.cpp` | model reconstruction, adversarial containment, identical-input comparison, cost |
-| `validation/stage5c/stage5c_speedcap.cpp` | `max_speed` premise probe |
+| `validation/stage5c/stage5c_speedcap.cpp` | `max_speed` premise probe: observed `s0`, configured `max_speed` and physical capability varied independently (corrected after `e1c1012`) |
 | `validation/stage5c/model_audit.json` | output of the first |
 | `validation/stage5c/speed_cap_probe.json` | output of the second |
 | `validation/stage5c/planner_comparison.json` | 18-trial planner-level results |
 
 No production source, parameter or prior evidence file was modified.
-`git diff --stat` is empty.
+`git diff --stat` is empty against the parent commit in both the qualification
+commit and the §3 evidence correction that followed it.
