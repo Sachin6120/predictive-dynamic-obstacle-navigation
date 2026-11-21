@@ -125,6 +125,19 @@ if(BUILD_TESTING)
   add_test(NAME stage5c1_contract COMMAND stage5c1_contract)
   set_tests_properties(stage5c1_contract PROPERTIES ENVIRONMENT "ROS_DOMAIN_ID=99" TIMEOUT 60)
 
+  # Stage-5D: class-aware capability-profile selection safety and
+  # configuration robustness. Includes the node translation unit for the same
+  # reason stage5c1_contract does -- the selection has to be exercised through
+  # the real parameter interface and the real per-track state, not only
+  # through the header.
+  add_executable(stage5d_profiles test/stage5d_profiles.cpp)
+  target_compile_options(stage5d_profiles PRIVATE -fno-access-control)
+  target_include_directories(stage5d_profiles PRIVATE include ${EIGEN3_INCLUDE_DIR})
+  ament_target_dependencies(stage5d_profiles rclcpp sensor_msgs nav_msgs geometry_msgs
+    tf2 tf2_ros tf2_geometry_msgs visualization_msgs predictive_nav_msgs)
+  add_test(NAME stage5d_profiles COMMAND stage5d_profiles)
+  set_tests_properties(stage5d_profiles PROPERTIES ENVIRONMENT "ROS_DOMAIN_ID=92" TIMEOUT 120)
+
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
   # comment the line when a copyright and license is added to all source files

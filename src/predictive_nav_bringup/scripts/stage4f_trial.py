@@ -102,6 +102,23 @@ class Stage4ETrial(Node):
         p('obstacle_start_y', -3.0)
         p('obstacle_speed', 0.25)
         p('obstacle_heading', 1.5707963)   # rad; direction of travel in map frame
+        # Stage-5D: the obstacle body's spawn yaw in the map frame. Only
+        # command_obstacle() reads it, to rotate the map-frame heading into the
+        # body twist gz expects. 0.0 reproduces every earlier stage exactly.
+        p('obstacle_yaw', 0.0)
+        # Stage-5D: the predictive layer's prediction_mode, set at RUNTIME via
+        # SetParameters, which is the mechanism predicted_obstacle_layer.cpp
+        # documents for it ("runtime-switchable so one Gazebo launch can serve
+        # both A/B arms, the same way Stage-4E switched `enabled`"). Empty --
+        # the default -- sends nothing and leaves whatever the params file
+        # configured, so every earlier stage is unaffected.
+        #
+        # Set this way rather than in the nav2 YAML because it is what the
+        # layer was designed for, and because it means BOTH Stage-5D arms read
+        # the SAME, UNMODIFIED Stage-4F nav2 params file: MPPI and every critic
+        # weight then cannot differ between arms even by accident, and no new
+        # costmap configuration file has to be introduced and kept in step.
+        p('layer_prediction_mode', '')
         p('obstacle_travel', 5.0)          # m; halts after covering this distance
         # Seconds relative to goal acceptance. NEGATIVE means the obstacle is
         # released before the goal is sent, so that a slow obstacle and a fast
@@ -142,7 +159,8 @@ class Stage4ETrial(Node):
             'trial_id', 'mode', 'scenario', 'out_path', 'start_x', 'start_y', 'start_yaw',
             'goal_x', 'goal_y', 'goal_yaw', 'cross_x', 'cross_y',
             'obstacle_start_x', 'obstacle_start_y', 'obstacle_speed',
-            'obstacle_heading', 'obstacle_travel', 'obstacle_trigger_delay',
+            'obstacle_heading', 'obstacle_yaw', 'obstacle_travel',
+            'obstacle_trigger_delay', 'layer_prediction_mode',
             'policy_max_prediction_horizon', 'policy_sigma_level', 'policy_temporal_decay',
             'policy_max_cost', 'policy_min_cost', 'policy_max_influence_radius',
             'nominal_speed', 'speed_reaction_fraction', 'reaction_sustain_s',
@@ -486,6 +504,14 @@ class Stage4ETrial(Node):
                 type=ParameterType.PARAMETER_BOOL,
                 bool_value=(self.P['mode'] == 'predictive'))),
         ]
+        # Stage-5D: only sent when explicitly asked for, so the default path
+        # is byte-identical to every earlier stage.
+        if self.P['layer_prediction_mode']:
+            params.append(Parameter(
+                name=f'{LAYER}.prediction_mode',
+                value=ParameterValue(
+                    type=ParameterType.PARAMETER_STRING,
+                    string_value=str(self.P['layer_prediction_mode']))))
         req = SetParameters.Request(parameters=params)
         fut = self.param_client.call_async(req)
         rclpy.spin_until_future_complete(self, fut, timeout_sec=15.0)
@@ -497,17 +523,27 @@ class Stage4ETrial(Node):
         self.get_logger().info(
             f"layer configured: enabled={self.P['mode'] == 'predictive'} "
             f"horizon={self.P['policy_max_prediction_horizon']} "
-            f"sigma={self.P['policy_sigma_level']} max_cost={self.P['policy_max_cost']}")
+            f"sigma={self.P['policy_sigma_level']} max_cost={self.P['policy_max_cost']} "
+            f"prediction_mode={self.P['layer_prediction_mode'] or '(from params file)'}")
 
     def command_obstacle(self, speed):
         """Drive the scripted obstacle along its fixed heading (map frame).
 
-        gz's VelocityControl plugin takes a body twist, and the obstacle model
-        carries no rotation, so body axes == map axes here.
+        gz's VelocityControl plugin takes a BODY twist, so the map-frame
+        heading is rotated into the obstacle's body frame by its spawn yaw.
+
+        Stage-5D added `obstacle_yaw` because a 2D LiDAR measures one
+        horizontal slice, so which aspect a class-specific body presents
+        decides whether it is classifiable at all -- a bicycle has to be
+        yawed along its travel for its wheel chords to be visible. At the
+        default obstacle_yaw 0.0 this reduces exactly to the pre-Stage-5D
+        expression (body axes == map axes), so every earlier stage is
+        reproduced bit for bit.
         """
+        rel = self.P['obstacle_heading'] - self.P['obstacle_yaw']
         t = Twist()
-        t.linear.x = float(speed) * math.cos(self.P['obstacle_heading'])
-        t.linear.y = float(speed) * math.sin(self.P['obstacle_heading'])
+        t.linear.x = float(speed) * math.cos(rel)
+        t.linear.y = float(speed) * math.sin(rel)
         self.obs_cmd_pub.publish(t)
 
     def obstacle_travelled(self):

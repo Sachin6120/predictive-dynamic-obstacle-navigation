@@ -1,0 +1,3341 @@
+{
+ "note": "Stage-5D bounded navigation campaign. The two arms differ in exactly one line of one file: tracker_params.yaml vs stage5d_classaware_tracker.yaml, reachability_class_aware false -> true. The nav2 params file -- hence MPPI and every critic weight, the planner, the costmap geometry and resolution, and prediction_mode: reachability -- is the SAME FILE for both arms, so MPPI cannot have been tuned per arm. Map, world, start, goal, obstacle body, obstacle trajectory, release time, sensor model, AMCL, the Kalman filter, the CV predictor, the Stage-5B classifier, compound clustering, the reachability mathematics and the Stage-5C.1 contract are shared by construction. Ground truth is used by the trial runner for scoring and for commanding the scripted obstacle only, and never reaches /scan, the tracker, the costmap layer, the planner or the controller.",
+ "near_miss_threshold_m": 0.2,
+ "trials_total": 36,
+ "arms": {
+  "global": {
+   "trials_launched": 18,
+   "infrastructure_faults": 0,
+   "trials": 18,
+   "succeeded": 18,
+   "collisions": 0,
+   "near_misses_below_0.20m": 4,
+   "collision_monitor_interventions": 1,
+   "planner_or_controller_failures": 0,
+   "failure_causes": [],
+   "layer_mode_observed": [
+    "reachability"
+   ],
+   "class_aware_banner_seen": [
+    false
+   ],
+   "min_clearance_m": {
+    "n": 18,
+    "mean": 0.5948,
+    "min": 0.0578,
+    "max": 0.9717
+   },
+   "nav_time_s": {
+    "n": 18,
+    "mean": 20.0997,
+    "min": 16.251,
+    "max": 23.9
+   },
+   "path_length_m": {
+    "n": 18,
+    "mean": 5.9997,
+    "min": 5.7857,
+    "max": 6.2347
+   },
+   "max_pred_cells": {
+    "n": 18,
+    "mean": 1140.6111,
+    "min": 1012,
+    "max": 1554
+   },
+   "mean_pred_frac_window": {
+    "n": 18,
+    "mean": 0.0442,
+    "min": 0.0329,
+    "max": 0.0616
+   },
+   "primary_reaction_time_s": {
+    "n": 18,
+    "mean": 4.0181,
+    "min": 3.5011,
+    "max": 4.452
+   },
+   "layer_updateCosts_us": {
+    "mean_of_means": 25.6889,
+    "max": 85.1
+   },
+   "tracker_reach_us": {
+    "n": 18,
+    "mean": 7.0988,
+    "min": 6.218,
+    "max": 9.059
+   },
+   "reachability_contract_violations": 0,
+   "reachability_contract_worst_speed": 0.0,
+   "profile_samples": {
+    "prof_global": 20364,
+    "prof_class": 0,
+    "prof_fb_unknown": 0,
+    "prof_fb_lowconf": 0,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 20364,
+   "fallback_rate": 0.0,
+   "class_closure_rate": 0.0,
+   "transition_rate": 0.0,
+   "global_profile_rate": 1.0,
+   "unsafe_profile_events": 0
+  },
+  "classaware": {
+   "trials_launched": 18,
+   "infrastructure_faults": 0,
+   "trials": 18,
+   "succeeded": 18,
+   "collisions": 0,
+   "near_misses_below_0.20m": 3,
+   "collision_monitor_interventions": 1,
+   "planner_or_controller_failures": 0,
+   "failure_causes": [],
+   "layer_mode_observed": [
+    "reachability"
+   ],
+   "class_aware_banner_seen": [
+    true
+   ],
+   "min_clearance_m": {
+    "n": 18,
+    "mean": 0.6101,
+    "min": 0.1254,
+    "max": 0.9923
+   },
+   "nav_time_s": {
+    "n": 18,
+    "mean": 19.7918,
+    "min": 16.201,
+    "max": 23.659
+   },
+   "path_length_m": {
+    "n": 18,
+    "mean": 5.9896,
+    "min": 5.6922,
+    "max": 6.3041
+   },
+   "max_pred_cells": {
+    "n": 18,
+    "mean": 1261.0556,
+    "min": 1114,
+    "max": 1689
+   },
+   "mean_pred_frac_window": {
+    "n": 18,
+    "mean": 0.0486,
+    "min": 0.0371,
+    "max": 0.0638
+   },
+   "primary_reaction_time_s": {
+    "n": 18,
+    "mean": 3.9734,
+    "min": 3.6013,
+    "max": 4.4514
+   },
+   "layer_updateCosts_us": {
+    "mean_of_means": 26.0556,
+    "max": 675.8
+   },
+   "tracker_reach_us": {
+    "n": 18,
+    "mean": 7.4918,
+    "min": 6.748,
+    "max": 9.266
+   },
+   "reachability_contract_violations": 0,
+   "reachability_contract_worst_speed": 0.0,
+   "profile_samples": {
+    "prof_global": 0,
+    "prof_class": 10146,
+    "prof_fb_unknown": 9240,
+    "prof_fb_lowconf": 816,
+    "prof_fb_immature": 54,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 20256,
+   "fallback_rate": 0.4991,
+   "class_closure_rate": 0.5009,
+   "transition_rate": 0.0,
+   "global_profile_rate": 0.0,
+   "unsafe_profile_events": 0
+  }
+ },
+ "per_condition": {
+  "ped_cross": {
+   "global": {
+    "trials_launched": 3,
+    "infrastructure_faults": 0,
+    "trials": 3,
+    "succeeded": 3,
+    "collisions": 0,
+    "near_misses_below_0.20m": 0,
+    "collision_monitor_interventions": 0,
+    "planner_or_controller_failures": 0,
+    "failure_causes": [],
+    "layer_mode_observed": [
+     "reachability"
+    ],
+    "class_aware_banner_seen": [
+     false
+    ],
+    "min_clearance_m": {
+     "n": 3,
+     "mean": 0.7158,
+     "min": 0.7068,
+     "max": 0.721
+    },
+    "nav_time_s": {
+     "n": 3,
+     "mean": 18.8847,
+     "min": 18.251,
+     "max": 19.402
+    },
+    "path_length_m": {
+     "n": 3,
+     "mean": 5.8049,
+     "min": 5.7857,
+     "max": 5.8331
+    },
+    "max_pred_cells": {
+     "n": 3,
+     "mean": 1036.0,
+     "min": 1030,
+     "max": 1048
+    },
+    "mean_pred_frac_window": {
+     "n": 3,
+     "mean": 0.0447,
+     "min": 0.0433,
+     "max": 0.0455
+    },
+    "primary_reaction_time_s": {
+     "n": 3,
+     "mean": 4.3348,
+     "min": 4.2512,
+     "max": 4.4514
+    },
+    "layer_updateCosts_us": {
+     "mean_of_means": 22.5,
+     "max": 49.5
+    },
+    "tracker_reach_us": {
+     "n": 3,
+     "mean": 6.814,
+     "min": 6.584,
+     "max": 6.959
+    },
+    "reachability_contract_violations": 0,
+    "reachability_contract_worst_speed": 0.0,
+    "profile_samples": {
+     "prof_global": 2820,
+     "prof_class": 0,
+     "prof_fb_unknown": 0,
+     "prof_fb_lowconf": 0,
+     "prof_fb_immature": 0,
+     "prof_fb_badconfig": 0,
+     "prof_transition": 0
+    },
+    "profile_samples_total": 2820,
+    "fallback_rate": 0.0,
+    "class_closure_rate": 0.0,
+    "transition_rate": 0.0,
+    "global_profile_rate": 1.0,
+    "unsafe_profile_events": 0
+   },
+   "classaware": {
+    "trials_launched": 3,
+    "infrastructure_faults": 0,
+    "trials": 3,
+    "succeeded": 3,
+    "collisions": 0,
+    "near_misses_below_0.20m": 0,
+    "collision_monitor_interventions": 0,
+    "planner_or_controller_failures": 0,
+    "failure_causes": [],
+    "layer_mode_observed": [
+     "reachability"
+    ],
+    "class_aware_banner_seen": [
+     true
+    ],
+    "min_clearance_m": {
+     "n": 3,
+     "mean": 0.7034,
+     "min": 0.6923,
+     "max": 0.7132
+    },
+    "nav_time_s": {
+     "n": 3,
+     "mean": 18.237,
+     "min": 17.358,
+     "max": 19.252
+    },
+    "path_length_m": {
+     "n": 3,
+     "mean": 5.7522,
+     "min": 5.6922,
+     "max": 5.7823
+    },
+    "max_pred_cells": {
+     "n": 3,
+     "mean": 1172.0,
+     "min": 1145,
+     "max": 1186
+    },
+    "mean_pred_frac_window": {
+     "n": 3,
+     "mean": 0.0503,
+     "min": 0.0498,
+     "max": 0.0506
+    },
+    "primary_reaction_time_s": {
+     "n": 3,
+     "mean": 4.3011,
+     "min": 4.2003,
+     "max": 4.4514
+    },
+    "layer_updateCosts_us": {
+     "mean_of_means": 27.8667,
+     "max": 72.9
+    },
+    "tracker_reach_us": {
+     "n": 3,
+     "mean": 7.0597,
+     "min": 7.006,
+     "max": 7.126
+    },
+    "reachability_contract_violations": 0,
+    "reachability_contract_worst_speed": 0.0,
+    "profile_samples": {
+     "prof_global": 0,
+     "prof_class": 1002,
+     "prof_fb_unknown": 1746,
+     "prof_fb_lowconf": 102,
+     "prof_fb_immature": 0,
+     "prof_fb_badconfig": 0,
+     "prof_transition": 0
+    },
+    "profile_samples_total": 2850,
+    "fallback_rate": 0.6484,
+    "class_closure_rate": 0.3516,
+    "transition_rate": 0.0,
+    "global_profile_rate": 0.0,
+    "unsafe_profile_events": 0
+   }
+  },
+  "ped_longitudinal": {
+   "global": {
+    "trials_launched": 3,
+    "infrastructure_faults": 0,
+    "trials": 3,
+    "succeeded": 3,
+    "collisions": 0,
+    "near_misses_below_0.20m": 3,
+    "collision_monitor_interventions": 0,
+    "planner_or_controller_failures": 0,
+    "failure_causes": [],
+    "layer_mode_observed": [
+     "reachability"
+    ],
+    "class_aware_banner_seen": [
+     false
+    ],
+    "min_clearance_m": {
+     "n": 3,
+     "mean": 0.0861,
+     "min": 0.0578,
+     "max": 0.107
+    },
+    "nav_time_s": {
+     "n": 3,
+     "mean": 16.5017,
+     "min": 16.251,
+     "max": 16.652
+    },
+    "path_length_m": {
+     "n": 3,
+     "mean": 6.0021,
+     "min": 5.8937,
+     "max": 6.1044
+    },
+    "max_pred_cells": {
+     "n": 3,
+     "mean": 1153.3333,
+     "min": 1127,
+     "max": 1167
+    },
+    "mean_pred_frac_window": {
+     "n": 3,
+     "mean": 0.0336,
+     "min": 0.0329,
+     "max": 0.0345
+    },
+    "primary_reaction_time_s": {
+     "n": 3,
+     "mean": 4.1182,
+     "min": 4.0014,
+     "max": 4.2516
+    },
+    "layer_updateCosts_us": {
+     "mean_of_means": 24.4667,
+     "max": 56.3
+    },
+    "tracker_reach_us": {
+     "n": 3,
+     "mean": 6.7667,
+     "min": 6.611,
+     "max": 6.981
+    },
+    "reachability_contract_violations": 0,
+    "reachability_contract_worst_speed": 0.0,
+    "profile_samples": {
+     "prof_global": 2640,
+     "prof_class": 0,
+     "prof_fb_unknown": 0,
+     "prof_fb_lowconf": 0,
+     "prof_fb_immature": 0,
+     "prof_fb_badconfig": 0,
+     "prof_transition": 0
+    },
+    "profile_samples_total": 2640,
+    "fallback_rate": 0.0,
+    "class_closure_rate": 0.0,
+    "transition_rate": 0.0,
+    "global_profile_rate": 1.0,
+    "unsafe_profile_events": 0
+   },
+   "classaware": {
+    "trials_launched": 3,
+    "infrastructure_faults": 0,
+    "trials": 3,
+    "succeeded": 3,
+    "collisions": 0,
+    "near_misses_below_0.20m": 3,
+    "collision_monitor_interventions": 0,
+    "planner_or_controller_failures": 0,
+    "failure_causes": [],
+    "layer_mode_observed": [
+     "reachability"
+    ],
+    "class_aware_banner_seen": [
+     true
+    ],
+    "min_clearance_m": {
+     "n": 3,
+     "mean": 0.1449,
+     "min": 0.1254,
+     "max": 0.1822
+    },
+    "nav_time_s": {
+     "n": 3,
+     "mean": 16.6517,
+     "min": 16.201,
+     "max": 17.152
+    },
+    "path_length_m": {
+     "n": 3,
+     "mean": 6.062,
+     "min": 5.9975,
+     "max": 6.1124
+    },
+    "max_pred_cells": {
+     "n": 3,
+     "mean": 1308.0,
+     "min": 1299,
+     "max": 1321
+    },
+    "mean_pred_frac_window": {
+     "n": 3,
+     "mean": 0.0375,
+     "min": 0.0371,
+     "max": 0.038
+    },
+    "primary_reaction_time_s": {
+     "n": 3,
+     "mean": 4.0684,
+     "min": 3.9512,
+     "max": 4.152
+    },
+    "layer_updateCosts_us": {
+     "mean_of_means": 22.6,
+     "max": 64.9
+    },
+    "tracker_reach_us": {
+     "n": 3,
+     "mean": 7.207,
+     "min": 6.956,
+     "max": 7.585
+    },
+    "reachability_contract_violations": 0,
+    "reachability_contract_worst_speed": 0.0,
+    "profile_samples": {
+     "prof_global": 0,
+     "prof_class": 750,
+     "prof_fb_unknown": 2058,
+     "prof_fb_lowconf": 132,
+     "prof_fb_immature": 0,
+     "prof_fb_badconfig": 0,
+     "prof_transition": 0
+    },
+    "profile_samples_total": 2940,
+    "fallback_rate": 0.7449,
+    "class_closure_rate": 0.2551,
+    "transition_rate": 0.0,
+    "global_profile_rate": 0.0,
+    "unsafe_profile_events": 0
+   }
+  },
+  "bike_cross": {
+   "global": {
+    "trials_launched": 3,
+    "infrastructure_faults": 0,
+    "trials": 3,
+    "succeeded": 3,
+    "collisions": 0,
+    "near_misses_below_0.20m": 0,
+    "collision_monitor_interventions": 0,
+    "planner_or_controller_failures": 0,
+    "failure_causes": [],
+    "layer_mode_observed": [
+     "reachability"
+    ],
+    "class_aware_banner_seen": [
+     false
+    ],
+    "min_clearance_m": {
+     "n": 3,
+     "mean": 0.6913,
+     "min": 0.6657,
+     "max": 0.7198
+    },
+    "nav_time_s": {
+     "n": 3,
+     "mean": 23.6343,
+     "min": 23.202,
+     "max": 23.9
+    },
+    "path_length_m": {
+     "n": 3,
+     "mean": 6.179,
+     "min": 6.1012,
+     "max": 6.2347
+    },
+    "max_pred_cells": {
+     "n": 3,
+     "mean": 1536.3333,
+     "min": 1527,
+     "max": 1554
+    },
+    "mean_pred_frac_window": {
+     "n": 3,
+     "mean": 0.0586,
+     "min": 0.0562,
+     "max": 0.0616
+    },
+    "primary_reaction_time_s": {
+     "n": 3,
+     "mean": 4.2848,
+     "min": 4.1515,
+     "max": 4.452
+    },
+    "layer_updateCosts_us": {
+     "mean_of_means": 27.7333,
+     "max": 70.0
+    },
+    "tracker_reach_us": {
+     "n": 3,
+     "mean": 8.8357,
+     "min": 8.664,
+     "max": 9.059
+    },
+    "reachability_contract_violations": 0,
+    "reachability_contract_worst_speed": 0.0,
+    "profile_samples": {
+     "prof_global": 6126,
+     "prof_class": 0,
+     "prof_fb_unknown": 0,
+     "prof_fb_lowconf": 0,
+     "prof_fb_immature": 0,
+     "prof_fb_badconfig": 0,
+     "prof_transition": 0
+    },
+    "profile_samples_total": 6126,
+    "fallback_rate": 0.0,
+    "class_closure_rate": 0.0,
+    "transition_rate": 0.0,
+    "global_profile_rate": 1.0,
+    "unsafe_profile_events": 0
+   },
+   "classaware": {
+    "trials_launched": 3,
+    "infrastructure_faults": 0,
+    "trials": 3,
+    "succeeded": 3,
+    "collisions": 0,
+    "near_misses_below_0.20m": 0,
+    "collision_monitor_interventions": 0,
+    "planner_or_controller_failures": 0,
+    "failure_causes": [],
+    "layer_mode_observed": [
+     "reachability"
+    ],
+    "class_aware_banner_seen": [
+     true
+    ],
+    "min_clearance_m": {
+     "n": 3,
+     "mean": 0.6349,
+     "min": 0.6209,
+     "max": 0.6592
+    },
+    "nav_time_s": {
+     "n": 3,
+     "mean": 22.985,
+     "min": 22.951,
+     "max": 23.003
+    },
+    "path_length_m": {
+     "n": 3,
+     "mean": 6.1259,
+     "min": 6.0878,
+     "max": 6.173
+    },
+    "max_pred_cells": {
+     "n": 3,
+     "mean": 1669.6667,
+     "min": 1648,
+     "max": 1689
+    },
+    "mean_pred_frac_window": {
+     "n": 3,
+     "mean": 0.0629,
+     "min": 0.0612,
+     "max": 0.0638
+    },
+    "primary_reaction_time_s": {
+     "n": 3,
+     "mean": 4.2347,
+     "min": 4.2004,
+     "max": 4.2518
+    },
+    "layer_updateCosts_us": {
+     "mean_of_means": 26.0333,
+     "max": 63.7
+    },
+    "tracker_reach_us": {
+     "n": 3,
+     "mean": 8.9337,
+     "min": 8.551,
+     "max": 9.266
+    },
+    "reachability_contract_violations": 0,
+    "reachability_contract_worst_speed": 0.0,
+    "profile_samples": {
+     "prof_global": 0,
+     "prof_class": 3414,
+     "prof_fb_unknown": 2124,
+     "prof_fb_lowconf": 108,
+     "prof_fb_immature": 18,
+     "prof_fb_badconfig": 0,
+     "prof_transition": 0
+    },
+    "profile_samples_total": 5664,
+    "fallback_rate": 0.3972,
+    "class_closure_rate": 0.6028,
+    "transition_rate": 0.0,
+    "global_profile_rate": 0.0,
+    "unsafe_profile_events": 0
+   }
+  },
+  "veh_cross": {
+   "global": {
+    "trials_launched": 3,
+    "infrastructure_faults": 0,
+    "trials": 3,
+    "succeeded": 3,
+    "collisions": 0,
+    "near_misses_below_0.20m": 0,
+    "collision_monitor_interventions": 0,
+    "planner_or_controller_failures": 0,
+    "failure_causes": [],
+    "layer_mode_observed": [
+     "reachability"
+    ],
+    "class_aware_banner_seen": [
+     false
+    ],
+    "min_clearance_m": {
+     "n": 3,
+     "mean": 0.8707,
+     "min": 0.8634,
+     "max": 0.8774
+    },
+    "nav_time_s": {
+     "n": 3,
+     "mean": 23.5383,
+     "min": 23.453,
+     "max": 23.661
+    },
+    "path_length_m": {
+     "n": 3,
+     "mean": 5.9647,
+     "min": 5.9178,
+     "max": 5.9971
+    },
+    "max_pred_cells": {
+     "n": 3,
+     "mean": 1022.0,
+     "min": 1012,
+     "max": 1029
+    },
+    "mean_pred_frac_window": {
+     "n": 3,
+     "mean": 0.0456,
+     "min": 0.0455,
+     "max": 0.0457
+    },
+    "primary_reaction_time_s": {
+     "n": 3,
+     "mean": 4.0345,
+     "min": 3.95,
+     "max": 4.1518
+    },
+    "layer_updateCosts_us": {
+     "mean_of_means": 28.1333,
+     "max": 75.9
+    },
+    "tracker_reach_us": {
+     "n": 3,
+     "mean": 6.801,
+     "min": 6.714,
+     "max": 6.954
+    },
+    "reachability_contract_violations": 0,
+    "reachability_contract_worst_speed": 0.0,
+    "profile_samples": {
+     "prof_global": 3144,
+     "prof_class": 0,
+     "prof_fb_unknown": 0,
+     "prof_fb_lowconf": 0,
+     "prof_fb_immature": 0,
+     "prof_fb_badconfig": 0,
+     "prof_transition": 0
+    },
+    "profile_samples_total": 3144,
+    "fallback_rate": 0.0,
+    "class_closure_rate": 0.0,
+    "transition_rate": 0.0,
+    "global_profile_rate": 1.0,
+    "unsafe_profile_events": 0
+   },
+   "classaware": {
+    "trials_launched": 3,
+    "infrastructure_faults": 0,
+    "trials": 3,
+    "succeeded": 3,
+    "collisions": 0,
+    "near_misses_below_0.20m": 0,
+    "collision_monitor_interventions": 0,
+    "planner_or_controller_failures": 0,
+    "failure_causes": [],
+    "layer_mode_observed": [
+     "reachability"
+    ],
+    "class_aware_banner_seen": [
+     true
+    ],
+    "min_clearance_m": {
+     "n": 3,
+     "mean": 0.8732,
+     "min": 0.866,
+     "max": 0.8872
+    },
+    "nav_time_s": {
+     "n": 3,
+     "mean": 23.4707,
+     "min": 23.101,
+     "max": 23.659
+    },
+    "path_length_m": {
+     "n": 3,
+     "mean": 5.8928,
+     "min": 5.8486,
+     "max": 5.9508
+    },
+    "max_pred_cells": {
+     "n": 3,
+     "mean": 1129.6667,
+     "min": 1122,
+     "max": 1145
+    },
+    "mean_pred_frac_window": {
+     "n": 3,
+     "mean": 0.0505,
+     "min": 0.0499,
+     "max": 0.0508
+    },
+    "primary_reaction_time_s": {
+     "n": 3,
+     "mean": 3.9509,
+     "min": 3.9014,
+     "max": 4.0005
+    },
+    "layer_updateCosts_us": {
+     "mean_of_means": 27.5667,
+     "max": 106.7
+    },
+    "tracker_reach_us": {
+     "n": 3,
+     "mean": 7.0713,
+     "min": 6.881,
+     "max": 7.212
+    },
+    "reachability_contract_violations": 0,
+    "reachability_contract_worst_speed": 0.0,
+    "profile_samples": {
+     "prof_global": 0,
+     "prof_class": 2646,
+     "prof_fb_unknown": 234,
+     "prof_fb_lowconf": 246,
+     "prof_fb_immature": 18,
+     "prof_fb_badconfig": 0,
+     "prof_transition": 0
+    },
+    "profile_samples_total": 3144,
+    "fallback_rate": 0.1584,
+    "class_closure_rate": 0.8416,
+    "transition_rate": 0.0,
+    "global_profile_rate": 0.0,
+    "unsafe_profile_events": 0
+   }
+  },
+  "veh_longitudinal": {
+   "global": {
+    "trials_launched": 3,
+    "infrastructure_faults": 0,
+    "trials": 3,
+    "succeeded": 3,
+    "collisions": 0,
+    "near_misses_below_0.20m": 1,
+    "collision_monitor_interventions": 1,
+    "planner_or_controller_failures": 0,
+    "failure_causes": [],
+    "layer_mode_observed": [
+     "reachability"
+    ],
+    "class_aware_banner_seen": [
+     false
+    ],
+    "min_clearance_m": {
+     "n": 3,
+     "mean": 0.2455,
+     "min": 0.1601,
+     "max": 0.3399
+    },
+    "nav_time_s": {
+     "n": 3,
+     "mean": 16.5543,
+     "min": 16.401,
+     "max": 16.751
+    },
+    "path_length_m": {
+     "n": 3,
+     "mean": 6.1413,
+     "min": 6.1111,
+     "max": 6.2003
+    },
+    "max_pred_cells": {
+     "n": 3,
+     "mean": 1049.6667,
+     "min": 1048,
+     "max": 1053
+    },
+    "mean_pred_frac_window": {
+     "n": 3,
+     "mean": 0.0351,
+     "min": 0.0347,
+     "max": 0.0354
+    },
+    "primary_reaction_time_s": {
+     "n": 3,
+     "mean": 3.5681,
+     "min": 3.5015,
+     "max": 3.6512
+    },
+    "layer_updateCosts_us": {
+     "mean_of_means": 24.9667,
+     "max": 68.1
+    },
+    "tracker_reach_us": {
+     "n": 3,
+     "mean": 6.729,
+     "min": 6.336,
+     "max": 7.138
+    },
+    "reachability_contract_violations": 0,
+    "reachability_contract_worst_speed": 0.0,
+    "profile_samples": {
+     "prof_global": 2550,
+     "prof_class": 0,
+     "prof_fb_unknown": 0,
+     "prof_fb_lowconf": 0,
+     "prof_fb_immature": 0,
+     "prof_fb_badconfig": 0,
+     "prof_transition": 0
+    },
+    "profile_samples_total": 2550,
+    "fallback_rate": 0.0,
+    "class_closure_rate": 0.0,
+    "transition_rate": 0.0,
+    "global_profile_rate": 1.0,
+    "unsafe_profile_events": 0
+   },
+   "classaware": {
+    "trials_launched": 3,
+    "infrastructure_faults": 0,
+    "trials": 3,
+    "succeeded": 3,
+    "collisions": 0,
+    "near_misses_below_0.20m": 0,
+    "collision_monitor_interventions": 1,
+    "planner_or_controller_failures": 0,
+    "failure_causes": [],
+    "layer_mode_observed": [
+     "reachability"
+    ],
+    "class_aware_banner_seen": [
+     true
+    ],
+    "min_clearance_m": {
+     "n": 3,
+     "mean": 0.3198,
+     "min": 0.2044,
+     "max": 0.4124
+    },
+    "nav_time_s": {
+     "n": 3,
+     "mean": 16.489,
+     "min": 16.354,
+     "max": 16.602
+    },
+    "path_length_m": {
+     "n": 3,
+     "mean": 6.1785,
+     "min": 6.0939,
+     "max": 6.3041
+    },
+    "max_pred_cells": {
+     "n": 3,
+     "mean": 1160.0,
+     "min": 1140,
+     "max": 1172
+    },
+    "mean_pred_frac_window": {
+     "n": 3,
+     "mean": 0.0388,
+     "min": 0.0381,
+     "max": 0.0394
+    },
+    "primary_reaction_time_s": {
+     "n": 3,
+     "mean": 3.6346,
+     "min": 3.6013,
+     "max": 3.6514
+    },
+    "layer_updateCosts_us": {
+     "mean_of_means": 26.8667,
+     "max": 675.8
+    },
+    "tracker_reach_us": {
+     "n": 3,
+     "mean": 7.6847,
+     "min": 7.471,
+     "max": 7.991
+    },
+    "reachability_contract_violations": 0,
+    "reachability_contract_worst_speed": 0.0,
+    "profile_samples": {
+     "prof_global": 0,
+     "prof_class": 2328,
+     "prof_fb_unknown": 126,
+     "prof_fb_lowconf": 132,
+     "prof_fb_immature": 18,
+     "prof_fb_badconfig": 0,
+     "prof_transition": 0
+    },
+    "profile_samples_total": 2604,
+    "fallback_rate": 0.106,
+    "class_closure_rate": 0.894,
+    "transition_rate": 0.0,
+    "global_profile_rate": 0.0,
+    "unsafe_profile_events": 0
+   }
+  },
+  "unknown_cross": {
+   "global": {
+    "trials_launched": 3,
+    "infrastructure_faults": 0,
+    "trials": 3,
+    "succeeded": 3,
+    "collisions": 0,
+    "near_misses_below_0.20m": 0,
+    "collision_monitor_interventions": 0,
+    "planner_or_controller_failures": 0,
+    "failure_causes": [],
+    "layer_mode_observed": [
+     "reachability"
+    ],
+    "class_aware_banner_seen": [
+     false
+    ],
+    "min_clearance_m": {
+     "n": 3,
+     "mean": 0.9593,
+     "min": 0.9469,
+     "max": 0.9717
+    },
+    "nav_time_s": {
+     "n": 3,
+     "mean": 21.4847,
+     "min": 20.501,
+     "max": 22.801
+    },
+    "path_length_m": {
+     "n": 3,
+     "mean": 5.9062,
+     "min": 5.8766,
+     "max": 5.9324
+    },
+    "max_pred_cells": {
+     "n": 3,
+     "mean": 1046.3333,
+     "min": 1030,
+     "max": 1070
+    },
+    "mean_pred_frac_window": {
+     "n": 3,
+     "mean": 0.0474,
+     "min": 0.047,
+     "max": 0.048
+    },
+    "primary_reaction_time_s": {
+     "n": 3,
+     "mean": 3.7681,
+     "min": 3.5011,
+     "max": 3.9512
+    },
+    "layer_updateCosts_us": {
+     "mean_of_means": 26.3333,
+     "max": 85.1
+    },
+    "tracker_reach_us": {
+     "n": 3,
+     "mean": 6.6467,
+     "min": 6.218,
+     "max": 7.124
+    },
+    "reachability_contract_violations": 0,
+    "reachability_contract_worst_speed": 0.0,
+    "profile_samples": {
+     "prof_global": 3084,
+     "prof_class": 0,
+     "prof_fb_unknown": 0,
+     "prof_fb_lowconf": 0,
+     "prof_fb_immature": 0,
+     "prof_fb_badconfig": 0,
+     "prof_transition": 0
+    },
+    "profile_samples_total": 3084,
+    "fallback_rate": 0.0,
+    "class_closure_rate": 0.0,
+    "transition_rate": 0.0,
+    "global_profile_rate": 1.0,
+    "unsafe_profile_events": 0
+   },
+   "classaware": {
+    "trials_launched": 3,
+    "infrastructure_faults": 0,
+    "trials": 3,
+    "succeeded": 3,
+    "collisions": 0,
+    "near_misses_below_0.20m": 0,
+    "collision_monitor_interventions": 0,
+    "planner_or_controller_failures": 0,
+    "failure_causes": [],
+    "layer_mode_observed": [
+     "reachability"
+    ],
+    "class_aware_banner_seen": [
+     true
+    ],
+    "min_clearance_m": {
+     "n": 3,
+     "mean": 0.9841,
+     "min": 0.978,
+     "max": 0.9923
+    },
+    "nav_time_s": {
+     "n": 3,
+     "mean": 20.9177,
+     "min": 19.101,
+     "max": 23.201
+    },
+    "path_length_m": {
+     "n": 3,
+     "mean": 5.9261,
+     "min": 5.8842,
+     "max": 5.9591
+    },
+    "max_pred_cells": {
+     "n": 3,
+     "mean": 1127.0,
+     "min": 1114,
+     "max": 1145
+    },
+    "mean_pred_frac_window": {
+     "n": 3,
+     "mean": 0.0515,
+     "min": 0.05,
+     "max": 0.0531
+    },
+    "primary_reaction_time_s": {
+     "n": 3,
+     "mean": 3.6509,
+     "min": 3.6014,
+     "max": 3.7003
+    },
+    "layer_updateCosts_us": {
+     "mean_of_means": 25.4,
+     "max": 120.0
+    },
+    "tracker_reach_us": {
+     "n": 3,
+     "mean": 6.9947,
+     "min": 6.748,
+     "max": 7.214
+    },
+    "reachability_contract_violations": 0,
+    "reachability_contract_worst_speed": 0.0,
+    "profile_samples": {
+     "prof_global": 0,
+     "prof_class": 6,
+     "prof_fb_unknown": 2952,
+     "prof_fb_lowconf": 96,
+     "prof_fb_immature": 0,
+     "prof_fb_badconfig": 0,
+     "prof_transition": 0
+    },
+    "profile_samples_total": 3054,
+    "fallback_rate": 0.998,
+    "class_closure_rate": 0.002,
+    "transition_rate": 0.0,
+    "global_profile_rate": 0.0,
+    "unsafe_profile_events": 0
+   }
+  }
+ },
+ "per_true_class": {
+  "BIKE": {
+   "global": {
+    "trials_launched": 3,
+    "infrastructure_faults": 0,
+    "trials": 3,
+    "succeeded": 3,
+    "collisions": 0,
+    "near_misses_below_0.20m": 0,
+    "collision_monitor_interventions": 0,
+    "planner_or_controller_failures": 0,
+    "failure_causes": [],
+    "layer_mode_observed": [
+     "reachability"
+    ],
+    "class_aware_banner_seen": [
+     false
+    ],
+    "min_clearance_m": {
+     "n": 3,
+     "mean": 0.6913,
+     "min": 0.6657,
+     "max": 0.7198
+    },
+    "nav_time_s": {
+     "n": 3,
+     "mean": 23.6343,
+     "min": 23.202,
+     "max": 23.9
+    },
+    "path_length_m": {
+     "n": 3,
+     "mean": 6.179,
+     "min": 6.1012,
+     "max": 6.2347
+    },
+    "max_pred_cells": {
+     "n": 3,
+     "mean": 1536.3333,
+     "min": 1527,
+     "max": 1554
+    },
+    "mean_pred_frac_window": {
+     "n": 3,
+     "mean": 0.0586,
+     "min": 0.0562,
+     "max": 0.0616
+    },
+    "primary_reaction_time_s": {
+     "n": 3,
+     "mean": 4.2848,
+     "min": 4.1515,
+     "max": 4.452
+    },
+    "layer_updateCosts_us": {
+     "mean_of_means": 27.7333,
+     "max": 70.0
+    },
+    "tracker_reach_us": {
+     "n": 3,
+     "mean": 8.8357,
+     "min": 8.664,
+     "max": 9.059
+    },
+    "reachability_contract_violations": 0,
+    "reachability_contract_worst_speed": 0.0,
+    "profile_samples": {
+     "prof_global": 6126,
+     "prof_class": 0,
+     "prof_fb_unknown": 0,
+     "prof_fb_lowconf": 0,
+     "prof_fb_immature": 0,
+     "prof_fb_badconfig": 0,
+     "prof_transition": 0
+    },
+    "profile_samples_total": 6126,
+    "fallback_rate": 0.0,
+    "class_closure_rate": 0.0,
+    "transition_rate": 0.0,
+    "global_profile_rate": 1.0,
+    "unsafe_profile_events": 0
+   },
+   "classaware": {
+    "trials_launched": 3,
+    "infrastructure_faults": 0,
+    "trials": 3,
+    "succeeded": 3,
+    "collisions": 0,
+    "near_misses_below_0.20m": 0,
+    "collision_monitor_interventions": 0,
+    "planner_or_controller_failures": 0,
+    "failure_causes": [],
+    "layer_mode_observed": [
+     "reachability"
+    ],
+    "class_aware_banner_seen": [
+     true
+    ],
+    "min_clearance_m": {
+     "n": 3,
+     "mean": 0.6349,
+     "min": 0.6209,
+     "max": 0.6592
+    },
+    "nav_time_s": {
+     "n": 3,
+     "mean": 22.985,
+     "min": 22.951,
+     "max": 23.003
+    },
+    "path_length_m": {
+     "n": 3,
+     "mean": 6.1259,
+     "min": 6.0878,
+     "max": 6.173
+    },
+    "max_pred_cells": {
+     "n": 3,
+     "mean": 1669.6667,
+     "min": 1648,
+     "max": 1689
+    },
+    "mean_pred_frac_window": {
+     "n": 3,
+     "mean": 0.0629,
+     "min": 0.0612,
+     "max": 0.0638
+    },
+    "primary_reaction_time_s": {
+     "n": 3,
+     "mean": 4.2347,
+     "min": 4.2004,
+     "max": 4.2518
+    },
+    "layer_updateCosts_us": {
+     "mean_of_means": 26.0333,
+     "max": 63.7
+    },
+    "tracker_reach_us": {
+     "n": 3,
+     "mean": 8.9337,
+     "min": 8.551,
+     "max": 9.266
+    },
+    "reachability_contract_violations": 0,
+    "reachability_contract_worst_speed": 0.0,
+    "profile_samples": {
+     "prof_global": 0,
+     "prof_class": 3414,
+     "prof_fb_unknown": 2124,
+     "prof_fb_lowconf": 108,
+     "prof_fb_immature": 18,
+     "prof_fb_badconfig": 0,
+     "prof_transition": 0
+    },
+    "profile_samples_total": 5664,
+    "fallback_rate": 0.3972,
+    "class_closure_rate": 0.6028,
+    "transition_rate": 0.0,
+    "global_profile_rate": 0.0,
+    "unsafe_profile_events": 0
+   }
+  },
+  "PEDESTRIAN": {
+   "global": {
+    "trials_launched": 6,
+    "infrastructure_faults": 0,
+    "trials": 6,
+    "succeeded": 6,
+    "collisions": 0,
+    "near_misses_below_0.20m": 3,
+    "collision_monitor_interventions": 0,
+    "planner_or_controller_failures": 0,
+    "failure_causes": [],
+    "layer_mode_observed": [
+     "reachability"
+    ],
+    "class_aware_banner_seen": [
+     false
+    ],
+    "min_clearance_m": {
+     "n": 6,
+     "mean": 0.4009,
+     "min": 0.0578,
+     "max": 0.721
+    },
+    "nav_time_s": {
+     "n": 6,
+     "mean": 17.6932,
+     "min": 16.251,
+     "max": 19.402
+    },
+    "path_length_m": {
+     "n": 6,
+     "mean": 5.9035,
+     "min": 5.7857,
+     "max": 6.1044
+    },
+    "max_pred_cells": {
+     "n": 6,
+     "mean": 1094.6667,
+     "min": 1030,
+     "max": 1167
+    },
+    "mean_pred_frac_window": {
+     "n": 6,
+     "mean": 0.0391,
+     "min": 0.0329,
+     "max": 0.0455
+    },
+    "primary_reaction_time_s": {
+     "n": 6,
+     "mean": 4.2265,
+     "min": 4.0014,
+     "max": 4.4514
+    },
+    "layer_updateCosts_us": {
+     "mean_of_means": 23.4833,
+     "max": 56.3
+    },
+    "tracker_reach_us": {
+     "n": 6,
+     "mean": 6.7903,
+     "min": 6.584,
+     "max": 6.981
+    },
+    "reachability_contract_violations": 0,
+    "reachability_contract_worst_speed": 0.0,
+    "profile_samples": {
+     "prof_global": 5460,
+     "prof_class": 0,
+     "prof_fb_unknown": 0,
+     "prof_fb_lowconf": 0,
+     "prof_fb_immature": 0,
+     "prof_fb_badconfig": 0,
+     "prof_transition": 0
+    },
+    "profile_samples_total": 5460,
+    "fallback_rate": 0.0,
+    "class_closure_rate": 0.0,
+    "transition_rate": 0.0,
+    "global_profile_rate": 1.0,
+    "unsafe_profile_events": 0
+   },
+   "classaware": {
+    "trials_launched": 6,
+    "infrastructure_faults": 0,
+    "trials": 6,
+    "succeeded": 6,
+    "collisions": 0,
+    "near_misses_below_0.20m": 3,
+    "collision_monitor_interventions": 0,
+    "planner_or_controller_failures": 0,
+    "failure_causes": [],
+    "layer_mode_observed": [
+     "reachability"
+    ],
+    "class_aware_banner_seen": [
+     true
+    ],
+    "min_clearance_m": {
+     "n": 6,
+     "mean": 0.4241,
+     "min": 0.1254,
+     "max": 0.7132
+    },
+    "nav_time_s": {
+     "n": 6,
+     "mean": 17.4443,
+     "min": 16.201,
+     "max": 19.252
+    },
+    "path_length_m": {
+     "n": 6,
+     "mean": 5.9071,
+     "min": 5.6922,
+     "max": 6.1124
+    },
+    "max_pred_cells": {
+     "n": 6,
+     "mean": 1240.0,
+     "min": 1145,
+     "max": 1321
+    },
+    "mean_pred_frac_window": {
+     "n": 6,
+     "mean": 0.0439,
+     "min": 0.0371,
+     "max": 0.0506
+    },
+    "primary_reaction_time_s": {
+     "n": 6,
+     "mean": 4.1848,
+     "min": 3.9512,
+     "max": 4.4514
+    },
+    "layer_updateCosts_us": {
+     "mean_of_means": 25.2333,
+     "max": 72.9
+    },
+    "tracker_reach_us": {
+     "n": 6,
+     "mean": 7.1333,
+     "min": 6.956,
+     "max": 7.585
+    },
+    "reachability_contract_violations": 0,
+    "reachability_contract_worst_speed": 0.0,
+    "profile_samples": {
+     "prof_global": 0,
+     "prof_class": 1752,
+     "prof_fb_unknown": 3804,
+     "prof_fb_lowconf": 234,
+     "prof_fb_immature": 0,
+     "prof_fb_badconfig": 0,
+     "prof_transition": 0
+    },
+    "profile_samples_total": 5790,
+    "fallback_rate": 0.6974,
+    "class_closure_rate": 0.3026,
+    "transition_rate": 0.0,
+    "global_profile_rate": 0.0,
+    "unsafe_profile_events": 0
+   }
+  },
+  "UNKNOWN": {
+   "global": {
+    "trials_launched": 3,
+    "infrastructure_faults": 0,
+    "trials": 3,
+    "succeeded": 3,
+    "collisions": 0,
+    "near_misses_below_0.20m": 0,
+    "collision_monitor_interventions": 0,
+    "planner_or_controller_failures": 0,
+    "failure_causes": [],
+    "layer_mode_observed": [
+     "reachability"
+    ],
+    "class_aware_banner_seen": [
+     false
+    ],
+    "min_clearance_m": {
+     "n": 3,
+     "mean": 0.9593,
+     "min": 0.9469,
+     "max": 0.9717
+    },
+    "nav_time_s": {
+     "n": 3,
+     "mean": 21.4847,
+     "min": 20.501,
+     "max": 22.801
+    },
+    "path_length_m": {
+     "n": 3,
+     "mean": 5.9062,
+     "min": 5.8766,
+     "max": 5.9324
+    },
+    "max_pred_cells": {
+     "n": 3,
+     "mean": 1046.3333,
+     "min": 1030,
+     "max": 1070
+    },
+    "mean_pred_frac_window": {
+     "n": 3,
+     "mean": 0.0474,
+     "min": 0.047,
+     "max": 0.048
+    },
+    "primary_reaction_time_s": {
+     "n": 3,
+     "mean": 3.7681,
+     "min": 3.5011,
+     "max": 3.9512
+    },
+    "layer_updateCosts_us": {
+     "mean_of_means": 26.3333,
+     "max": 85.1
+    },
+    "tracker_reach_us": {
+     "n": 3,
+     "mean": 6.6467,
+     "min": 6.218,
+     "max": 7.124
+    },
+    "reachability_contract_violations": 0,
+    "reachability_contract_worst_speed": 0.0,
+    "profile_samples": {
+     "prof_global": 3084,
+     "prof_class": 0,
+     "prof_fb_unknown": 0,
+     "prof_fb_lowconf": 0,
+     "prof_fb_immature": 0,
+     "prof_fb_badconfig": 0,
+     "prof_transition": 0
+    },
+    "profile_samples_total": 3084,
+    "fallback_rate": 0.0,
+    "class_closure_rate": 0.0,
+    "transition_rate": 0.0,
+    "global_profile_rate": 1.0,
+    "unsafe_profile_events": 0
+   },
+   "classaware": {
+    "trials_launched": 3,
+    "infrastructure_faults": 0,
+    "trials": 3,
+    "succeeded": 3,
+    "collisions": 0,
+    "near_misses_below_0.20m": 0,
+    "collision_monitor_interventions": 0,
+    "planner_or_controller_failures": 0,
+    "failure_causes": [],
+    "layer_mode_observed": [
+     "reachability"
+    ],
+    "class_aware_banner_seen": [
+     true
+    ],
+    "min_clearance_m": {
+     "n": 3,
+     "mean": 0.9841,
+     "min": 0.978,
+     "max": 0.9923
+    },
+    "nav_time_s": {
+     "n": 3,
+     "mean": 20.9177,
+     "min": 19.101,
+     "max": 23.201
+    },
+    "path_length_m": {
+     "n": 3,
+     "mean": 5.9261,
+     "min": 5.8842,
+     "max": 5.9591
+    },
+    "max_pred_cells": {
+     "n": 3,
+     "mean": 1127.0,
+     "min": 1114,
+     "max": 1145
+    },
+    "mean_pred_frac_window": {
+     "n": 3,
+     "mean": 0.0515,
+     "min": 0.05,
+     "max": 0.0531
+    },
+    "primary_reaction_time_s": {
+     "n": 3,
+     "mean": 3.6509,
+     "min": 3.6014,
+     "max": 3.7003
+    },
+    "layer_updateCosts_us": {
+     "mean_of_means": 25.4,
+     "max": 120.0
+    },
+    "tracker_reach_us": {
+     "n": 3,
+     "mean": 6.9947,
+     "min": 6.748,
+     "max": 7.214
+    },
+    "reachability_contract_violations": 0,
+    "reachability_contract_worst_speed": 0.0,
+    "profile_samples": {
+     "prof_global": 0,
+     "prof_class": 6,
+     "prof_fb_unknown": 2952,
+     "prof_fb_lowconf": 96,
+     "prof_fb_immature": 0,
+     "prof_fb_badconfig": 0,
+     "prof_transition": 0
+    },
+    "profile_samples_total": 3054,
+    "fallback_rate": 0.998,
+    "class_closure_rate": 0.002,
+    "transition_rate": 0.0,
+    "global_profile_rate": 0.0,
+    "unsafe_profile_events": 0
+   }
+  },
+  "VEHICLE": {
+   "global": {
+    "trials_launched": 6,
+    "infrastructure_faults": 0,
+    "trials": 6,
+    "succeeded": 6,
+    "collisions": 0,
+    "near_misses_below_0.20m": 1,
+    "collision_monitor_interventions": 1,
+    "planner_or_controller_failures": 0,
+    "failure_causes": [],
+    "layer_mode_observed": [
+     "reachability"
+    ],
+    "class_aware_banner_seen": [
+     false
+    ],
+    "min_clearance_m": {
+     "n": 6,
+     "mean": 0.5581,
+     "min": 0.1601,
+     "max": 0.8774
+    },
+    "nav_time_s": {
+     "n": 6,
+     "mean": 20.0463,
+     "min": 16.401,
+     "max": 23.661
+    },
+    "path_length_m": {
+     "n": 6,
+     "mean": 6.053,
+     "min": 5.9178,
+     "max": 6.2003
+    },
+    "max_pred_cells": {
+     "n": 6,
+     "mean": 1035.8333,
+     "min": 1012,
+     "max": 1053
+    },
+    "mean_pred_frac_window": {
+     "n": 6,
+     "mean": 0.0403,
+     "min": 0.0347,
+     "max": 0.0457
+    },
+    "primary_reaction_time_s": {
+     "n": 6,
+     "mean": 3.8013,
+     "min": 3.5015,
+     "max": 4.1518
+    },
+    "layer_updateCosts_us": {
+     "mean_of_means": 26.55,
+     "max": 75.9
+    },
+    "tracker_reach_us": {
+     "n": 6,
+     "mean": 6.765,
+     "min": 6.336,
+     "max": 7.138
+    },
+    "reachability_contract_violations": 0,
+    "reachability_contract_worst_speed": 0.0,
+    "profile_samples": {
+     "prof_global": 5694,
+     "prof_class": 0,
+     "prof_fb_unknown": 0,
+     "prof_fb_lowconf": 0,
+     "prof_fb_immature": 0,
+     "prof_fb_badconfig": 0,
+     "prof_transition": 0
+    },
+    "profile_samples_total": 5694,
+    "fallback_rate": 0.0,
+    "class_closure_rate": 0.0,
+    "transition_rate": 0.0,
+    "global_profile_rate": 1.0,
+    "unsafe_profile_events": 0
+   },
+   "classaware": {
+    "trials_launched": 6,
+    "infrastructure_faults": 0,
+    "trials": 6,
+    "succeeded": 6,
+    "collisions": 0,
+    "near_misses_below_0.20m": 0,
+    "collision_monitor_interventions": 1,
+    "planner_or_controller_failures": 0,
+    "failure_causes": [],
+    "layer_mode_observed": [
+     "reachability"
+    ],
+    "class_aware_banner_seen": [
+     true
+    ],
+    "min_clearance_m": {
+     "n": 6,
+     "mean": 0.5965,
+     "min": 0.2044,
+     "max": 0.8872
+    },
+    "nav_time_s": {
+     "n": 6,
+     "mean": 19.9798,
+     "min": 16.354,
+     "max": 23.659
+    },
+    "path_length_m": {
+     "n": 6,
+     "mean": 6.0357,
+     "min": 5.8486,
+     "max": 6.3041
+    },
+    "max_pred_cells": {
+     "n": 6,
+     "mean": 1144.8333,
+     "min": 1122,
+     "max": 1172
+    },
+    "mean_pred_frac_window": {
+     "n": 6,
+     "mean": 0.0446,
+     "min": 0.0381,
+     "max": 0.0508
+    },
+    "primary_reaction_time_s": {
+     "n": 6,
+     "mean": 3.7928,
+     "min": 3.6013,
+     "max": 4.0005
+    },
+    "layer_updateCosts_us": {
+     "mean_of_means": 27.2167,
+     "max": 675.8
+    },
+    "tracker_reach_us": {
+     "n": 6,
+     "mean": 7.378,
+     "min": 6.881,
+     "max": 7.991
+    },
+    "reachability_contract_violations": 0,
+    "reachability_contract_worst_speed": 0.0,
+    "profile_samples": {
+     "prof_global": 0,
+     "prof_class": 4974,
+     "prof_fb_unknown": 360,
+     "prof_fb_lowconf": 378,
+     "prof_fb_immature": 36,
+     "prof_fb_badconfig": 0,
+     "prof_transition": 0
+    },
+    "profile_samples_total": 5748,
+    "fallback_rate": 0.1347,
+    "class_closure_rate": 0.8653,
+    "transition_rate": 0.0,
+    "global_profile_rate": 0.0,
+    "unsafe_profile_events": 0
+   }
+  }
+ },
+ "per_trial": [
+  {
+   "trial": "bike_cross_classaware_01",
+   "condition": "bike_cross",
+   "arm": "classaware",
+   "index": 1,
+   "gt_class": "BIKE",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.6247,
+   "nav_time_s": 23.003,
+   "path_length_m": 6.1168,
+   "max_pred_cells": 1672,
+   "mean_pred_frac_window": 0.0638,
+   "primary_reaction_time_s": 4.2518,
+   "response_class": "stop_yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 23,
+   "global_path_changes": 7,
+   "frames_tracked": 443,
+   "max_tracks": 2,
+   "tracked_speed_max": 0.6608,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 29.1,
+   "layer_update_us_max": 63.7,
+   "tracker_reach_us_mean": 8.551,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": true,
+   "profile_samples": {
+    "prof_global": 0,
+    "prof_class": 1182,
+    "prof_fb_unknown": 762,
+    "prof_fb_lowconf": 36,
+    "prof_fb_immature": 6,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 1986
+  },
+  {
+   "trial": "bike_cross_classaware_02",
+   "condition": "bike_cross",
+   "arm": "classaware",
+   "index": 2,
+   "gt_class": "BIKE",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.6592,
+   "nav_time_s": 22.951,
+   "path_length_m": 6.0878,
+   "max_pred_cells": 1689,
+   "mean_pred_frac_window": 0.0637,
+   "primary_reaction_time_s": 4.2518,
+   "response_class": "stop_yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 23,
+   "global_path_changes": 8,
+   "frames_tracked": 447,
+   "max_tracks": 2,
+   "tracked_speed_max": 0.5861,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 26.0,
+   "layer_update_us_max": 59.8,
+   "tracker_reach_us_mean": 9.266,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": true,
+   "profile_samples": {
+    "prof_global": 0,
+    "prof_class": 1116,
+    "prof_fb_unknown": 696,
+    "prof_fb_lowconf": 36,
+    "prof_fb_immature": 6,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 1854
+  },
+  {
+   "trial": "bike_cross_classaware_03",
+   "condition": "bike_cross",
+   "arm": "classaware",
+   "index": 3,
+   "gt_class": "BIKE",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.6209,
+   "nav_time_s": 23.001,
+   "path_length_m": 6.173,
+   "max_pred_cells": 1648,
+   "mean_pred_frac_window": 0.0612,
+   "primary_reaction_time_s": 4.2004,
+   "response_class": "stop_yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 23,
+   "global_path_changes": 7,
+   "frames_tracked": 441,
+   "max_tracks": 2,
+   "tracked_speed_max": 0.5789,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 23.0,
+   "layer_update_us_max": 50.5,
+   "tracker_reach_us_mean": 8.984,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": true,
+   "profile_samples": {
+    "prof_global": 0,
+    "prof_class": 1116,
+    "prof_fb_unknown": 666,
+    "prof_fb_lowconf": 36,
+    "prof_fb_immature": 6,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 1824
+  },
+  {
+   "trial": "bike_cross_global_01",
+   "condition": "bike_cross",
+   "arm": "global",
+   "index": 1,
+   "gt_class": "BIKE",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.7198,
+   "nav_time_s": 23.801,
+   "path_length_m": 6.2347,
+   "max_pred_cells": 1527,
+   "mean_pred_frac_window": 0.0616,
+   "primary_reaction_time_s": 4.452,
+   "response_class": "lateral_detour+yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 24,
+   "global_path_changes": 8,
+   "frames_tracked": 464,
+   "max_tracks": 2,
+   "tracked_speed_max": 0.5549,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 28.4,
+   "layer_update_us_max": 57.8,
+   "tracker_reach_us_mean": 9.059,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": false,
+   "profile_samples": {
+    "prof_global": 2064,
+    "prof_class": 0,
+    "prof_fb_unknown": 0,
+    "prof_fb_lowconf": 0,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 2064
+  },
+  {
+   "trial": "bike_cross_global_02",
+   "condition": "bike_cross",
+   "arm": "global",
+   "index": 2,
+   "gt_class": "BIKE",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.6883,
+   "nav_time_s": 23.202,
+   "path_length_m": 6.1012,
+   "max_pred_cells": 1554,
+   "mean_pred_frac_window": 0.0562,
+   "primary_reaction_time_s": 4.1515,
+   "response_class": "stop_yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 23,
+   "global_path_changes": 7,
+   "frames_tracked": 427,
+   "max_tracks": 2,
+   "tracked_speed_max": 0.5347,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 26.6,
+   "layer_update_us_max": 70.0,
+   "tracker_reach_us_mean": 8.664,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": false,
+   "profile_samples": {
+    "prof_global": 2220,
+    "prof_class": 0,
+    "prof_fb_unknown": 0,
+    "prof_fb_lowconf": 0,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 2220
+  },
+  {
+   "trial": "bike_cross_global_03",
+   "condition": "bike_cross",
+   "arm": "global",
+   "index": 3,
+   "gt_class": "BIKE",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.6657,
+   "nav_time_s": 23.9,
+   "path_length_m": 6.2011,
+   "max_pred_cells": 1528,
+   "mean_pred_frac_window": 0.058,
+   "primary_reaction_time_s": 4.2508,
+   "response_class": "stop_yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 24,
+   "global_path_changes": 7,
+   "frames_tracked": 458,
+   "max_tracks": 2,
+   "tracked_speed_max": 0.6227,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 28.2,
+   "layer_update_us_max": 55.8,
+   "tracker_reach_us_mean": 8.784,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": false,
+   "profile_samples": {
+    "prof_global": 1842,
+    "prof_class": 0,
+    "prof_fb_unknown": 0,
+    "prof_fb_lowconf": 0,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 1842
+  },
+  {
+   "trial": "ped_cross_classaware_01",
+   "condition": "ped_cross",
+   "arm": "classaware",
+   "index": 1,
+   "gt_class": "PEDESTRIAN",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.7046,
+   "nav_time_s": 19.252,
+   "path_length_m": 5.7821,
+   "max_pred_cells": 1185,
+   "mean_pred_frac_window": 0.0506,
+   "primary_reaction_time_s": 4.2517,
+   "response_class": "stop_yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 19,
+   "global_path_changes": 5,
+   "frames_tracked": 389,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.5521,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 27.4,
+   "layer_update_us_max": 50.1,
+   "tracker_reach_us_mean": 7.006,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": true,
+   "profile_samples": {
+    "prof_global": 0,
+    "prof_class": 354,
+    "prof_fb_unknown": 504,
+    "prof_fb_lowconf": 30,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 888
+  },
+  {
+   "trial": "ped_cross_classaware_02",
+   "condition": "ped_cross",
+   "arm": "classaware",
+   "index": 2,
+   "gt_class": "PEDESTRIAN",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.6923,
+   "nav_time_s": 17.358,
+   "path_length_m": 5.6922,
+   "max_pred_cells": 1145,
+   "mean_pred_frac_window": 0.0506,
+   "primary_reaction_time_s": 4.4514,
+   "response_class": "stop_yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 17,
+   "global_path_changes": 4,
+   "frames_tracked": 351,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.532,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 27.8,
+   "layer_update_us_max": 63.4,
+   "tracker_reach_us_mean": 7.047,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": true,
+   "profile_samples": {
+    "prof_global": 0,
+    "prof_class": 318,
+    "prof_fb_unknown": 636,
+    "prof_fb_lowconf": 30,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 984
+  },
+  {
+   "trial": "ped_cross_classaware_03",
+   "condition": "ped_cross",
+   "arm": "classaware",
+   "index": 3,
+   "gt_class": "PEDESTRIAN",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.7132,
+   "nav_time_s": 18.101,
+   "path_length_m": 5.7823,
+   "max_pred_cells": 1186,
+   "mean_pred_frac_window": 0.0498,
+   "primary_reaction_time_s": 4.2003,
+   "response_class": "stop_yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 18,
+   "global_path_changes": 5,
+   "frames_tracked": 366,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.5504,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 28.4,
+   "layer_update_us_max": 72.9,
+   "tracker_reach_us_mean": 7.126,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": true,
+   "profile_samples": {
+    "prof_global": 0,
+    "prof_class": 330,
+    "prof_fb_unknown": 606,
+    "prof_fb_lowconf": 42,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 978
+  },
+  {
+   "trial": "ped_cross_global_01",
+   "condition": "ped_cross",
+   "arm": "global",
+   "index": 1,
+   "gt_class": "PEDESTRIAN",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.7196,
+   "nav_time_s": 19.001,
+   "path_length_m": 5.796,
+   "max_pred_cells": 1030,
+   "mean_pred_frac_window": 0.0455,
+   "primary_reaction_time_s": 4.2512,
+   "response_class": "stop_yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 19,
+   "global_path_changes": 5,
+   "frames_tracked": 384,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.5322,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 25.0,
+   "layer_update_us_max": 43.0,
+   "tracker_reach_us_mean": 6.584,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": false,
+   "profile_samples": {
+    "prof_global": 918,
+    "prof_class": 0,
+    "prof_fb_unknown": 0,
+    "prof_fb_lowconf": 0,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 918
+  },
+  {
+   "trial": "ped_cross_global_02",
+   "condition": "ped_cross",
+   "arm": "global",
+   "index": 2,
+   "gt_class": "PEDESTRIAN",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.7068,
+   "nav_time_s": 18.251,
+   "path_length_m": 5.7857,
+   "max_pred_cells": 1048,
+   "mean_pred_frac_window": 0.0433,
+   "primary_reaction_time_s": 4.4514,
+   "response_class": "stop_yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 18,
+   "global_path_changes": 4,
+   "frames_tracked": 370,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.5482,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 20.4,
+   "layer_update_us_max": 43.5,
+   "tracker_reach_us_mean": 6.899,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": false,
+   "profile_samples": {
+    "prof_global": 984,
+    "prof_class": 0,
+    "prof_fb_unknown": 0,
+    "prof_fb_lowconf": 0,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 984
+  },
+  {
+   "trial": "ped_cross_global_03",
+   "condition": "ped_cross",
+   "arm": "global",
+   "index": 3,
+   "gt_class": "PEDESTRIAN",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.721,
+   "nav_time_s": 19.402,
+   "path_length_m": 5.8331,
+   "max_pred_cells": 1030,
+   "mean_pred_frac_window": 0.0452,
+   "primary_reaction_time_s": 4.3017,
+   "response_class": "stop_yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 19,
+   "global_path_changes": 5,
+   "frames_tracked": 392,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.5237,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 22.1,
+   "layer_update_us_max": 49.5,
+   "tracker_reach_us_mean": 6.959,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": false,
+   "profile_samples": {
+    "prof_global": 918,
+    "prof_class": 0,
+    "prof_fb_unknown": 0,
+    "prof_fb_lowconf": 0,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 918
+  },
+  {
+   "trial": "ped_longitudinal_classaware_01",
+   "condition": "ped_longitudinal",
+   "arm": "classaware",
+   "index": 1,
+   "gt_class": "PEDESTRIAN",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": true,
+   "min_clearance_m": 0.1822,
+   "nav_time_s": 16.602,
+   "path_length_m": 6.0761,
+   "max_pred_cells": 1321,
+   "mean_pred_frac_window": 0.0375,
+   "primary_reaction_time_s": 3.9512,
+   "response_class": "lateral_detour+yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 17,
+   "global_path_changes": 4,
+   "frames_tracked": 336,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.6735,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 21.1,
+   "layer_update_us_max": 56.2,
+   "tracker_reach_us_mean": 6.956,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": true,
+   "profile_samples": {
+    "prof_global": 0,
+    "prof_class": 258,
+    "prof_fb_unknown": 492,
+    "prof_fb_lowconf": 42,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 792
+  },
+  {
+   "trial": "ped_longitudinal_classaware_02",
+   "condition": "ped_longitudinal",
+   "arm": "classaware",
+   "index": 2,
+   "gt_class": "PEDESTRIAN",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": true,
+   "min_clearance_m": 0.1271,
+   "nav_time_s": 17.152,
+   "path_length_m": 6.1124,
+   "max_pred_cells": 1304,
+   "mean_pred_frac_window": 0.0371,
+   "primary_reaction_time_s": 4.152,
+   "response_class": "lateral_detour+yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 17,
+   "global_path_changes": 4,
+   "frames_tracked": 347,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.7484,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 25.9,
+   "layer_update_us_max": 64.9,
+   "tracker_reach_us_mean": 7.585,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": true,
+   "profile_samples": {
+    "prof_global": 0,
+    "prof_class": 240,
+    "prof_fb_unknown": 930,
+    "prof_fb_lowconf": 48,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 1218
+  },
+  {
+   "trial": "ped_longitudinal_classaware_03",
+   "condition": "ped_longitudinal",
+   "arm": "classaware",
+   "index": 3,
+   "gt_class": "PEDESTRIAN",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": true,
+   "min_clearance_m": 0.1254,
+   "nav_time_s": 16.201,
+   "path_length_m": 5.9975,
+   "max_pred_cells": 1299,
+   "mean_pred_frac_window": 0.038,
+   "primary_reaction_time_s": 4.1019,
+   "response_class": "lateral_detour+yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 16,
+   "global_path_changes": 3,
+   "frames_tracked": 316,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.7988,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 20.8,
+   "layer_update_us_max": 47.8,
+   "tracker_reach_us_mean": 7.08,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": true,
+   "profile_samples": {
+    "prof_global": 0,
+    "prof_class": 252,
+    "prof_fb_unknown": 636,
+    "prof_fb_lowconf": 42,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 930
+  },
+  {
+   "trial": "ped_longitudinal_global_01",
+   "condition": "ped_longitudinal",
+   "arm": "global",
+   "index": 1,
+   "gt_class": "PEDESTRIAN",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": true,
+   "min_clearance_m": 0.0935,
+   "nav_time_s": 16.602,
+   "path_length_m": 5.8937,
+   "max_pred_cells": 1166,
+   "mean_pred_frac_window": 0.0345,
+   "primary_reaction_time_s": 4.0014,
+   "response_class": "lateral_detour+yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 17,
+   "global_path_changes": 4,
+   "frames_tracked": 336,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.6064,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 26.1,
+   "layer_update_us_max": 56.3,
+   "tracker_reach_us_mean": 6.708,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": false,
+   "profile_samples": {
+    "prof_global": 948,
+    "prof_class": 0,
+    "prof_fb_unknown": 0,
+    "prof_fb_lowconf": 0,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 948
+  },
+  {
+   "trial": "ped_longitudinal_global_02",
+   "condition": "ped_longitudinal",
+   "arm": "global",
+   "index": 2,
+   "gt_class": "PEDESTRIAN",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": true,
+   "min_clearance_m": 0.0578,
+   "nav_time_s": 16.652,
+   "path_length_m": 6.1044,
+   "max_pred_cells": 1127,
+   "mean_pred_frac_window": 0.0329,
+   "primary_reaction_time_s": 4.2516,
+   "response_class": "lateral_detour+yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 17,
+   "global_path_changes": 4,
+   "frames_tracked": 337,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.6148,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 24.1,
+   "layer_update_us_max": 50.3,
+   "tracker_reach_us_mean": 6.611,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": false,
+   "profile_samples": {
+    "prof_global": 804,
+    "prof_class": 0,
+    "prof_fb_unknown": 0,
+    "prof_fb_lowconf": 0,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 804
+  },
+  {
+   "trial": "ped_longitudinal_global_03",
+   "condition": "ped_longitudinal",
+   "arm": "global",
+   "index": 3,
+   "gt_class": "PEDESTRIAN",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": true,
+   "min_clearance_m": 0.107,
+   "nav_time_s": 16.251,
+   "path_length_m": 6.0082,
+   "max_pred_cells": 1167,
+   "mean_pred_frac_window": 0.0334,
+   "primary_reaction_time_s": 4.1017,
+   "response_class": "lateral_detour+yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 16,
+   "global_path_changes": 5,
+   "frames_tracked": 329,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.6205,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 23.2,
+   "layer_update_us_max": 49.7,
+   "tracker_reach_us_mean": 6.981,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": false,
+   "profile_samples": {
+    "prof_global": 888,
+    "prof_class": 0,
+    "prof_fb_unknown": 0,
+    "prof_fb_lowconf": 0,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 888
+  },
+  {
+   "trial": "unknown_cross_classaware_01",
+   "condition": "unknown_cross",
+   "arm": "classaware",
+   "index": 1,
+   "gt_class": "UNKNOWN",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.9923,
+   "nav_time_s": 23.201,
+   "path_length_m": 5.9351,
+   "max_pred_cells": 1145,
+   "mean_pred_frac_window": 0.05,
+   "primary_reaction_time_s": 3.7003,
+   "response_class": "stop_yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 23,
+   "global_path_changes": 6,
+   "frames_tracked": 468,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.5207,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 27.7,
+   "layer_update_us_max": 120.0,
+   "tracker_reach_us_mean": 7.022,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": true,
+   "profile_samples": {
+    "prof_global": 0,
+    "prof_class": 6,
+    "prof_fb_unknown": 1020,
+    "prof_fb_lowconf": 42,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 1068
+  },
+  {
+   "trial": "unknown_cross_classaware_02",
+   "condition": "unknown_cross",
+   "arm": "classaware",
+   "index": 2,
+   "gt_class": "UNKNOWN",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.9821,
+   "nav_time_s": 19.101,
+   "path_length_m": 5.9591,
+   "max_pred_cells": 1122,
+   "mean_pred_frac_window": 0.0513,
+   "primary_reaction_time_s": 3.651,
+   "response_class": "stop_yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 19,
+   "global_path_changes": 6,
+   "frames_tracked": 387,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.4999,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 22.8,
+   "layer_update_us_max": 42.4,
+   "tracker_reach_us_mean": 6.748,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": true,
+   "profile_samples": {
+    "prof_global": 0,
+    "prof_class": 0,
+    "prof_fb_unknown": 954,
+    "prof_fb_lowconf": 54,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 1008
+  },
+  {
+   "trial": "unknown_cross_classaware_03",
+   "condition": "unknown_cross",
+   "arm": "classaware",
+   "index": 3,
+   "gt_class": "UNKNOWN",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.978,
+   "nav_time_s": 20.451,
+   "path_length_m": 5.8842,
+   "max_pred_cells": 1114,
+   "mean_pred_frac_window": 0.0531,
+   "primary_reaction_time_s": 3.6014,
+   "response_class": "stop_yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 20,
+   "global_path_changes": 4,
+   "frames_tracked": 413,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.4949,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 25.7,
+   "layer_update_us_max": 89.9,
+   "tracker_reach_us_mean": 7.214,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": true,
+   "profile_samples": {
+    "prof_global": 0,
+    "prof_class": 0,
+    "prof_fb_unknown": 978,
+    "prof_fb_lowconf": 0,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 978
+  },
+  {
+   "trial": "unknown_cross_global_01",
+   "condition": "unknown_cross",
+   "arm": "global",
+   "index": 1,
+   "gt_class": "UNKNOWN",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.9717,
+   "nav_time_s": 20.501,
+   "path_length_m": 5.9324,
+   "max_pred_cells": 1030,
+   "mean_pred_frac_window": 0.048,
+   "primary_reaction_time_s": 3.5011,
+   "response_class": "stop_yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 20,
+   "global_path_changes": 6,
+   "frames_tracked": 414,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.5224,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 25.8,
+   "layer_update_us_max": 56.1,
+   "tracker_reach_us_mean": 6.598,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": false,
+   "profile_samples": {
+    "prof_global": 948,
+    "prof_class": 0,
+    "prof_fb_unknown": 0,
+    "prof_fb_lowconf": 0,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 948
+  },
+  {
+   "trial": "unknown_cross_global_02",
+   "condition": "unknown_cross",
+   "arm": "global",
+   "index": 2,
+   "gt_class": "UNKNOWN",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.9469,
+   "nav_time_s": 21.152,
+   "path_length_m": 5.9096,
+   "max_pred_cells": 1039,
+   "mean_pred_frac_window": 0.0472,
+   "primary_reaction_time_s": 3.8521,
+   "response_class": "stop_yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 21,
+   "global_path_changes": 6,
+   "frames_tracked": 427,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.5068,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 25.1,
+   "layer_update_us_max": 85.1,
+   "tracker_reach_us_mean": 7.124,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": false,
+   "profile_samples": {
+    "prof_global": 1128,
+    "prof_class": 0,
+    "prof_fb_unknown": 0,
+    "prof_fb_lowconf": 0,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 1128
+  },
+  {
+   "trial": "unknown_cross_global_03",
+   "condition": "unknown_cross",
+   "arm": "global",
+   "index": 3,
+   "gt_class": "UNKNOWN",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.9593,
+   "nav_time_s": 22.801,
+   "path_length_m": 5.8766,
+   "max_pred_cells": 1070,
+   "mean_pred_frac_window": 0.047,
+   "primary_reaction_time_s": 3.9512,
+   "response_class": "stop_yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 23,
+   "global_path_changes": 6,
+   "frames_tracked": 460,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.5592,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 28.1,
+   "layer_update_us_max": 56.4,
+   "tracker_reach_us_mean": 6.218,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": false,
+   "profile_samples": {
+    "prof_global": 1008,
+    "prof_class": 0,
+    "prof_fb_unknown": 0,
+    "prof_fb_lowconf": 0,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 1008
+  },
+  {
+   "trial": "veh_cross_classaware_01",
+   "condition": "veh_cross",
+   "arm": "classaware",
+   "index": 1,
+   "gt_class": "VEHICLE",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.8665,
+   "nav_time_s": 23.101,
+   "path_length_m": 5.9508,
+   "max_pred_cells": 1145,
+   "mean_pred_frac_window": 0.0499,
+   "primary_reaction_time_s": 4.0005,
+   "response_class": "stop_yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 23,
+   "global_path_changes": 6,
+   "frames_tracked": 466,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.5185,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 24.8,
+   "layer_update_us_max": 106.7,
+   "tracker_reach_us_mean": 7.121,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": true,
+   "profile_samples": {
+    "prof_global": 0,
+    "prof_class": 870,
+    "prof_fb_unknown": 78,
+    "prof_fb_lowconf": 84,
+    "prof_fb_immature": 6,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 1038
+  },
+  {
+   "trial": "veh_cross_classaware_02",
+   "condition": "veh_cross",
+   "arm": "classaware",
+   "index": 2,
+   "gt_class": "VEHICLE",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.8872,
+   "nav_time_s": 23.652,
+   "path_length_m": 5.8486,
+   "max_pred_cells": 1122,
+   "mean_pred_frac_window": 0.0507,
+   "primary_reaction_time_s": 3.9509,
+   "response_class": "stop_yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 23,
+   "global_path_changes": 6,
+   "frames_tracked": 476,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.524,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 30.4,
+   "layer_update_us_max": 96.8,
+   "tracker_reach_us_mean": 6.881,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": true,
+   "profile_samples": {
+    "prof_global": 0,
+    "prof_class": 858,
+    "prof_fb_unknown": 78,
+    "prof_fb_lowconf": 96,
+    "prof_fb_immature": 6,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 1038
+  },
+  {
+   "trial": "veh_cross_classaware_03",
+   "condition": "veh_cross",
+   "arm": "classaware",
+   "index": 3,
+   "gt_class": "VEHICLE",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.866,
+   "nav_time_s": 23.659,
+   "path_length_m": 5.8791,
+   "max_pred_cells": 1122,
+   "mean_pred_frac_window": 0.0508,
+   "primary_reaction_time_s": 3.9014,
+   "response_class": "stop_yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 24,
+   "global_path_changes": 6,
+   "frames_tracked": 476,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.4911,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 27.5,
+   "layer_update_us_max": 57.1,
+   "tracker_reach_us_mean": 7.212,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": true,
+   "profile_samples": {
+    "prof_global": 0,
+    "prof_class": 918,
+    "prof_fb_unknown": 78,
+    "prof_fb_lowconf": 66,
+    "prof_fb_immature": 6,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 1068
+  },
+  {
+   "trial": "veh_cross_global_01",
+   "condition": "veh_cross",
+   "arm": "global",
+   "index": 1,
+   "gt_class": "VEHICLE",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.8774,
+   "nav_time_s": 23.501,
+   "path_length_m": 5.9793,
+   "max_pred_cells": 1029,
+   "mean_pred_frac_window": 0.0457,
+   "primary_reaction_time_s": 4.0016,
+   "response_class": "stop_yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 23,
+   "global_path_changes": 6,
+   "frames_tracked": 475,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.5146,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 27.7,
+   "layer_update_us_max": 53.2,
+   "tracker_reach_us_mean": 6.954,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": false,
+   "profile_samples": {
+    "prof_global": 1038,
+    "prof_class": 0,
+    "prof_fb_unknown": 0,
+    "prof_fb_lowconf": 0,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 1038
+  },
+  {
+   "trial": "veh_cross_global_02",
+   "condition": "veh_cross",
+   "arm": "global",
+   "index": 2,
+   "gt_class": "VEHICLE",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.8634,
+   "nav_time_s": 23.661,
+   "path_length_m": 5.9971,
+   "max_pred_cells": 1025,
+   "mean_pred_frac_window": 0.0456,
+   "primary_reaction_time_s": 3.95,
+   "response_class": "stop_yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 24,
+   "global_path_changes": 7,
+   "frames_tracked": 476,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.4977,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 27.7,
+   "layer_update_us_max": 75.9,
+   "tracker_reach_us_mean": 6.714,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": false,
+   "profile_samples": {
+    "prof_global": 1068,
+    "prof_class": 0,
+    "prof_fb_unknown": 0,
+    "prof_fb_lowconf": 0,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 1068
+  },
+  {
+   "trial": "veh_cross_global_03",
+   "condition": "veh_cross",
+   "arm": "global",
+   "index": 3,
+   "gt_class": "VEHICLE",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.8714,
+   "nav_time_s": 23.453,
+   "path_length_m": 5.9178,
+   "max_pred_cells": 1012,
+   "mean_pred_frac_window": 0.0455,
+   "primary_reaction_time_s": 4.1518,
+   "response_class": "stop_yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 23,
+   "global_path_changes": 6,
+   "frames_tracked": 473,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.5194,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 29.0,
+   "layer_update_us_max": 59.0,
+   "tracker_reach_us_mean": 6.735,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": false,
+   "profile_samples": {
+    "prof_global": 1038,
+    "prof_class": 0,
+    "prof_fb_unknown": 0,
+    "prof_fb_lowconf": 0,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 1038
+  },
+  {
+   "trial": "veh_longitudinal_classaware_01",
+   "condition": "veh_longitudinal",
+   "arm": "classaware",
+   "index": 1,
+   "gt_class": "VEHICLE",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.4124,
+   "nav_time_s": 16.511,
+   "path_length_m": 6.3041,
+   "max_pred_cells": 1140,
+   "mean_pred_frac_window": 0.0381,
+   "primary_reaction_time_s": 3.6514,
+   "response_class": "lateral_detour+yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 17,
+   "global_path_changes": 4,
+   "frames_tracked": 334,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.5187,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 29.1,
+   "layer_update_us_max": 675.8,
+   "tracker_reach_us_mean": 7.991,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": true,
+   "profile_samples": {
+    "prof_global": 0,
+    "prof_class": 768,
+    "prof_fb_unknown": 42,
+    "prof_fb_lowconf": 42,
+    "prof_fb_immature": 6,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 858
+  },
+  {
+   "trial": "veh_longitudinal_classaware_02",
+   "condition": "veh_longitudinal",
+   "arm": "classaware",
+   "index": 2,
+   "gt_class": "VEHICLE",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.3427,
+   "nav_time_s": 16.354,
+   "path_length_m": 6.1375,
+   "max_pred_cells": 1172,
+   "mean_pred_frac_window": 0.0394,
+   "primary_reaction_time_s": 3.6512,
+   "response_class": "lateral_detour",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 16,
+   "global_path_changes": 6,
+   "frames_tracked": 331,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.5256,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 24.2,
+   "layer_update_us_max": 63.1,
+   "tracker_reach_us_mean": 7.592,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": true,
+   "profile_samples": {
+    "prof_global": 0,
+    "prof_class": 762,
+    "prof_fb_unknown": 42,
+    "prof_fb_lowconf": 48,
+    "prof_fb_immature": 6,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 858
+  },
+  {
+   "trial": "veh_longitudinal_classaware_03",
+   "condition": "veh_longitudinal",
+   "arm": "classaware",
+   "index": 3,
+   "gt_class": "VEHICLE",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.2044,
+   "nav_time_s": 16.602,
+   "path_length_m": 6.0939,
+   "max_pred_cells": 1168,
+   "mean_pred_frac_window": 0.0388,
+   "primary_reaction_time_s": 3.6013,
+   "response_class": "lateral_detour+yield",
+   "collision_monitor_interventions": 1,
+   "plan_publications": 17,
+   "global_path_changes": 7,
+   "frames_tracked": 336,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.5248,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 27.3,
+   "layer_update_us_max": 74.6,
+   "tracker_reach_us_mean": 7.471,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": true,
+   "profile_samples": {
+    "prof_global": 0,
+    "prof_class": 798,
+    "prof_fb_unknown": 42,
+    "prof_fb_lowconf": 42,
+    "prof_fb_immature": 6,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 888
+  },
+  {
+   "trial": "veh_longitudinal_global_01",
+   "condition": "veh_longitudinal",
+   "arm": "global",
+   "index": 1,
+   "gt_class": "VEHICLE",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.3399,
+   "nav_time_s": 16.401,
+   "path_length_m": 6.2003,
+   "max_pred_cells": 1048,
+   "mean_pred_frac_window": 0.0347,
+   "primary_reaction_time_s": 3.6512,
+   "response_class": "lateral_detour+yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 16,
+   "global_path_changes": 6,
+   "frames_tracked": 331,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.5133,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 24.9,
+   "layer_update_us_max": 63.2,
+   "tracker_reach_us_mean": 6.336,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": false,
+   "profile_samples": {
+    "prof_global": 888,
+    "prof_class": 0,
+    "prof_fb_unknown": 0,
+    "prof_fb_lowconf": 0,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 888
+  },
+  {
+   "trial": "veh_longitudinal_global_02",
+   "condition": "veh_longitudinal",
+   "arm": "global",
+   "index": 2,
+   "gt_class": "VEHICLE",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": true,
+   "min_clearance_m": 0.1601,
+   "nav_time_s": 16.751,
+   "path_length_m": 6.1124,
+   "max_pred_cells": 1053,
+   "mean_pred_frac_window": 0.0351,
+   "primary_reaction_time_s": 3.5516,
+   "response_class": "lateral_detour+yield",
+   "collision_monitor_interventions": 1,
+   "plan_publications": 17,
+   "global_path_changes": 6,
+   "frames_tracked": 339,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.5331,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 25.8,
+   "layer_update_us_max": 68.1,
+   "tracker_reach_us_mean": 6.713,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": false,
+   "profile_samples": {
+    "prof_global": 828,
+    "prof_class": 0,
+    "prof_fb_unknown": 0,
+    "prof_fb_lowconf": 0,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 828
+  },
+  {
+   "trial": "veh_longitudinal_global_03",
+   "condition": "veh_longitudinal",
+   "arm": "global",
+   "index": 3,
+   "gt_class": "VEHICLE",
+   "infrastructure_fault": false,
+   "success": true,
+   "nav_status": "SUCCEEDED",
+   "collision": false,
+   "near_miss": false,
+   "min_clearance_m": 0.2366,
+   "nav_time_s": 16.511,
+   "path_length_m": 6.1111,
+   "max_pred_cells": 1048,
+   "mean_pred_frac_window": 0.0354,
+   "primary_reaction_time_s": 3.5015,
+   "response_class": "lateral_detour+yield",
+   "collision_monitor_interventions": 0,
+   "plan_publications": 17,
+   "global_path_changes": 4,
+   "frames_tracked": 333,
+   "max_tracks": 1,
+   "tracked_speed_max": 0.5435,
+   "failure_cause": null,
+   "layer_mode": "reachability",
+   "layer_update_us_mean": 24.2,
+   "layer_update_us_max": 52.6,
+   "tracker_reach_us_mean": 7.138,
+   "reach_contract_violations": 0,
+   "reach_contract_worst_speed": 0.0,
+   "class_aware_banner": false,
+   "profile_samples": {
+    "prof_global": 834,
+    "prof_class": 0,
+    "prof_fb_unknown": 0,
+    "prof_fb_lowconf": 0,
+    "prof_fb_immature": 0,
+    "prof_fb_badconfig": 0,
+    "prof_transition": 0
+   },
+   "profile_samples_total": 834
+  }
+ ]
+}

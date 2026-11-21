@@ -49,6 +49,13 @@ ARG_NAMES = (
     # Stage-4G8 robustness hooks (defaults reproduce every earlier stage).
     'tracker_params', 'tracker_scan_topic',
     'initialpose_dx', 'initialpose_dy', 'initialpose_dyaw',
+    # Stage-5D: which obstacle BODY is spawned, and at what yaw and height.
+    # Defaults are the Stage-4B dynamic_obstacle at yaw 0 and z 0.3, so every
+    # earlier stage is reproduced byte for byte.
+    'obstacle_model', 'obstacle_yaw', 'obstacle_spawn_z',
+    # Stage-5D: the predictive layer's mode, applied at RUNTIME by the trial
+    # runner. Empty (the default) changes nothing.
+    'layer_prediction_mode',
 )
 
 
@@ -121,6 +128,57 @@ def generate_launch_description():
         DeclareLaunchArgument('initialpose_dx', default_value='0.0'),
         DeclareLaunchArgument('initialpose_dy', default_value='0.0'),
         DeclareLaunchArgument('initialpose_dyaw', default_value='0.0'),
+        # --- Stage-5D: a CLASS-SPECIFIC obstacle body.
+        #
+        # Stage-5D section 13 needs a pedestrian, a bicycle, a vehicle and a
+        # non-target object to navigate against, and those bodies already
+        # exist as the Stage-5B actor models -- generated from the single
+        # ACTORS table that also supplies their ground-truth class, so the
+        # geometry cannot disagree with the label. They carry exactly the
+        # plugin pair dynamic_obstacle.sdf carries (VelocityControl +
+        # OdometryPublisher), and the entity is still spawned under the name
+        # `dynamic_obstacle`, so /model/dynamic_obstacle/cmd_vel and
+        # /model/dynamic_obstacle/odometry, the bridge config and the trial
+        # runner all work unchanged.
+        #
+        # obstacle_yaw exists because a 2D LiDAR sees only ONE horizontal
+        # slice, so the ASPECT an actor presents decides whether it is
+        # classifiable at all: a bicycle has to be yawed along its travel for
+        # its two wheel chords and the hole between them to be visible, which
+        # is the same reason Stage-5B's crossing pattern yaws its actors.
+        # obstacle_spawn_z exists because the Stage-5B actors are prisms over
+        # z in [0, 0.45] in their own frame and so sit on the floor at z 0,
+        # while dynamic_obstacle.sdf is centred on its own origin and spawns
+        # at 0.3.
+        #
+        # ALL THREE DEFAULT TO THE PRE-STAGE-5D VALUES, so no earlier stage
+        # is perturbed by their existence.
+        DeclareLaunchArgument(
+            'obstacle_model',
+            default_value=os.path.join(bringup_dir, 'models', 'dynamic_obstacle.sdf'),
+            description='SDF of the scripted dynamic obstacle; Stage-5D points this '
+                        'at models/stage5b/actor_*.sdf to navigate against a '
+                        'class-specific body'),
+        DeclareLaunchArgument('obstacle_yaw', default_value='0.0'),
+        DeclareLaunchArgument('obstacle_spawn_z', default_value='0.3'),
+        # --- Stage-5D: the predictive layer's prediction_mode.
+        #
+        # Applied at RUNTIME by stage4f_trial.py through SetParameters, which
+        # is the mechanism predicted_obstacle_layer.cpp documents for this
+        # parameter ("runtime-switchable so one Gazebo launch can serve both
+        # A/B arms, the same way Stage-4E switched `enabled`"). Empty -- the
+        # default -- sends nothing, so the mode stays whatever the nav2 params
+        # file configured and every earlier stage is unaffected.
+        #
+        # Doing it this way means both Stage-5D arms read the SAME, UNMODIFIED
+        # Stage-4F nav2 params file, so MPPI and every critic weight cannot
+        # differ between arms even by accident, and no second costmap
+        # configuration file has to be introduced and kept in step with it.
+        DeclareLaunchArgument(
+            'layer_prediction_mode', default_value='',
+            description="predicted_obstacle_layer.prediction_mode to apply at "
+                        "runtime: 'cv_covariance', 'reachability' or 'hybrid'; "
+                        "empty leaves the params file's value"),
     ]
 
     tb3_simulation = IncludeLaunchDescription(
@@ -158,10 +216,10 @@ def generate_launch_description():
     spawn_dynamic_obstacle = Node(
         package='ros_gz_sim', executable='create', name='spawn_dynamic_obstacle',
         output='screen', condition=IfCondition(a['spawn_obstacle']),
-        arguments=['-file', os.path.join(bringup_dir, 'models', 'dynamic_obstacle.sdf'),
+        arguments=['-file', a['obstacle_model'],
                    '-name', 'dynamic_obstacle',
                    '-x', a['obstacle_start_x'], '-y', a['obstacle_start_y'],
-                   '-z', '0.3'],
+                   '-z', a['obstacle_spawn_z'], '-Y', a['obstacle_yaw']],
     )
 
     dynamic_obstacle_bridge = Node(
@@ -190,6 +248,7 @@ def generate_launch_description():
             'start_x', 'start_y', 'start_yaw', 'goal_x', 'goal_y', 'goal_yaw',
             'cross_x', 'cross_y', 'obstacle_start_x', 'obstacle_start_y',
             'obstacle_speed', 'obstacle_heading', 'obstacle_travel',
+            'obstacle_yaw', 'layer_prediction_mode',
             'obstacle_trigger_delay', 'nominal_speed',
             'policy_max_prediction_horizon', 'policy_sigma_level',
             'policy_temporal_decay', 'policy_max_cost', 'policy_min_cost',

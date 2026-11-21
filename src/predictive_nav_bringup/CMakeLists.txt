@@ -32,6 +32,7 @@ install(PROGRAMS
   scripts/run_stage4f_bench.py
   scripts/summarize_stage4f.py
   scripts/stage4g8/scan_noise.py
+  scripts/stage5d/run_nav.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

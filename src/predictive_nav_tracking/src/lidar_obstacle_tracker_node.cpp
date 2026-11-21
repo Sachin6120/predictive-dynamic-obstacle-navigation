@@ -60,6 +60,7 @@
 #include "predictive_nav_msgs/msg/reachability_prediction.hpp"
 #include "predictive_nav_tracking/kalman_filter.hpp"
 #include "predictive_nav_tracking/compound_observation.hpp"
+#include "predictive_nav_tracking/capability_profiles.hpp"
 #include "predictive_nav_tracking/obstacle_classification.hpp"
 #include "predictive_nav_tracking/reachability.hpp"
 
@@ -75,6 +76,13 @@ using predictive_nav_tracking::CompoundEvidence;
 using predictive_nav_tracking::CompoundHypothesisTracker;
 using predictive_nav_tracking::CompoundParams;
 using predictive_nav_tracking::ObstacleClass;
+using predictive_nav_tracking::AmbiguitySets;
+using predictive_nav_tracking::CapabilityProfileSet;
+using predictive_nav_tracking::ClassProfileState;
+using predictive_nav_tracking::MotionCapabilityProfile;
+using predictive_nav_tracking::ProfileReason;
+using predictive_nav_tracking::ProfileSelection;
+using predictive_nav_tracking::ProfileSelectionPolicy;
 
 namespace
 {
@@ -176,6 +184,19 @@ struct Track
   /// Stage-5B.1: true when THIS scan's associated measurement was a compound
   /// observation. Provenance only, reset on every coasting scan.
   bool class_from_compound{false};
+
+  // --- Stage-5D: class-aware capability-profile state -------------------
+  // The transition rule's memory (capability_profiles.hpp section 6). It is
+  // attached to the track id, so a new id starts with no held envelope and
+  // takes its first scan's selection -- which, because a new track is both
+  // UNKNOWN and immature, is the conservative fallback. Nothing here is read
+  // by the Kalman filter, the CV prediction or the classifier; it is read
+  // only by predict_reachability().
+  ClassProfileState class_profile_state;
+  /// The profile decision made on the most recent published scan, kept so
+  /// publish_tracks() can report it without recomputing and so a test can
+  /// inspect it. Advisory copy of the result, not state.
+  ProfileSelection class_profile_selection;
 };
 
 }  // namespace
@@ -438,6 +459,100 @@ private:
     this->declare_parameter<bool>("reachability_enforce_observed_speed", true);
     this->declare_parameter<double>("reachability_max_speed_tolerance", 1e-6);
 
+    // --- Stage-5D: class-aware motion-capability profiles ----------------
+    // Replaces the ONE global (max_acceleration, max_speed, base_safety_
+    // margin) triple above with a per-class table plus the policy that
+    // decides which entry a track is entitled to. The reachability equation,
+    // the Stage-5C.1 validity contract and the published region are
+    // unchanged functions of whichever profile is selected -- see
+    // capability_profiles.hpp, whose header comment carries the full
+    // derivation, the measured classifier evidence behind the defaults and
+    // the four invariants (I1)-(I3), (T1)-(T3).
+    //
+    // reachability_class_aware DEFAULTS TO FALSE, and that is the production
+    // setting for this milestone. False returns the single global
+    // configuration verbatim, so every published number is bit-identical to
+    // Stage-5C.1. Production also keeps reachability_enabled false and the
+    // costmap's prediction_mode cv_covariance, so Stage-5D changes no
+    // production behaviour at all.
+    //
+    // THE PROFILE VALUES ARE REAL-WORLD PHYSICAL PRIORS, NOT THE SIMULATION
+    // ENVELOPE. max_speed and max_acceleration are premises about an
+    // object's FUTURE capability, so they must cover what the class can do,
+    // not what the Gazebo actors were commanded to do. Every Stage-5B actor
+    // ran at 0.25/0.50/0.75 m/s whatever its class and the filtered speed
+    // never exceeded 0.967 m/s, so a simulation-fitted table would be
+    // class-independent -- it would carry no semantic information -- and
+    // would under-bound a real bicycle by a factor of 15.
+    //
+    //   max_speed 2.5 / 12.0 / 40.0 m/s are the SHIPPED Stage-5B per-class
+    //     speed vetoes (ClassificationParams::*.speed_max), so the
+    //     classifier's refusal threshold and the reachability premise are one
+    //     number rather than two that can disagree.
+    //   max_acceleration 2.5 / 7.0 / 10.0 m/s^2 are measured external values
+    //     (pedestrian crossing accelerations, bicycle pitch-over-limited
+    //     braking, ABS decelerations on dry asphalt), cited per field in
+    //     capability_profiles.hpp and in validation/stage5d/STAGE5D_README.md.
+    //   margin 0.0 m for every class, inherited deliberately from Stage-4G4's
+    //     base_safety_margin: 0.0 so the region measures the motion model
+    //     alone and the global-vs-class-aware comparison is not confounded.
+    //
+    // UNKNOWN HAS NO PARAMETERS BY DESIGN. Its profile is DERIVED as the
+    // envelope over its ambiguity set, so it dominates every class it has to
+    // cover by identity instead of by a chosen pair of numbers that could
+    // drift. 382 of the 1,137 UNKNOWN detections in the Stage-5B recordings
+    // were ground-truth VEHICLE, so an UNKNOWN object in this very dataset
+    // demonstrably is a vehicle about a third of the time; the old global
+    // 0.8 m/s would have under-bounded it by a factor of 50.
+    const CapabilityProfileSet prof_def;
+    const AmbiguitySets amb_def;
+    const ProfileSelectionPolicy pol_def;
+    this->declare_parameter<bool>("reachability_class_aware", pol_def.class_aware);
+    declare_profile_params("pedestrian", prof_def[ObstacleClass::PEDESTRIAN]);
+    declare_profile_params("bike", prof_def[ObstacleClass::BIKE]);
+    declare_profile_params("vehicle", prof_def[ObstacleClass::VEHICLE]);
+
+    // Per-label AMBIGUITY SET: the classes an object carrying that label
+    // might really be. This is a property of the CLASSIFIER and its sensor,
+    // measured, and is kept separate from the capability table above, which
+    // is physics. Defaults come from the measured composition of each
+    // predicted label over the Stage-5B recordings:
+    //   PEDESTRIAN n=715 : PEDESTRIAN 381, VEHICLE 306, BIKE 28
+    //   BIKE       n=277 : BIKE 277 -- precision 1.000, 0 false predictions
+    //   VEHICLE    n=418 : VEHICLE 301, UNKNOWN 117
+    //   UNKNOWN    n=1137: UNKNOWN 550, VEHICLE 382, PEDESTRIAN 197, BIKE 8
+    // The label is forced into its own set in code, so omitting it from the
+    // list cannot weaken invariant (I1).
+    declare_ambiguity_param("unknown", amb_def[ObstacleClass::UNKNOWN]);
+    declare_ambiguity_param("pedestrian", amb_def[ObstacleClass::PEDESTRIAN]);
+    declare_ambiguity_param("bike", amb_def[ObstacleClass::BIKE]);
+    declare_ambiguity_param("vehicle", amb_def[ObstacleClass::VEHICLE]);
+
+    // reachability_profile_min_confidence 0.60: the measured FLOOR of the
+    //   VEHICLE -> PEDESTRIAN confusion. Below it no label is trusted; above
+    //   it the ambiguity sets, not the confidence, are what keep the
+    //   selection conservative, because that confusion runs to 1.000 and is
+    //   more confident than correct PEDESTRIAN classification (median 1.000
+    //   against 0.856). The gate does the job it can do and is not asked to
+    //   do the job it cannot.
+    // reachability_profile_min_observations 5: the earliest observation at
+    //   which the stabiliser can hold a label built from two consecutive
+    //   confident scans, plus one.
+    // reachability_profile_transition_hold_scans 3: 0.6 s at 5 Hz, one full
+    //   classification_smoothing EWMA window (1/0.40 = 2.5 scans), so a
+    //   shrink cannot be published until the new label has outlived the
+    //   evidence window that produced the old one. 115 stable-label
+    //   transitions occurred over 36 of 57 Stage-5B tracks, so this is a
+    //   frequent event, not a hypothetical one.
+    this->declare_parameter<double>(
+      "reachability_profile_min_confidence", pol_def.min_confidence);
+    this->declare_parameter<int>(
+      "reachability_profile_min_observations",
+      static_cast<int>(pol_def.min_observations));
+    this->declare_parameter<int>(
+      "reachability_profile_transition_hold_scans",
+      static_cast<int>(pol_def.transition_hold_scans));
+
     // --- Stage-5B: dynamic obstacle classification -----------------------
     // Geometry/motion classification of tracked objects into
     // PEDESTRIAN / BIKE / VEHICLE / UNKNOWN. OBSERVATION ONLY: the label is
@@ -546,6 +661,85 @@ private:
     b.speed_max = this->get_parameter(k + "speed_max").as_double();
   }
 
+  // --- Stage-5D: class-aware capability-profile parameters ---------------
+
+  /// Declares one class's capability triple under the prefix
+  /// "reachability_profile_<name>_*". UNKNOWN deliberately has no group: its
+  /// profile is DERIVED as the envelope over its ambiguity set, so it cannot
+  /// be configured into being less conservative than a class it must cover.
+  void declare_profile_params(
+    const std::string & name, const MotionCapabilityProfile & d)
+  {
+    const std::string k = "reachability_profile_" + name + "_";
+    this->declare_parameter<double>(k + "max_speed", d.max_speed);
+    this->declare_parameter<double>(k + "max_acceleration", d.max_acceleration);
+    this->declare_parameter<double>(k + "margin", d.margin);
+  }
+
+  void read_profile_params(const std::string & name, MotionCapabilityProfile & p)
+  {
+    const std::string k = "reachability_profile_" + name + "_";
+    p.max_speed = this->get_parameter(k + "max_speed").as_double();
+    p.max_acceleration = this->get_parameter(k + "max_acceleration").as_double();
+    p.margin = this->get_parameter(k + "margin").as_double();
+  }
+
+  /// The class names a mask contains, as the parameter's string list.
+  static std::vector<std::string> mask_to_names(uint8_t mask)
+  {
+    static const char * kNames[] = {"unknown", "pedestrian", "bike", "vehicle"};
+    std::vector<std::string> out;
+    for (size_t c = 0; c < predictive_nav_tracking::kNumProfileClasses; ++c) {
+      if ((mask & predictive_nav_tracking::classBit(static_cast<ObstacleClass>(c))) != 0) {
+        out.emplace_back(kNames[c]);
+      }
+    }
+    return out;
+  }
+
+  void declare_ambiguity_param(const std::string & label, uint8_t d)
+  {
+    this->declare_parameter<std::vector<std::string>>(
+      "reachability_ambiguity_" + label, mask_to_names(d));
+  }
+
+  /// Reads one ambiguity set. An UNRECOGNISED class name is rejected
+  /// CONSERVATIVELY: it cannot be silently dropped, because dropping a name
+  /// narrows the set and a narrower set means a weaker profile, so an
+  /// operator typo would buy a smaller region. Instead the whole set falls
+  /// back to "every class", which is the most conservative reading of "I do
+  /// not understand this configuration", and the node logs an error.
+  uint8_t read_ambiguity_param(const std::string & label)
+  {
+    const auto names = this->get_parameter("reachability_ambiguity_" + label).as_string_array();
+    const uint8_t all = static_cast<uint8_t>(
+      predictive_nav_tracking::classBit(ObstacleClass::UNKNOWN) |
+      predictive_nav_tracking::classBit(ObstacleClass::PEDESTRIAN) |
+      predictive_nav_tracking::classBit(ObstacleClass::BIKE) |
+      predictive_nav_tracking::classBit(ObstacleClass::VEHICLE));
+    uint8_t mask = 0;
+    for (const auto & n : names) {
+      if (n == "unknown") {
+        mask |= predictive_nav_tracking::classBit(ObstacleClass::UNKNOWN);
+      } else if (n == "pedestrian") {
+        mask |= predictive_nav_tracking::classBit(ObstacleClass::PEDESTRIAN);
+      } else if (n == "bike") {
+        mask |= predictive_nav_tracking::classBit(ObstacleClass::BIKE);
+      } else if (n == "vehicle") {
+        mask |= predictive_nav_tracking::classBit(ObstacleClass::VEHICLE);
+      } else {
+        RCLCPP_ERROR(
+          this->get_logger(),
+          "reachability_ambiguity_%s lists unknown class '%s'. The set is being replaced by "
+          "ALL classes, because narrowing an ambiguity set weakens the selected profile and a "
+          "configuration this node cannot read must never buy a smaller reachable set.",
+          label.c_str(), n.c_str());
+        return all;
+      }
+    }
+    return mask;
+  }
+
   void read_parameters()
   {
     scan_topic_ = this->get_parameter("scan_topic").as_string();
@@ -647,6 +841,72 @@ private:
       this->get_parameter("reachability_enforce_observed_speed").as_bool();
     reachability_bounds_.max_speed_tolerance =
       std::max(this->get_parameter("reachability_max_speed_tolerance").as_double(), 0.0);
+
+    // --- Stage-5D: class-aware capability profiles -----------------------
+    profile_policy_.class_aware = this->get_parameter("reachability_class_aware").as_bool();
+    profile_policy_.min_confidence =
+      this->get_parameter("reachability_profile_min_confidence").as_double();
+    profile_policy_.min_observations = static_cast<uint32_t>(
+      std::max<int64_t>(this->get_parameter("reachability_profile_min_observations").as_int(), 0));
+    profile_policy_.transition_hold_scans = static_cast<uint32_t>(
+      std::max<int64_t>(
+        this->get_parameter("reachability_profile_transition_hold_scans").as_int(), 0));
+
+    read_profile_params("pedestrian", profile_set_[ObstacleClass::PEDESTRIAN]);
+    read_profile_params("bike", profile_set_[ObstacleClass::BIKE]);
+    read_profile_params("vehicle", profile_set_[ObstacleClass::VEHICLE]);
+    // UNKNOWN's stored entry is never read -- the fallback is derived from the
+    // ambiguity set -- but it is zeroed explicitly so a future reader of the
+    // table cannot mistake a default for a configured value.
+    profile_set_[ObstacleClass::UNKNOWN] = MotionCapabilityProfile{0.0, 0.0, 0.0};
+
+    ambiguity_sets_.mask[static_cast<size_t>(ObstacleClass::UNKNOWN)] =
+      read_ambiguity_param("unknown");
+    ambiguity_sets_.mask[static_cast<size_t>(ObstacleClass::PEDESTRIAN)] =
+      read_ambiguity_param("pedestrian");
+    ambiguity_sets_.mask[static_cast<size_t>(ObstacleClass::BIKE)] =
+      read_ambiguity_param("bike");
+    ambiguity_sets_.mask[static_cast<size_t>(ObstacleClass::VEHICLE)] =
+      read_ambiguity_param("vehicle");
+
+    // Sanitize ONCE, here, not per scan. A malformed entry is replaced by a
+    // dominating substitute so it can never produce an optimistic region, and
+    // the failure is reported on every published sample as
+    // PROFILE_FALLBACK_INVALID_CONFIG rather than only in this log line.
+    profile_config_valid_ = predictive_nav_tracking::sanitizeProfileSet(profile_set_);
+    if (!profile_config_valid_) {
+      RCLCPP_ERROR(
+        this->get_logger(),
+        "reachability capability profiles are MALFORMED (a non-finite or negative max_speed, "
+        "max_acceleration or margin). Every track is now served the conservative fallback "
+        "envelope and every published sample reports "
+        "capability_profile_reason=PROFILE_FALLBACK_INVALID_CONFIG. Class-aware reachability "
+        "is NOT qualified in this state -- fix the profile parameters.");
+    }
+    if (profile_policy_.class_aware) {
+      const MotionCapabilityProfile fb =
+        predictive_nav_tracking::fallbackProfile(profile_set_, ambiguity_sets_);
+      RCLCPP_INFO(
+        this->get_logger(),
+        "Stage-5D class-aware reachability ENABLED. profiles (max_speed m/s, max_accel m/s^2, "
+        "margin m): PEDESTRIAN %.2f/%.2f/%.2f BIKE %.2f/%.2f/%.2f VEHICLE %.2f/%.2f/%.2f "
+        "FALLBACK(derived) %.2f/%.2f/%.2f; gates confidence>=%.2f observations>=%u "
+        "transition_hold=%u scans. These are DECLARED future-capability premises, not proven "
+        "bounds -- Stage-5C.1 applies unchanged.",
+        profile_set_[ObstacleClass::PEDESTRIAN].max_speed,
+        profile_set_[ObstacleClass::PEDESTRIAN].max_acceleration,
+        profile_set_[ObstacleClass::PEDESTRIAN].margin,
+        profile_set_[ObstacleClass::BIKE].max_speed,
+        profile_set_[ObstacleClass::BIKE].max_acceleration,
+        profile_set_[ObstacleClass::BIKE].margin,
+        profile_set_[ObstacleClass::VEHICLE].max_speed,
+        profile_set_[ObstacleClass::VEHICLE].max_acceleration,
+        profile_set_[ObstacleClass::VEHICLE].margin,
+        fb.max_speed, fb.max_acceleration, fb.margin,
+        profile_policy_.min_confidence,
+        static_cast<unsigned>(profile_policy_.min_observations),
+        static_cast<unsigned>(profile_policy_.transition_hold_scans));
+    }
     reachability_horizon_ = this->get_parameter("reachability_horizon").as_double();
     reachability_time_step_ = this->get_parameter("reachability_time_step").as_double();
     max_observation_age_ = this->get_parameter("max_observation_age").as_double();
@@ -931,7 +1191,9 @@ private:
         "association_us=%.3f reach_us=%.3f publish_us=%.3f "
         "callback_us=%.3f clusters=%zu measurements=%zu tracks=%zu splits=%zu ambiguous=%zu "
         "compound_candidates=%zu compounds=%zu "
-        "reach_contract_violations=%lu reach_contract_worst_speed=%.3f",
+        "reach_contract_violations=%lu reach_contract_worst_speed=%.3f "
+        "prof_global=%lu prof_class=%lu prof_fb_unknown=%lu prof_fb_lowconf=%lu "
+        "prof_fb_immature=%lu prof_fb_badconfig=%lu prof_transition=%lu",
         stamp.seconds(), us(callback_start, cluster_start), us(cluster_start, cluster_end),
         us(deblend_start, deblend_end), us(compound_start, compound_end),
         us(association_start, association_end),
@@ -941,7 +1203,17 @@ private:
         deblend_split_count_ - splits_before, ambiguous_merge_count_,
         compound_candidate_count_, compound_emitted_count_ - compounds_before,
         static_cast<unsigned long>(reachability_contract_violation_samples_),
-        contract_violation_worst_speed_);
+        contract_violation_worst_speed_,
+        // Stage-5D: cumulative published-sample counts per profile reason, so
+        // fallback rate, UNKNOWN-profile rate and transition rate are
+        // measurable from a live run and not only from an offline replay.
+        static_cast<unsigned long>(profile_reason_samples_[0]),
+        static_cast<unsigned long>(profile_reason_samples_[1]),
+        static_cast<unsigned long>(profile_reason_samples_[2]),
+        static_cast<unsigned long>(profile_reason_samples_[3]),
+        static_cast<unsigned long>(profile_reason_samples_[4]),
+        static_cast<unsigned long>(profile_reason_samples_[5]),
+        static_cast<unsigned long>(profile_reason_samples_[6]));
     }
   }
 
@@ -1817,13 +2089,56 @@ private:
   // exactly the semantic the legacy Stage-4C message deliberately does not
   // have, and it is why reachability is published in its own field rather than
   // written into the existing one.
+  /// --- Stage-5D: choose and record one track's capability premises -----
+  ///
+  /// Advances the track's transition state, so it is called EXACTLY ONCE per
+  /// track per scan, from publish_tracks(), before predict_reachability().
+  /// Reads the ALREADY-STABILISED Stage-5B label that update_track() wrote
+  /// earlier in this same scan, so there is no one-scan lag and no new
+  /// plumbing, and the one decision is shared by every horizon sample of the
+  /// track -- six samples of one track can never describe two profiles.
+  ///
+  /// With reachability_class_aware false this returns reachability_bounds_
+  /// verbatim, so every published number is bit-identical to Stage-5C.1.
+  ReachabilityBounds select_track_bounds(Track & track)
+  {
+    // Guarded on exactly the conditions predict_reachability() uses, so that
+    // when reachability is off -- the PRODUCTION setting -- no selection runs,
+    // no per-track profile state is advanced and no work is added to the
+    // production path at all. Production is therefore inert, not merely
+    // numerically equivalent.
+    if (!reachability_enabled_ || !track.kalman_initialized ||
+      num_reachability_samples_ == 0)
+    {
+      return reachability_bounds_;
+    }
+    const MotionCapabilityProfile global_profile{
+      reachability_bounds_.max_speed,
+      reachability_bounds_.max_acceleration,
+      reachability_bounds_.safety_margin};
+    track.class_profile_selection = predictive_nav_tracking::selectCapabilityProfile(
+      track.class_state.label(), track.class_state.confidence(), track.observations,
+      profile_set_, ambiguity_sets_, profile_policy_, global_profile,
+      profile_config_valid_, track.class_profile_state);
+    return predictive_nav_tracking::boundsForProfile(
+      reachability_bounds_, track.class_profile_selection.profile);
+  }
+
+  /// `bounds` overrides the global configuration for this track; nullptr
+  /// means "use the single global configuration", which is both the
+  /// Stage-5C.1 behaviour and what the pre-Stage-5D tests exercise, so the
+  /// legacy call shape stays available and stays exact.
   std::vector<ReachabilityRegion> predict_reachability(
-    const Track & track, const rclcpp::Time & scan_stamp) const
+    const Track & track, const rclcpp::Time & scan_stamp,
+    const ReachabilityBounds * bounds = nullptr) const
   {
     std::vector<ReachabilityRegion> regions;
     if (!reachability_enabled_ || !track.kalman_initialized || num_reachability_samples_ == 0) {
       return regions;
     }
+    const ReachabilityBounds & track_bounds =
+      (bounds != nullptr) ? *bounds : reachability_bounds_;
+
     const double observation_age = std::max((scan_stamp - track.last_update).seconds(), 0.0);
     regions.reserve(num_reachability_samples_);
 
@@ -1840,7 +2155,7 @@ private:
 
       ReachabilityRegion region = predictive_nav_tracking::buildRegion(
         track.kf_x(0), track.kf_x(1), track.kf_x(2), track.kf_x(3),
-        Pp.topLeftCorner<2, 2>(), total_time, reachability_bounds_);
+        Pp.topLeftCorner<2, 2>(), total_time, track_bounds);
 
       // A region is only meaningful while the track's information is recent
       // enough to be worth extrapolating; past that it is published as invalid
@@ -1862,7 +2177,10 @@ private:
     array_msg.header.stamp = stamp;
     array_msg.header.frame_id = map_frame_;
 
-    for (const auto & t : tracks_) {
+    // Stage-5D: non-const because predict_reachability() advances the track's
+    // capability-profile transition state (capability_profiles.hpp section 6).
+    // Nothing else in this loop mutates a track.
+    for (auto & t : tracks_) {
       if (t.observations < min_observations_to_publish_) {
         continue;
       }
@@ -1939,7 +2257,11 @@ private:
       // t.last_update -- which is recorded in every sample's observation_age
       // and total_time so no consumer has to infer it.
       const auto reach_start = std::chrono::steady_clock::now();
-      const std::vector<ReachabilityRegion> reach_regions = predict_reachability(t, stamp);
+      // Stage-5D: the profile decision and the regions it produced are timed
+      // together, so reach_us keeps measuring the whole reachability cost.
+      const ReachabilityBounds track_bounds = select_track_bounds(t);
+      const std::vector<ReachabilityRegion> reach_regions =
+        predict_reachability(t, stamp, &track_bounds);
       reachability_total_us_ +=
         std::chrono::duration<double, std::micro>(
         std::chrono::steady_clock::now() - reach_start).count();
@@ -1972,6 +2294,20 @@ private:
         reach.configured_max_speed = r.configured_max_speed;
         reach.effective_max_speed = r.effective_max_speed;
         reach.contract_status = static_cast<uint8_t>(r.contract_status);
+        // Stage-5D capability-profile metadata. Which premises this sample was
+        // built with, and why -- published on every sample because under
+        // class-aware selection they are per-track and no longer readable from
+        // a node parameter. configured_max_speed above already carries (P2) for
+        // the selected profile, since boundsForProfile() wrote it into the
+        // bounds buildRegion() used.
+        reach.configured_max_acceleration =
+          t.class_profile_selection.profile.max_acceleration;
+        reach.capability_profile_class =
+          static_cast<uint8_t>(t.class_profile_selection.dominating_class);
+        reach.capability_profile_reason =
+          static_cast<uint8_t>(t.class_profile_selection.reason);
+        ++profile_reason_samples_[
+          static_cast<size_t>(t.class_profile_selection.reason) % profile_reason_samples_.size()];
         if (r.contract_status ==
           predictive_nav_tracking::ContractStatus::kObservedSpeedExceedsCap)
         {
@@ -2328,6 +2664,21 @@ private:
   // warning that may be throttled away.
   uint64_t reachability_contract_violation_samples_{0};
   double contract_violation_worst_speed_{0.0};
+
+  // --- Stage-5D: class-aware capability profiles ---
+  // The ONLY new coupling between classification and prediction. Everything
+  // here is configuration plus counters; the per-track transition state lives
+  // on the Track so it dies with the track id.
+  CapabilityProfileSet profile_set_{};
+  AmbiguitySets ambiguity_sets_{};
+  ProfileSelectionPolicy profile_policy_{};
+  /// False when sanitizeProfileSet() had to replace a malformed entry. Forces
+  /// the fallback on every track and is published on every sample.
+  bool profile_config_valid_{true};
+  /// Cumulative published-sample counts per ProfileReason, reported in the
+  /// throttled stats log so fallback rate and transition rate are measurable
+  /// in a live run rather than only offline. Indexed by the enum value.
+  std::array<uint64_t, 7> profile_reason_samples_{};
 
   // --- Stage-5B: dynamic obstacle classification ---
   // OBSERVATION ONLY. Nothing in this block is read by the filter, the CV

@@ -122,3 +122,54 @@ uint8 CONTRACT_NOT_EVALUATED=2              # not a usable region (non-finite st
 # encoding of that fact: no duplicate boolean is carried, because two encodings
 # of one fact can disagree.
 uint8 contract_status
+
+# --- Stage-5D: CLASS-AWARE CAPABILITY PROFILE -------------------------------
+# Stage-5C.1 and earlier carried ONE global pair of premises for every track.
+# Stage-5D selects the pair per track from the stabilised Stage-5B class label,
+# so `configured_max_speed` above is no longer a node-wide constant a consumer
+# can read from a parameter: the three fields below say which profile this
+# sample was actually built with, and why.
+#
+# NOTHING about the mathematics or the validity contract changes. The premises
+# are still (P1) |a(u)| <= configured_max_acceleration and
+# (P2) |v(s)| <= configured_max_speed over [0, total_time], still DECLARED
+# claims about an unobservable future, and the observable-contradiction
+# response (effective_max_speed, contract_status) applies to the selected
+# profile exactly as it applied to the global one. Attaching a class name to a
+# premise changes who the premise is about, not whether it has been proved.
+
+float64 configured_max_acceleration  # m/s^2, premise (P1) for THIS sample: the selected
+                                     # profile's isotropic |a| bound. Previously inferable
+                                     # from the node's max_acceleration parameter; per-track
+                                     # under class-aware selection, so it is published
+
+uint8 capability_profile_class       # CLASS_* (TrackedObject.msg) of the class whose own
+                                     # profile the APPLIED bounds coincide with exactly, or
+                                     # CLASS_UNKNOWN when they coincide with none because a
+                                     # strict envelope was applied. Reporting only.
+                                     #
+                                     # It is NOT the classifier's label -- that is
+                                     # TrackedObject.classification, published once on the
+                                     # parent and not duplicated here. The two differing is
+                                     # the normal, intended case: a PEDESTRIAN label whose
+                                     # measured ambiguity set contains VEHICLE is served a
+                                     # vehicle-grade profile, and this field is where that
+                                     # is visible
+
+# Why those bounds, as a SINGLE encoding -- no companion `fallback_used`
+# boolean, following the Stage-5C.1 rule that two encodings of one fact can
+# disagree. "A conservative substitution was applied" is exactly
+# `capability_profile_reason >= PROFILE_FALLBACK_UNKNOWN_LABEL`.
+uint8 PROFILE_GLOBAL=0                    # class-aware selection disabled: the single
+                                          # Stage-5C.1 global configuration, bit-identical
+uint8 PROFILE_CLASS_CLOSURE=1             # the stable label's own ambiguity-closure envelope
+uint8 PROFILE_FALLBACK_UNKNOWN_LABEL=2    # label was CLASS_UNKNOWN
+uint8 PROFILE_FALLBACK_LOW_CONFIDENCE=3   # label semantic, confidence below the gate
+uint8 PROFILE_FALLBACK_IMMATURE_TRACK=4   # label semantic and confident, track too young
+uint8 PROFILE_FALLBACK_INVALID_CONFIG=5   # the configured profile table was malformed and
+                                          # was replaced by a dominating substitute
+uint8 PROFILE_TRANSITION_HOLD=6           # a stable-label change is inside its hold window:
+                                          # the envelope of the previously held profile and
+                                          # the current selection was applied, dominating both
+
+uint8 capability_profile_reason

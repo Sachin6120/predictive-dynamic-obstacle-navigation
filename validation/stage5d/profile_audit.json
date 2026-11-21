@@ -1,0 +1,110 @@
+{
+  "note": "Stage-5D class-aware reachability audit. ANALYSIS ONLY: built against the shipped production headers, modifies nothing. The ORACLE arm (C) and part 4 are the ONLY readers of the ground-truth class and are ANALYTICAL / EVALUATION ONLY -- no ground-truth label enters any runtime path.",
+  "part1_in_profile_adversarial": {
+    "gate": "0 escapes required",
+    "profiles": [
+      {"class": "UNKNOWN", "max_speed": 40.00, "max_acceleration": 10.00, "margin": 0.00, "horizons_s": [0.5, 1.0, 1.5, 2.0, 2.5, 3.0], "total_time_max_s": 4.0, "trials": 1728, "escapes": 0, "worst_slack_m": -8.397478e-10, "worst_escape_beyond_tolerance_m": 0.000000e+00, "integration_tolerance_m": 1e-06, "area_at_0.5s_m2": 5.5297, "area_at_4.0s_m2": 20144.7698, "area_growth": 3643.01},
+      {"class": "PEDESTRIAN", "max_speed": 2.50, "max_acceleration": 2.50, "margin": 0.00, "horizons_s": [0.5, 1.0, 1.5, 2.0, 2.5, 3.0], "total_time_max_s": 4.0, "trials": 1728, "escapes": 0, "worst_slack_m": -5.567324e-12, "worst_escape_beyond_tolerance_m": 0.000000e+00, "integration_tolerance_m": 1e-06, "area_at_0.5s_m2": 0.4759, "area_at_4.0s_m2": 331.7970, "area_growth": 697.20},
+      {"class": "BIKE", "max_speed": 12.00, "max_acceleration": 7.00, "margin": 0.00, "horizons_s": [0.5, 1.0, 1.5, 2.0, 2.5, 3.0], "total_time_max_s": 4.0, "trials": 1728, "escapes": 0, "worst_slack_m": -4.661871e-11, "worst_escape_beyond_tolerance_m": 0.000000e+00, "integration_tolerance_m": 1e-06, "area_at_0.5s_m2": 2.8455, "area_at_4.0s_m2": 4757.8326, "area_growth": 1672.06},
+      {"class": "VEHICLE", "max_speed": 40.00, "max_acceleration": 10.00, "margin": 0.00, "horizons_s": [0.5, 1.0, 1.5, 2.0, 2.5, 3.0], "total_time_max_s": 4.0, "trials": 1728, "escapes": 0, "worst_slack_m": -8.397478e-10, "worst_escape_beyond_tolerance_m": 0.000000e+00, "integration_tolerance_m": 1e-06, "area_at_0.5s_m2": 5.5297, "area_at_4.0s_m2": 20144.7698, "area_growth": 3643.01}
+    ]
+  },
+  "part2_out_of_profile": {
+    "what_this_shows": "A profile is a DECLARED premise about an unobservable future, not a proven bound. Where the true capability exceeds the declared one and the observed speed does NOT reveal it, the region is escaped -- and no runtime check can prevent that. Where the observed speed DOES reveal it, Stage-5C.1 raises the effective cap and containment is restored.",
+    "unobservable": [
+      {"declared_profile": "PEDESTRIAN", "declared": [2.50, 2.50], "true_capability": "a cyclist mislabelled PEDESTRIAN", "true": [12.00, 7.00], "trials": 288, "escapes": 288, "escape_rate": 1.0000, "worst_escape_m": 28.9643, "escape_at_4.0s_m": 28.9643, "contract_status": "CONTRACT_SATISFIED throughout -- the breach is UNOBSERVABLE"},
+      {"declared_profile": "PEDESTRIAN", "declared": [2.50, 2.50], "true_capability": "an athletic side-step at 0.5 g", "true": [2.50, 5.00], "trials": 288, "escapes": 199, "escape_rate": 0.6910, "worst_escape_m": 1.4062, "escape_at_4.0s_m": 1.4062, "contract_status": "CONTRACT_SATISFIED throughout -- the breach is UNOBSERVABLE"},
+      {"declared_profile": "BIKE", "declared": [12.00, 7.00], "true_capability": "a car mislabelled BIKE", "true": [40.00, 10.00], "trials": 288, "escapes": 288, "escape_rate": 1.0000, "worst_escape_m": 42.2857, "escape_at_4.0s_m": 42.2857, "contract_status": "CONTRACT_SATISFIED throughout -- the breach is UNOBSERVABLE"},
+      {"declared_profile": "VEHICLE", "declared": [40.00, 10.00], "true_capability": "a vehicle 1.5x the declared capability", "true": [60.00, 15.00], "trials": 288, "escapes": 288, "escape_rate": 1.0000, "worst_escape_m": 40.0000, "escape_at_4.0s_m": 40.0000, "contract_status": "CONTRACT_SATISFIED throughout -- the breach is UNOBSERVABLE"}
+    ],
+    "observable": [
+      {"declared_profile": "PEDESTRIAN", "configured_max_speed": 2.50, "observed_speed": 3.12, "trials": 96, "escapes_without_5C1_response": 6, "escapes_with_5C1_response": 0, "worst_slack_with_response_m": 5.506706e-14, "every_sample_flagged": true},
+      {"declared_profile": "BIKE", "configured_max_speed": 12.00, "observed_speed": 15.00, "trials": 96, "escapes_without_5C1_response": 1, "escapes_with_5C1_response": 0, "worst_slack_with_response_m": 2.363443e-12, "every_sample_flagged": true},
+      {"declared_profile": "VEHICLE", "configured_max_speed": 40.00, "observed_speed": 50.00, "trials": 96, "escapes_without_5C1_response": 0, "escapes_with_5C1_response": 0, "worst_slack_with_response_m": -1.973433e-09, "every_sample_flagged": true}
+    ]
+  },
+  "part3_three_arms": {
+    "replay_rows": 2547,
+    "per_horizon": {
+      "A_global": {
+      "h0.5": {"samples": 2547, "capability_containment": 0.036514, "observed_containment": 0.978670, "observed_evaluable": 2391, "mean_area_m2": 0.597184, "mean_cells": 123.326, "mean_reach_radius_m": 0.0625, "contract_breaches": 17, "fallback_rate": 0.000000, "transition_rate": 0.000000, "unknown_profile_rate": 0.000000, "unsafe_selections": 2547},
+      "h1.0": {"samples": 2547, "capability_containment": 0.012956, "observed_containment": 0.998234, "observed_evaluable": 2265, "mean_area_m2": 3.616411, "mean_cells": 529.000, "mean_reach_radius_m": 0.2500, "contract_breaches": 17, "fallback_rate": 0.000000, "transition_rate": 0.000000, "unknown_profile_rate": 0.000000, "unsafe_selections": 2547},
+      "h1.5": {"samples": 2547, "capability_containment": 0.008245, "observed_containment": 1.000000, "observed_evaluable": 2137, "mean_area_m2": 13.120400, "mean_cells": 529.000, "mean_reach_radius_m": 0.5625, "contract_breaches": 17, "fallback_rate": 0.000000, "transition_rate": 0.000000, "unknown_profile_rate": 0.000000, "unsafe_selections": 2547},
+      "h2.0": {"samples": 2547, "capability_containment": 0.008638, "observed_containment": 1.000000, "observed_evaluable": 1987, "mean_area_m2": 35.658006, "mean_cells": 529.000, "mean_reach_radius_m": 0.9953, "contract_breaches": 17, "fallback_rate": 0.000000, "transition_rate": 0.000000, "unknown_profile_rate": 0.000000, "unsafe_selections": 2547},
+      "h2.5": {"samples": 2547, "capability_containment": 0.009030, "observed_containment": 1.000000, "observed_evaluable": 1869, "mean_area_m2": 79.115303, "mean_cells": 529.000, "mean_reach_radius_m": 1.5090, "contract_breaches": 17, "fallback_rate": 0.000000, "transition_rate": 0.000000, "unknown_profile_rate": 0.000000, "unsafe_selections": 2547},
+      "h3.0": {"samples": 2547, "capability_containment": 0.027091, "observed_containment": 1.000000, "observed_evaluable": 1720, "mean_area_m2": 151.740423, "mean_cells": 529.000, "mean_reach_radius_m": 2.0562, "contract_breaches": 17, "fallback_rate": 0.000000, "transition_rate": 0.000000, "unknown_profile_rate": 0.000000, "unsafe_selections": 2547}
+      },
+      "B_runtime_class_aware": {
+      "h0.5": {"samples": 2547, "capability_containment": 1.000000, "observed_containment": 1.000000, "observed_evaluable": 2391, "mean_area_m2": 7.258157, "mean_cells": 529.000, "mean_reach_radius_m": 1.2107, "contract_breaches": 0, "fallback_rate": 0.542599, "transition_rate": 0.001178, "unknown_profile_rate": 0.895171, "unsafe_selections": 0},
+      "h1.0": {"samples": 2547, "capability_containment": 1.000000, "observed_containment": 1.000000, "observed_evaluable": 2265, "mean_area_m2": 97.700712, "mean_cells": 529.000, "mean_reach_radius_m": 4.8428, "contract_breaches": 0, "fallback_rate": 0.542599, "transition_rate": 0.001178, "unknown_profile_rate": 0.895171, "unsafe_selections": 0},
+      "h1.5": {"samples": 2547, "capability_containment": 1.000000, "observed_containment": 1.000000, "observed_evaluable": 2137, "mean_area_m2": 475.874776, "mean_cells": 529.000, "mean_reach_radius_m": 10.8962, "contract_breaches": 0, "fallback_rate": 0.542599, "transition_rate": 0.001178, "unknown_profile_rate": 0.895171, "unsafe_selections": 0},
+      "h2.0": {"samples": 2547, "capability_containment": 1.000000, "observed_containment": 1.000000, "observed_evaluable": 1987, "mean_area_m2": 1479.355223, "mean_cells": 529.000, "mean_reach_radius_m": 19.3492, "contract_breaches": 0, "fallback_rate": 0.542599, "transition_rate": 0.001178, "unknown_profile_rate": 0.895171, "unsafe_selections": 0},
+      "h2.5": {"samples": 2547, "capability_containment": 1.000000, "observed_containment": 1.000000, "observed_evaluable": 1869, "mean_area_m2": 3558.890810, "mean_cells": 529.000, "mean_reach_radius_m": 30.0648, "contract_breaches": 0, "fallback_rate": 0.542599, "transition_rate": 0.001178, "unknown_profile_rate": 0.895171, "unsafe_selections": 0},
+      "h3.0": {"samples": 2547, "capability_containment": 1.000000, "observed_containment": 1.000000, "observed_evaluable": 1720, "mean_area_m2": 7291.324549, "mean_cells": 529.000, "mean_reach_radius_m": 43.0183, "contract_breaches": 0, "fallback_rate": 0.542599, "transition_rate": 0.001178, "unknown_profile_rate": 0.895171, "unsafe_selections": 0}
+      },
+      "C_oracle_class_aware_EVALUATION_ONLY": {
+      "h0.5": {"samples": 2547, "capability_containment": 1.000000, "observed_containment": 1.000000, "observed_evaluable": 2391, "mean_area_m2": 7.196888, "mean_cells": 529.000, "mean_reach_radius_m": 1.2039, "contract_breaches": 0, "fallback_rate": 0.261877, "transition_rate": 0.000000, "unknown_profile_rate": 0.877110, "unsafe_selections": 0},
+      "h1.0": {"samples": 2547, "capability_containment": 1.000000, "observed_containment": 1.000000, "observed_evaluable": 2265, "mean_area_m2": 96.829077, "mean_cells": 529.000, "mean_reach_radius_m": 4.8157, "contract_breaches": 0, "fallback_rate": 0.261877, "transition_rate": 0.000000, "unknown_profile_rate": 0.877110, "unsafe_selections": 0},
+      "h1.5": {"samples": 2547, "capability_containment": 1.000000, "observed_containment": 1.000000, "observed_evaluable": 2137, "mean_area_m2": 471.601548, "mean_cells": 529.000, "mean_reach_radius_m": 10.8352, "contract_breaches": 0, "fallback_rate": 0.261877, "transition_rate": 0.000000, "unknown_profile_rate": 0.877110, "unsafe_selections": 0},
+      "h2.0": {"samples": 2547, "capability_containment": 1.000000, "observed_containment": 1.000000, "observed_evaluable": 1987, "mean_area_m2": 1465.655199, "mean_cells": 529.000, "mean_reach_radius_m": 19.2371, "contract_breaches": 0, "fallback_rate": 0.261877, "transition_rate": 0.000000, "unknown_profile_rate": 0.877110, "unsafe_selections": 0},
+      "h2.5": {"samples": 2547, "capability_containment": 1.000000, "observed_containment": 1.000000, "observed_evaluable": 1869, "mean_area_m2": 3521.265060, "mean_cells": 529.000, "mean_reach_radius_m": 29.8609, "contract_breaches": 0, "fallback_rate": 0.261877, "transition_rate": 0.000000, "unknown_profile_rate": 0.877110, "unsafe_selections": 0},
+      "h3.0": {"samples": 2547, "capability_containment": 1.000000, "observed_containment": 1.000000, "observed_evaluable": 1720, "mean_area_m2": 7204.008070, "mean_cells": 529.000, "mean_reach_radius_m": 42.6774, "contract_breaches": 0, "fallback_rate": 0.261877, "transition_rate": 0.000000, "unknown_profile_rate": 0.877110, "unsafe_selections": 0}
+      }
+    },
+    "pooled": {
+      "A_global": {"samples": 15282, "capability_containment": 0.017079, "observed_containment": 0.995553, "observed_evaluable": 12369, "mean_area_m2": 47.307954, "mean_cells": 461.388, "mean_reach_radius_m": 0.9059, "contract_breaches": 102, "fallback_rate": 0.000000, "transition_rate": 0.000000, "unknown_profile_rate": 0.000000, "unsafe_selections": 15282},
+      "B_runtime_class_aware": {"samples": 15282, "capability_containment": 1.000000, "observed_containment": 1.000000, "observed_evaluable": 12369, "mean_area_m2": 2151.734038, "mean_cells": 529.000, "mean_reach_radius_m": 18.2303, "contract_breaches": 0, "fallback_rate": 0.542599, "transition_rate": 0.001178, "unknown_profile_rate": 0.895171, "unsafe_selections": 0},
+      "C_oracle_class_aware_EVALUATION_ONLY": {"samples": 15282, "capability_containment": 1.000000, "observed_containment": 1.000000, "observed_evaluable": 12369, "mean_area_m2": 2127.759307, "mean_cells": 529.000, "mean_reach_radius_m": 18.1050, "contract_breaches": 0, "fallback_rate": 0.261877, "transition_rate": 0.000000, "unknown_profile_rate": 0.877110, "unsafe_selections": 0}
+    },
+    "per_true_class": {
+      "A_global": {
+      "UNKNOWN": {"samples": 4002, "capability_containment": 0.002999, "observed_containment": 0.997333, "observed_evaluable": 3374, "mean_area_m2": 46.284456, "mean_cells": 460.663, "mean_reach_radius_m": 0.9077, "contract_breaches": 12, "fallback_rate": 0.000000, "transition_rate": 0.000000, "unknown_profile_rate": 0.000000, "unsafe_selections": 4002},
+      "PEDESTRIAN": {"samples": 3468, "capability_containment": 0.059689, "observed_containment": 0.997182, "observed_evaluable": 2839, "mean_area_m2": 47.054247, "mean_cells": 461.127, "mean_reach_radius_m": 0.9098, "contract_breaches": 18, "fallback_rate": 0.000000, "transition_rate": 0.000000, "unknown_profile_rate": 0.000000, "unsafe_selections": 3468},
+      "BIKE": {"samples": 1878, "capability_containment": 0.009585, "observed_containment": 0.983662, "observed_evaluable": 1469, "mean_area_m2": 48.794547, "mean_cells": 462.370, "mean_reach_radius_m": 0.9035, "contract_breaches": 24, "fallback_rate": 0.000000, "transition_rate": 0.000000, "unknown_profile_rate": 0.000000, "unsafe_selections": 1878},
+      "VEHICLE": {"samples": 5934, "capability_containment": 0.004044, "observed_containment": 0.997013, "observed_evaluable": 4687, "mean_area_m2": 47.676015, "mean_cells": 461.718, "mean_reach_radius_m": 0.9032, "contract_breaches": 48, "fallback_rate": 0.000000, "transition_rate": 0.000000, "unknown_profile_rate": 0.000000, "unsafe_selections": 5934}
+      },
+      "B_runtime_class_aware": {
+      "UNKNOWN": {"samples": 4002, "capability_containment": 1.000000, "observed_containment": 1.000000, "observed_evaluable": 3374, "mean_area_m2": 2284.247799, "mean_cells": 529.000, "mean_reach_radius_m": 18.9583, "contract_breaches": 0, "fallback_rate": 0.943028, "transition_rate": 0.000000, "unknown_profile_rate": 1.000000, "unsafe_selections": 0},
+      "PEDESTRIAN": {"samples": 3468, "capability_containment": 1.000000, "observed_containment": 1.000000, "observed_evaluable": 2839, "mean_area_m2": 2287.495427, "mean_cells": 529.000, "mean_reach_radius_m": 18.9583, "contract_breaches": 0, "fallback_rate": 0.522491, "transition_rate": 0.000000, "unknown_profile_rate": 1.000000, "unsafe_selections": 0},
+      "BIKE": {"samples": 1878, "capability_containment": 1.000000, "observed_containment": 1.000000, "observed_evaluable": 1469, "mean_area_m2": 1176.540817, "mean_cells": 529.000, "mean_reach_radius_m": 13.0342, "contract_breaches": 0, "fallback_rate": 0.092652, "transition_rate": 0.009585, "unknown_profile_rate": 0.146965, "unsafe_selections": 0},
+      "VEHICLE": {"samples": 5934, "capability_containment": 1.000000, "observed_containment": 1.000000, "observed_evaluable": 4687, "mean_area_m2": 2291.651851, "mean_cells": 529.000, "mean_reach_radius_m": 18.9583, "contract_breaches": 0, "fallback_rate": 0.426694, "transition_rate": 0.000000, "unknown_profile_rate": 1.000000, "unsafe_selections": 0}
+      },
+      "C_oracle_class_aware_EVALUATION_ONLY": {
+      "UNKNOWN": {"samples": 4002, "capability_containment": 1.000000, "observed_containment": 1.000000, "observed_evaluable": 3374, "mean_area_m2": 2284.247799, "mean_cells": 529.000, "mean_reach_radius_m": 18.9583, "contract_breaches": 0, "fallback_rate": 1.000000, "transition_rate": 0.000000, "unknown_profile_rate": 1.000000, "unsafe_selections": 0},
+      "PEDESTRIAN": {"samples": 3468, "capability_containment": 1.000000, "observed_containment": 1.000000, "observed_evaluable": 2839, "mean_area_m2": 2287.495427, "mean_cells": 529.000, "mean_reach_radius_m": 18.9583, "contract_breaches": 0, "fallback_rate": 0.000000, "transition_rate": 0.000000, "unknown_profile_rate": 1.000000, "unsafe_selections": 0},
+      "BIKE": {"samples": 1878, "capability_containment": 1.000000, "observed_containment": 1.000000, "observed_evaluable": 1469, "mean_area_m2": 981.449317, "mean_cells": 529.000, "mean_reach_radius_m": 12.0148, "contract_breaches": 0, "fallback_rate": 0.000000, "transition_rate": 0.000000, "unknown_profile_rate": 0.000000, "unsafe_selections": 0},
+      "VEHICLE": {"samples": 5934, "capability_containment": 1.000000, "observed_containment": 1.000000, "observed_evaluable": 4687, "mean_area_m2": 2291.651851, "mean_cells": 529.000, "mean_reach_radius_m": 18.9583, "contract_breaches": 0, "fallback_rate": 0.000000, "transition_rate": 0.000000, "unknown_profile_rate": 1.000000, "unsafe_selections": 0}
+      }
+    },
+    "label_transitions": {"runtime": 115, "oracle_ground_truth": 0},
+    "cost": {"region_build_mean_ns": 163.3, "samples_timed": 45846, "per_track_6_sample_us": 0.980, "cv_propagate_mean_ns": 14.6}
+  },
+  "part4_classification_error": {
+    "question": "For each (ground truth -> runtime label) direction, does the RUNTIME arm's selected profile dominate the true class's capability profile componentwise? Anything other than 0 unsafe selections is a defect.",
+    "directions": [
+      {"ground_truth": "UNKNOWN", "runtime_label": "UNKNOWN", "samples": 550, "unsafe_selections": 0, "fallback_samples": 550, "class_closure_samples": 0, "confidence_range": [0.000, 0.000], "mean_applied_max_speed": 40.00, "true_class_max_speed": 40.00},
+      {"ground_truth": "UNKNOWN", "runtime_label": "VEHICLE", "samples": 117, "unsafe_selections": 0, "fallback_samples": 79, "class_closure_samples": 38, "confidence_range": [0.268, 0.999], "mean_applied_max_speed": 40.00, "true_class_max_speed": 40.00},
+      {"ground_truth": "PEDESTRIAN", "runtime_label": "UNKNOWN", "samples": 197, "unsafe_selections": 0, "fallback_samples": 197, "class_closure_samples": 0, "confidence_range": [0.000, 0.000], "mean_applied_max_speed": 40.00, "true_class_max_speed": 2.50},
+      {"ground_truth": "PEDESTRIAN", "runtime_label": "PEDESTRIAN", "samples": 381, "unsafe_selections": 0, "fallback_samples": 105, "class_closure_samples": 276, "confidence_range": [0.253, 1.000], "mean_applied_max_speed": 40.00, "true_class_max_speed": 2.50},
+      {"ground_truth": "BIKE", "runtime_label": "UNKNOWN", "samples": 8, "unsafe_selections": 0, "fallback_samples": 8, "class_closure_samples": 0, "confidence_range": [0.000, 0.000], "mean_applied_max_speed": 40.00, "true_class_max_speed": 12.00},
+      {"ground_truth": "BIKE", "runtime_label": "PEDESTRIAN", "samples": 28, "unsafe_selections": 0, "fallback_samples": 14, "class_closure_samples": 14, "confidence_range": [0.280, 0.926], "mean_applied_max_speed": 40.00, "true_class_max_speed": 12.00},
+      {"ground_truth": "BIKE", "runtime_label": "BIKE", "samples": 277, "unsafe_selections": 0, "fallback_samples": 7, "class_closure_samples": 267, "confidence_range": [0.348, 1.000], "mean_applied_max_speed": 13.01, "true_class_max_speed": 12.00},
+      {"ground_truth": "VEHICLE", "runtime_label": "UNKNOWN", "samples": 382, "unsafe_selections": 0, "fallback_samples": 382, "class_closure_samples": 0, "confidence_range": [0.000, 0.000], "mean_applied_max_speed": 40.00, "true_class_max_speed": 40.00},
+      {"ground_truth": "VEHICLE", "runtime_label": "PEDESTRIAN", "samples": 306, "unsafe_selections": 0, "fallback_samples": 0, "class_closure_samples": 306, "confidence_range": [0.640, 1.000], "mean_applied_max_speed": 40.00, "true_class_max_speed": 40.00},
+      {"ground_truth": "VEHICLE", "runtime_label": "VEHICLE", "samples": 301, "unsafe_selections": 0, "fallback_samples": 40, "class_closure_samples": 261, "confidence_range": [0.252, 1.000], "mean_applied_max_speed": 40.00, "true_class_max_speed": 40.00}
+    ],
+    "total_unsafe_selections": 0
+  },
+  "part5_planner_visibility": {
+    "max_influence_radius_m": 0.55,
+    "costmap_resolution_m": 0.05,
+    "window_cells_when_saturated": 529,
+    "profiles": [
+      {"profile": "A_global", "max_speed": 0.80, "max_acceleration": 0.50, "r_det_at_0.5s_m": 0.0625, "r_det_at_1.0s_m": 0.2500, "r_det_at_4.0s_m": 2.5600, "saturates_window_at_total_time_s": 1.49, "cells_at_0.5s_zero_sigma": 5},
+      {"profile": "PEDESTRIAN", "max_speed": 2.50, "max_acceleration": 2.50, "r_det_at_0.5s_m": 0.3125, "r_det_at_1.0s_m": 1.2500, "r_det_at_4.0s_m": 8.7500, "saturates_window_at_total_time_s": 0.67, "cells_at_0.5s_zero_sigma": 121},
+      {"profile": "BIKE", "max_speed": 12.00, "max_acceleration": 7.00, "r_det_at_0.5s_m": 0.8750, "r_det_at_1.0s_m": 3.5000, "r_det_at_4.0s_m": 37.7143, "saturates_window_at_total_time_s": 0.40, "cells_at_0.5s_zero_sigma": 529},
+      {"profile": "VEHICLE", "max_speed": 40.00, "max_acceleration": 10.00, "r_det_at_0.5s_m": 1.2500, "r_det_at_1.0s_m": 5.0000, "r_det_at_4.0s_m": 80.0000, "saturates_window_at_total_time_s": 0.34, "cells_at_0.5s_zero_sigma": 529},
+      {"profile": "FALLBACK_derived", "max_speed": 40.00, "max_acceleration": 10.00, "r_det_at_0.5s_m": 1.2500, "r_det_at_1.0s_m": 5.0000, "r_det_at_4.0s_m": 80.0000, "saturates_window_at_total_time_s": 0.34, "cells_at_0.5s_zero_sigma": 529}
+    ]
+  }
+}

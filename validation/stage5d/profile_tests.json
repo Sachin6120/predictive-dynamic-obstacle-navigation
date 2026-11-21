@@ -1,0 +1,12 @@
+{
+  "monotonicity": {"radius_trials": 9216, "radius_violations": 0, "worst_decrease_m": 0, "region_trials": 320, "region_violations": 0},
+  "selection_at_defaults": {"fallback": [40.00, 10.00, 0.00], "pedestrian_applied": [40.00, 10.00, 0.00], "bike_applied": [12.00, 7.00, 0.00], "vehicle_applied": [40.00, 10.00, 0.00], "pedestrian_buys_reduction": false, "bike_horizons_tighter": 8},
+  "fallback_dominance": {"random_tables": 20000, "checks": 140000, "violations": 0},
+  "uncertainty_invariant": {"cases": 7, "region_shrinks": 0},
+  "transitions": {"sequences": 2000, "steps": 80000, "exceeded_fallback": 0, "illegal_shrinks": 0},
+  "observable_breach_per_profile": {"profiles": 3, "flagged": 3, "caps_raised": 3, "global_breaches_at_0.967": true, "bike_breaches_at_0.967": false},
+  "malformed_config": {"cases": 9, "rejected": 8, "all_substitutions_dominate_vehicle": true},
+  "through_production_node": {"class_aware_default": false, "off_path_bit_differences": 0, "bike_max_speed": 12.00, "pedestrian_applied_max_speed": 40.00, "unknown_max_speed": 40.00, "immature_fell_back": true, "bike_samples_smaller_than_fallback": 6, "cv_bit_differences": 0},
+  "failures": 0,
+  "pass": true
+}

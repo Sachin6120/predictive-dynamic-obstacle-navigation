@@ -263,6 +263,182 @@ lidar_obstacle_tracker:
     reachability_enforce_observed_speed: true
     reachability_max_speed_tolerance: 1.0e-6   # m/s
 
+    # --- Stage-5D: class-aware motion-capability profiles ------------------
+    # Replaces the ONE global (max_acceleration, max_speed, base_safety_margin)
+    # triple above with a per-class table plus the policy deciding which entry
+    # a track is entitled to. The reachability equation, the Stage-5C.1
+    # validity contract and the published region are unchanged functions of
+    # whichever profile is selected. Full derivation, the measured classifier
+    # evidence behind every default, and the proofs of the six invariants are
+    # in capability_profiles.hpp; the numbers are tabulated with citations in
+    # validation/stage5d/STAGE5D_README.md.
+    #
+    # reachability_class_aware: FALSE IS THE PRODUCTION SETTING for this
+    #   milestone. False returns the single global configuration verbatim, so
+    #   every published number is bit-identical to Stage-5C.1. Production
+    #   additionally keeps reachability_enabled false and the costmap's
+    #   prediction_mode cv_covariance.
+    #
+    # THE PROFILES BELOW ARE CONSERVATIVE CONFIGURED CAPABILITY PRIORS, NOT
+    # THE SIMULATION ENVELOPE, and the distinction is load-bearing. Three
+    # kinds of number must be kept apart here, and only the third is
+    # independent evidence:
+    #   (a) SIMULATION-QUALIFIED OPERATING ENVELOPE -- what the Gazebo actors
+    #       were commanded and observed to do (filtered speed never above
+    #       0.967 m/s, ramped 0.5 m/s^2). Tabulated separately in section 3.A
+    #       of STAGE5D_README.md. NOT used as a profile default.
+    #   (b) CONFIGURED CONSERVATIVE CAPABILITY PRIOR -- a declared premise
+    #       chosen to be hard to exceed, asserted rather than proved. The
+    #       max_speed column below is this, and nothing stronger.
+    #   (c) INDEPENDENTLY SOURCED PHYSICAL EVIDENCE -- an external measurement
+    #       this repository did not produce. The max_acceleration column below
+    #       is this, with citations.
+    # max_speed and
+    # max_acceleration are premises about an obstacle's FUTURE capability
+    # (see the Stage-5C.1 note above), so they must cover what the class CAN
+    # do. Every Stage-5B actor was commanded at 0.25/0.50/0.75 m/s whatever
+    # its class and the filtered speed never exceeded 0.967 m/s, so a
+    # simulation-fitted table would be CLASS-INDEPENDENT -- it would carry no
+    # semantic information at all -- and would under-bound a real bicycle by a
+    # factor of 15 and a car by 50. The simulation-qualified envelope is
+    # tabulated separately in STAGE5D_README.md section 3, and every Stage-5D
+    # result states which of the two domains it belongs to.
+    #
+    #   max_speed 2.5 / 12.0 / 40.0 m/s are CONSERVATIVE CONFIGURED
+    #     CAPABILITY PRIORS ALIGNED WITH THE CLASSIFIER'S PER-CLASS SPEED
+    #     GATES -- the SHIPPED Stage-5B per-class speed vetoes
+    #     (classification_{pedestrian,bike,vehicle*}_speed_max above). THEY
+    #     ARE NOT MEASURED VALUES AND NOT LITERATURE-PROVEN PHYSICAL MAXIMA:
+    #     no evidence inside or outside this repository establishes them as
+    #     the fastest a member of each class can travel, and Stage-5D does not
+    #     claim it. They are kept for two reasons -- they are conservative at
+    #     the geometry this system operates in, and aligning them with the
+    #     gate is self-consistency rather than a new constant: the
+    #     classifier already REFUSES a PEDESTRIAN label to anything observed
+    #     above 2.5 m/s, so a held PEDESTRIAN label already asserts |v| <= 2.5,
+    #     and premise (P2) with max_speed 2.5 asserts the same thing over the
+    #     prediction window. One number, not two that can disagree -- and the
+    #     classifier's veto and the observable-contradiction predicate
+    #     therefore fire at the same speed.
+    #   max_acceleration 2.5 / 7.0 / 10.0 m/s^2 are MEASURED EXTERNAL values,
+    #     because this repository holds no per-class acceleration evidence.
+    #     The bound is isotropic -- it covers braking, side-stepping and
+    #     turning alike -- so the governing figure is the largest magnitude
+    #     the class can produce in ANY direction, which for the wheeled
+    #     classes is braking, not propulsion.
+    #       PEDESTRIAN 2.5: measured crossing accelerations average 0.68 with
+    #         a maximum of 1.44 m/s^2 (arXiv:1610.00029), so this is 1.7x the
+    #         measured maximum and about 0.25 g of foot traction. DECLARED
+    #         RESIDUAL: an athletic standing start or side-step is traction
+    #         limited nearer 0.5 g and can exceed this transiently. That is an
+    #         out-of-profile case, measured and reported by the Stage-5D
+    #         out-of-domain probe, in the same spirit as the 5-9.5 m/s^2
+    #         Gazebo step-velocity residual documented above.
+    #       BIKE 7.0: bicycle braking is pitch-over limited at a calculated
+    #         5.4-7.0 m/s^2, and measured emergency front-or-both-brake
+    #         decelerations are 0.40-0.71 g = 3.9-7.0 m/s^2 (SAE 2020-01-0876).
+    #       VEHICLE 10.0: measured ABS decelerations for 20 late-model vehicles
+    #         on dry asphalt and concrete average 0.871-1.081 g =
+    #         8.5-10.6 m/s^2 (SAE 2023-01-0616).
+    #   margin 0.0 m for every class, inherited deliberately from
+    #     base_safety_margin: 0.0 above so the published region measures the
+    #     motion model alone and the global-vs-class-aware comparison is not
+    #     confounded by a free additive term. The field is per-class and
+    #     configurable; STAGE5D_README.md tabulates each actor's scan-plane
+    #     body half-extent as the value a deployment should set.
+    #
+    # UNKNOWN HAS NO PROFILE PARAMETERS, BY DESIGN. Its profile is DERIVED as
+    # the envelope over reachability_ambiguity_unknown, so it dominates every
+    # class it must cover by identity instead of by a chosen pair of numbers
+    # that could drift out of step. 382 of the 1,137 UNKNOWN detections in the
+    # Stage-5B recordings were ground-truth VEHICLE -- an UNKNOWN object in
+    # that dataset demonstrably IS a vehicle about a third of the time -- so
+    # reusing the old global 0.8 m/s for UNKNOWN would have under-bounded it
+    # by a factor of 50. Section 4 of the Stage-5D brief forbids exactly that.
+    reachability_class_aware: false
+    reachability_profile_pedestrian_max_speed: 2.5          # m/s
+    reachability_profile_pedestrian_max_acceleration: 2.5   # m/s^2
+    reachability_profile_pedestrian_margin: 0.0             # m
+    reachability_profile_bike_max_speed: 12.0               # m/s
+    reachability_profile_bike_max_acceleration: 7.0         # m/s^2
+    reachability_profile_bike_margin: 0.0                   # m
+    reachability_profile_vehicle_max_speed: 40.0            # m/s
+    reachability_profile_vehicle_max_acceleration: 10.0     # m/s^2
+    reachability_profile_vehicle_margin: 0.0                # m
+
+    # AMBIGUITY SETS -- what a LABEL is worth, as distinct from what a CLASS
+    # can do. The profile table above is physics and is the same whatever
+    # classifier produced the word; these sets are a property of THIS
+    # classifier and THIS sensor, measured at this operating point. Keeping
+    # them apart is the point: conflating them in one number is what makes a
+    # misclassification invalidate the bound instead of being survived by it.
+    #
+    # For a predicted label c the applied profile is the envelope over every
+    # class a c-labelled object might really be, so the bound stays valid for
+    # whichever of them it actually is. The label is forced into its own set
+    # in code, so omitting it here cannot weaken that.
+    #
+    # The defaults are the measured composition of each predicted label over
+    # the retained Stage-5B recordings (2,547 rows, 57 tracks):
+    #   predicted PEDESTRIAN n=715 : PEDESTRIAN 381, VEHICLE 306, BIKE 28
+    #   predicted BIKE       n=277 : BIKE 277 -- precision 1.000 per detection
+    #                                AND per track, 0 false BIKE predictions
+    #   predicted VEHICLE    n=418 : VEHICLE 301, UNKNOWN(planter) 117
+    #   predicted UNKNOWN    n=1137: UNKNOWN 550, VEHICLE 382, PEDESTRIAN 197,
+    #                                BIKE 8
+    #
+    # WHY A CONFIDENCE GATE CANNOT REPLACE THESE. The VEHICLE -> PEDESTRIAN
+    # confusion runs at min confidence 0.640 and MEDIAN 1.000, while correct
+    # PEDESTRIAN -> PEDESTRIAN runs at min 0.253 and median 0.856: the
+    # misclassification is reported MORE confidently than the correct answer,
+    # and its minimum sits above the correct answer's median. No threshold can
+    # separate them. The mechanism is physical -- a 1.0 x 0.5 m compact body
+    # viewed end-on returns a 0.42-0.45 m long, 0.02-0.03 m thick, fully
+    # filled slice in one horizontal plane, which is a pedestrian-sized
+    # return -- and is the same family of 2D-LiDAR observability limit already
+    # documented for the six head-on bicycle scenarios.
+    #
+    # CONSEQUENCE, STATED PLAINLY: because A(PEDESTRIAN) contains VEHICLE, a
+    # PEDESTRIAN label buys NO reduction under these defaults. BIKE is the one
+    # label whose measured precision earns a profile weaker than the fallback.
+    # That is a measurement of this classifier, reported rather than
+    # engineered around. A better classifier earns narrower sets -- and must
+    # then re-measure them to claim them.
+    #
+    # An UNRECOGNISED class name here is rejected CONSERVATIVELY: the whole
+    # set falls back to all four classes and an error is logged, because
+    # narrowing a set weakens the profile and a configuration the node cannot
+    # read must never buy a smaller reachable set.
+    reachability_ambiguity_unknown: ["unknown", "pedestrian", "bike", "vehicle"]
+    reachability_ambiguity_pedestrian: ["pedestrian", "bike", "vehicle"]
+    reachability_ambiguity_bike: ["bike"]
+    reachability_ambiguity_vehicle: ["vehicle", "unknown"]
+
+    # reachability_profile_min_confidence 0.60: the measured FLOOR of the
+    #   VEHICLE -> PEDESTRIAN confusion. Below it no label is trusted at all;
+    #   above it the ambiguity sets, not the confidence, are what keep the
+    #   selection conservative. The gate does the job it can do -- rejecting
+    #   weakly-held labels -- and is not asked to do the job it provably
+    #   cannot.
+    # reachability_profile_min_observations 5: the earliest observation at
+    #   which the Stage-5B stabiliser can hold a label built from two
+    #   consecutive confident scans (instant labels begin at observation 3;
+    #   two scans at confidence 1.0 cross enter_threshold 0.45 at 0.400 then
+    #   0.640), plus one, so a label must have survived a further scan.
+    #   Measured first-label observation over the Stage-5B tracks: min 4,
+    #   median 16 -- i.e. the median track is UNKNOWN, hence on the fallback,
+    #   for its first ~3.2 s.
+    # reachability_profile_transition_hold_scans 3: 0.6 s at the 5 Hz LDS, one
+    #   full classification_smoothing EWMA window (1/0.40 = 2.5 scans), so a
+    #   SHRINK cannot be published until the new label has outlived the
+    #   evidence window that produced the old one. 115 stable-label
+    #   transitions occurred over 36 of 57 Stage-5B tracks (63%), including
+    #   PEDESTRIAN -> BIKE, which under the defaults above is the one shrinking
+    #   direction -- so this is a frequent event, not a hypothetical.
+    reachability_profile_min_confidence: 0.60
+    reachability_profile_min_observations: 5
+    reachability_profile_transition_hold_scans: 3
+
     # Gated nearest-neighbour association + track lifecycle.
     association_gate: 0.6
     track_timeout: 1.0
