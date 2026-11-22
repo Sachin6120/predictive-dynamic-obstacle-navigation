@@ -565,7 +565,7 @@ the soundness reference.
 
 ## 9. What this project demonstrates
 
-*(Fraunhofer-aligned summary. Simulation only — no real-world validation is
+*(Application-ready project summary. Simulation only — no real-world validation is
 claimed.)*
 
 This project builds and evaluates a complete predictive navigation stack for a
