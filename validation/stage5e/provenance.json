@@ -1,0 +1,165 @@
+{
+ "stage": "Stage-5E -- FINAL PREDICTOR ARCHITECTURE DECISION",
+ "note": "Stage-5E is FINAL COMPARATIVE VALIDATION. NO algorithm, parameter, policy, message, launch file, trial runner or production configuration was modified. Every file below is byte-identical to its blob at HEAD, verified by sha256 against `git show`. The only new files are evidence and analysis under validation/stage5e/, and nothing there is installed, referenced by a launch default or reachable from a production configuration.",
+ "head": "09e96a54d445adf16b7ad00a8f8ae51b01959475",
+ "origin_main": "09e96a54d445adf16b7ad00a8f8ae51b01959475",
+ "branch": "main",
+ "working_tree_at_capture": "?? validation/stage5e/",
+ "production_configuration_unchanged": {
+  "nav2_params": "src/predictive_nav_bringup/config/production_nav2_params.yaml",
+  "tracker_params": "src/predictive_nav_tracking/config/production_tracker_params.yaml",
+  "prediction_mode": "cv_covariance",
+  "reachability_enabled": false,
+  "changed_by_stage5e": false
+ },
+ "algorithm_files_unchanged_at_head": {
+  "src/predictive_nav_tracking/src/lidar_obstacle_tracker_node.cpp": {
+   "at_head": "171943b43bb246103f56b690c89f46ce0f218b7d1b36854a0bdeafe2fb65f902",
+   "now": "171943b43bb246103f56b690c89f46ce0f218b7d1b36854a0bdeafe2fb65f902",
+   "unchanged": true
+  },
+  "src/predictive_nav_tracking/include/predictive_nav_tracking/reachability.hpp": {
+   "at_head": "fa87d73f3648da0eede060da4cdf7ff4811cdfa8932fb248fc51a0269033b582",
+   "now": "fa87d73f3648da0eede060da4cdf7ff4811cdfa8932fb248fc51a0269033b582",
+   "unchanged": true
+  },
+  "src/predictive_nav_tracking/include/predictive_nav_tracking/capability_profiles.hpp": {
+   "at_head": "d0937eabf1ad756952069679408d10365bc17a2f104e1adb38099ff7efe85d7f",
+   "now": "d0937eabf1ad756952069679408d10365bc17a2f104e1adb38099ff7efe85d7f",
+   "unchanged": true
+  },
+  "src/predictive_nav_tracking/include/predictive_nav_tracking/obstacle_classification.hpp": {
+   "at_head": "91739c14babdf2231eb157c69ebbd8f86ac9a9a980d6db9787bb747eb265f827",
+   "now": "91739c14babdf2231eb157c69ebbd8f86ac9a9a980d6db9787bb747eb265f827",
+   "unchanged": true
+  },
+  "src/predictive_nav_tracking/include/predictive_nav_tracking/kalman_filter.hpp": {
+   "at_head": "a7588026ebba8bad83c45e0b9cc4d5bf8651d6724d19a3d0b65d84ff78e214db",
+   "now": "a7588026ebba8bad83c45e0b9cc4d5bf8651d6724d19a3d0b65d84ff78e214db",
+   "unchanged": true
+  },
+  "src/predictive_nav_tracking/config/tracker_params.yaml": {
+   "at_head": "e3de8b7f0f72f6d74572a243bcf26ada56ed6d209f8ef83adedbeea01645f4c7",
+   "now": "e3de8b7f0f72f6d74572a243bcf26ada56ed6d209f8ef83adedbeea01645f4c7",
+   "unchanged": true
+  },
+  "src/predictive_nav_tracking/config/production_tracker_params.yaml": {
+   "at_head": "a9becad73d57c3cd8e7407fdfdf3a1170226c78243ab839a80022dd7df76ccbb",
+   "now": "a9becad73d57c3cd8e7407fdfdf3a1170226c78243ab839a80022dd7df76ccbb",
+   "unchanged": true
+  },
+  "src/predictive_nav_tracking/config/stage5d_global_tracker.yaml": {
+   "at_head": "685823b96405899364242018e078e2e4bce3051a1c55936c59be0a9537e04c46",
+   "now": "685823b96405899364242018e078e2e4bce3051a1c55936c59be0a9537e04c46",
+   "unchanged": true
+  },
+  "src/predictive_nav_tracking/config/stage5d_classaware_tracker.yaml": {
+   "at_head": "66c01d67b8741b06ba6095b359c14e8e57a2356faae202e8be1d5b839ea94ffb",
+   "now": "66c01d67b8741b06ba6095b359c14e8e57a2356faae202e8be1d5b839ea94ffb",
+   "unchanged": true
+  },
+  "src/predictive_nav_costmap/src/predicted_obstacle_layer.cpp": {
+   "at_head": "7a962e0b8ab464403817f92acdb684efc472b8302b0cc3401fb82ea4b90fcf16",
+   "now": "7a962e0b8ab464403817f92acdb684efc472b8302b0cc3401fb82ea4b90fcf16",
+   "unchanged": true
+  },
+  "src/predictive_nav_costmap/include/predictive_nav_costmap/predicted_obstacle_layer.hpp": {
+   "at_head": "c19a2b3c5e6d92682ab331cc04ea5eaad524c30951e242c6641748d3f2d7e733",
+   "now": "c19a2b3c5e6d92682ab331cc04ea5eaad524c30951e242c6641748d3f2d7e733",
+   "unchanged": true
+  },
+  "src/predictive_nav_bringup/config/nav2_stage4f_params.yaml": {
+   "at_head": "471a5b38b874a01d11db56b5d0701c9f6d2e51689d5d929f047e7493fbc1b4e5",
+   "now": "471a5b38b874a01d11db56b5d0701c9f6d2e51689d5d929f047e7493fbc1b4e5",
+   "unchanged": true
+  },
+  "src/predictive_nav_bringup/config/production_nav2_params.yaml": {
+   "at_head": "697b136367eda055ef2c06a3789f6da60b63b0c5362b4fa89e80b1a2966d8be5",
+   "now": "697b136367eda055ef2c06a3789f6da60b63b0c5362b4fa89e80b1a2966d8be5",
+   "unchanged": true
+  },
+  "src/predictive_nav_bringup/launch/stage4f_bringup.launch.py": {
+   "at_head": "395703325bd99e229be017a76283e772fb6087e7d2bb675229ab3e07a7302f3c",
+   "now": "395703325bd99e229be017a76283e772fb6087e7d2bb675229ab3e07a7302f3c",
+   "unchanged": true
+  },
+  "src/predictive_nav_bringup/scripts/stage4f_trial.py": {
+   "at_head": "3805563be2e2dcc5d6c559788a550e2edeea121c9505fe76a0f0258c78ca50e0",
+   "now": "3805563be2e2dcc5d6c559788a550e2edeea121c9505fe76a0f0258c78ca50e0",
+   "unchanged": true
+  },
+  "src/predictive_nav_bringup/scripts/run_stage4f_bench.py": {
+   "at_head": "4efa203bf875388f5451802a578a024f03d09d5d3d418d411ae6ed438fd239dd",
+   "now": "4efa203bf875388f5451802a578a024f03d09d5d3d418d411ae6ed438fd239dd",
+   "unchanged": true
+  },
+  "src/predictive_nav_bringup/scripts/stage5d/run_nav.py": {
+   "at_head": "264c891164a52fdca209cd749bfb4b02effba8cbd845440b58d198beb449fa99",
+   "now": "264c891164a52fdca209cd749bfb4b02effba8cbd845440b58d198beb449fa99",
+   "unchanged": true
+  },
+  "src/predictive_nav_bringup/scripts/stage4g2/scenarios.json": {
+   "at_head": "42b4fdae1329ae7101b377a5f2e452f664310cc6d578a7b1de300c3bfbb391a8",
+   "now": "42b4fdae1329ae7101b377a5f2e452f664310cc6d578a7b1de300c3bfbb391a8",
+   "unchanged": true
+  },
+  "src/predictive_nav_msgs/msg/ReachabilityPrediction.msg": {
+   "at_head": "0390fb48e9f3047ead5786df57d8ca0b61dc74d669fb45fad0bc5c4a1142c519",
+   "now": "0390fb48e9f3047ead5786df57d8ca0b61dc74d669fb45fad0bc5c4a1142c519",
+   "unchanged": true
+  }
+ },
+ "all_algorithm_files_unchanged": true,
+ "decision_rule": {
+  "file": "validation/stage5e/DECISION_RULE.md",
+  "sha256": "cfff14a96218264f0d2ca2929db173505c791a522228ecd13a12948fd8c483d6",
+  "fixed_before_aggregate": true,
+  "fixed_at_trial": "4 of 135"
+ },
+ "campaign": {
+  "runner": "validation/stage5e/run_nav5.py",
+  "invocation": "run_nav5.py --out <scratch>/nav5 --trials 5 --arms cv,global,classaware --domain-base 80",
+  "arms": 3,
+  "conditions": 9,
+  "repetitions": 5,
+  "trials_launched": 135,
+  "wall_time_s": 7187,
+  "trials_scored": 132,
+  "infrastructure_faults": 3,
+  "infrastructure_fault_trials": {
+   "veh_cross_global_01": "Gazebo never served world names; ros_gz_sim create died exit 255; obstacle never spawned; odom TF never published",
+   "ped_corner_global_03": "Gazebo never served world names; ros_gz_sim create died exit 255; obstacle never spawned; odom TF never published",
+   "ped_corner_classaware_05": "Nav2 map_server ImageMagick SIGSEGV during bringup (component container exit -6)"
+  },
+  "exclusion_convention": "nav_status null -> trial invalid -> excluded from scoring, per the convention used from Stage-4F onward. All three exclusions are pre-navigation bringup faults with no predictor involvement.",
+  "arm_integrity": "Every scored trial read back its own layer mode, a 0.55 m influence window and the expected class-aware banner. The only three integrity mismatches in the campaign are exactly the three excluded infrastructure-fault trials.",
+  "one_simulator_restart_per_trial": true,
+  "arms_interleaved_within_trial_index": true
+ },
+ "regression_tests": {
+  "functional_suites_run": 13,
+  "functional_failures": 0,
+  "suites": [
+   "stage4g2_lifecycle",
+   "stage4g3_deblend",
+   "stage4g4_reachability",
+   "stage5b1_compound",
+   "stage5b1_compound_integration",
+   "stage5b_classification",
+   "stage5b_tracker_integration",
+   "stage5c1_contract",
+   "stage5d_profiles",
+   "stage4g2_multi_layer",
+   "stage4g4_reach_layer",
+   "stage4g5_hybrid_layer",
+   "stage5c1_raster_fidelity"
+  ],
+  "lint_debt": {
+   "flake8": 14,
+   "pep257": 13,
+   "uncrustify": 8,
+   "note": "Pre-existing and unrelated to Stage-5E. Every failing lint case is in scripts/stage4g2, stage4g3, stage4g4 or an existing package source. No Stage-5E file is scanned by ament lint (validation/ is not inside a ROS package). Lint debt is separated from functional results and is not a functional failure."
+  },
+  "before_after": "The algorithm tree is byte-identical to origin/main (19/19 files verified above), so the pre-campaign and post-campaign trees are the same tree and one run characterises both. The hashes are the evidence."
+ }
+}

@@ -1,0 +1,168 @@
+{
+ "stage": "Stage-5E section 9 -- causal classification of every collision, timeout, major near miss and planner failure",
+ "taxonomy": [
+  "PREDICTION_FAILURE",
+  "COSTMAP_OVERCONSERVATIVE",
+  "COSTMAP_UNDERREPRESENTED",
+  "PLANNER_FIELD_COLLAPSE",
+  "TRACKING_FAILURE",
+  "CLASSIFICATION_LIMITATION",
+  "SENSOR_OBSERVABILITY",
+  "SIM_INFRASTRUCTURE",
+  "OTHER"
+ ],
+ "scoring_convention": {
+  "rule": "A trial whose nav_status is null never produced a navigation result and is marked an infrastructure fault, excluded from scoring and counted against no arm. This is the convention in force since Stage-4F; Stage-5E does not change it.",
+  "excluded_trials": 3,
+  "excluded_of": 135,
+  "excluded_fraction": 0.0222,
+  "excluded_by_arm": {
+   "cv": 0,
+   "global": 2,
+   "classaware": 1
+  },
+  "documented_explicitly": true
+ },
+ "events": [
+  {
+   "id": "E1",
+   "trials": [
+    "veh_cross_global_01",
+    "ped_corner_global_03"
+   ],
+   "arm": "global",
+   "count": 2,
+   "event": "INFRASTRUCTURE_FAULT",
+   "class": "SIM_INFRASTRUCTURE",
+   "counted_against_arm": false,
+   "evidence": "ros_gz_sim create: \"Timed out when getting world names\", process died exit code 255; the obstacle was never spawned; local_costmap never obtained base_link->odom (\"Invalid frame ID odom\"). The Gazebo server never served the world. No navigation was attempted.",
+   "predictor_involvement": "none -- the fault precedes any prediction"
+  },
+  {
+   "id": "E2",
+   "trials": [
+    "ped_corner_classaware_05"
+   ],
+   "arm": "classaware",
+   "count": 1,
+   "event": "INFRASTRUCTURE_FAULT",
+   "class": "SIM_INFRASTRUCTURE",
+   "counted_against_arm": false,
+   "evidence": "Nav2 component container aborted during bringup: \"Magick: abort due to signal 11 (SIGSEGV)\" in map_server image loading, container exit code -6. The runner printed \"INFRASTRUCTURE FAULT: Nav2 bringup failed; trial invalid\".",
+   "predictor_involvement": "none -- the fault precedes any prediction"
+  },
+  {
+   "id": "E3",
+   "trials": [
+    "veh_longitudinal_cv_03"
+   ],
+   "arm": "cv",
+   "count": 1,
+   "event": "COLLISION (min clearance -0.1284 m)",
+   "class": "PLANNER_FIELD_COLLAPSE",
+   "counted_against_arm": true,
+   "evidence": "Head-on vehicle at 0.471 m/s with a 0.25 m lateral offset. The robot reached x=-0.910, achieved only 0.4335 m of lateral offset -- the smallest of all 15 trials in this condition -- and then stopped. From t=7.2 s to t>=10 s its pose is frozen while the controller continues to request 0.18-0.20 m/s (v_nav>0, v_out=0 for 3.60 s): the Nav2 collision monitor was zeroing the command. The scripted actor, which has no avoidance and no collision response, continued at a constant 0.471 m/s and traversed the stationary robot: separation fell 0.455 -> 0.321 m with the robot motionless, clearance crossed zero at t=7.95 s and bottomed at -0.128 m at t=8.35 s, then recovered as the vehicle passed.",
+   "ruled_out": {
+    "TRACKING_FAILURE": "The trial does show 13 simultaneous tracks, unique in the campaign (every other veh_longitudinal trial holds exactly 1). But the proliferation begins at t=8.50 s, AFTER contact at t=8.35 s, and n_tracks=1 throughout the approach. The fragmentation is a consequence of a vehicle body at point-blank range, not a cause. The elevated per-trial tracking error (0.651 m vs 0.44 m in siblings) is likewise post-contact.",
+    "PREDICTION_FAILURE": "CV displacement error at the decisive horizons is ordinary for the condition (0.66 m at 0.5 s, within the spread of the other four CV trials), and the predicted field was not what stopped the robot -- the collision monitor was.",
+    "SIM_INFRASTRUCTURE": "The simulator ran correctly; the trial produced a complete, scored navigation result (SUCCEEDED)."
+   },
+   "contributing_factor": "The obstacle actors are scripted one-way bodies with no avoidance and no collision response. Once the robot is held stationary inside the actor path, contact is geometric. This is a property of the harness used by every stage since 4F and applies equally to all three arms; it is reported, not used to excuse the event. The event IS counted against CV.",
+   "arm_specificity": "NOT predictor-specific. The same collision-monitor hold occurs in 3 of 5 class-aware trials in the same condition (0.30 s, 0.20 s, 0.10 s of hold, producing 0.069 m, 0.131 m and 0.205 m clearance) and in 0 of 5 global trials. Across all 15 trials of the condition the correlation between hold duration and minimum clearance is r = -0.784, and every trial with a nonzero hold occupies the bottom of the clearance ranking. The mechanism is a planner/monitor interaction in a tight head-on corridor, sampled on the wrong side of the line once by CV."
+  },
+  {
+   "id": "E4",
+   "trials": [
+    "veh_longitudinal_classaware_01",
+    "veh_longitudinal_classaware_03"
+   ],
+   "arm": "classaware",
+   "count": 2,
+   "event": "NEAR MISS (0.0687 m, 0.1306 m)",
+   "class": "PLANNER_FIELD_COLLAPSE",
+   "counted_against_arm": true,
+   "evidence": "Same mechanism as E3 short of contact: collision-monitor hold of 0.30 s and 0.20 s respectively while the head-on vehicle closed.",
+   "note": "0.0687 m is the worst clearance of any non-colliding trial in the campaign, in the arm with the largest predicted region. A larger conservative set did not buy clearance here."
+  },
+  {
+   "id": "E5",
+   "trials": [
+    "ped_longitudinal_cv_01",
+    "ped_longitudinal_cv_02",
+    "ped_longitudinal_cv_03",
+    "ped_longitudinal_cv_04",
+    "ped_longitudinal_cv_05",
+    "ped_longitudinal_global_01",
+    "ped_longitudinal_global_02",
+    "ped_longitudinal_global_03",
+    "ped_longitudinal_global_04",
+    "ped_longitudinal_global_05",
+    "ped_longitudinal_classaware_01",
+    "ped_longitudinal_classaware_02",
+    "ped_longitudinal_classaware_03",
+    "ped_longitudinal_classaware_04",
+    "ped_longitudinal_classaware_05"
+   ],
+   "arm": "all three",
+   "count": 15,
+   "event": "NEAR MISS (<0.20 m): 15 of 15 trials of the condition, in every arm",
+   "class": "OTHER -- condition-inherent geometry",
+   "counted_against_arm": false,
+   "evidence": "Head-on pedestrian at 0.46 m/s with a 0.25 m lateral offset in the benchmark corridor. In every trial the robot keeps moving at 0.46-0.50 m/s, executes a lateral detour to 0.33-0.39 m and passes alongside. Minimum clearance is 0.099-0.190 m with zero collision-monitor interventions, zero planner failures and SUCCEEDED in all 15. Mean clearance is 0.137 m (CV), 0.136 m (global), 0.121 m (class-aware) -- a spread of 0.016 m, inside the two-sigma band.",
+   "why_not_counted": "It is identical in all three arms, so it discriminates nothing and is not attributable to any predictor. It is a property of the 0.20 m near-miss yardstick applied to a head-on pass whose geometry fixes the clearance near 0.13 m. It is reported as a condition-level limitation, not as an arm failure.",
+   "contestable_reading": "A reader could instead class this COSTMAP_UNDERREPRESENTED, since the predicted region carried little cost in the pass corridor (pred_peak_ahead 0 for CV, 70 for global at the pass). That reading is recorded here rather than suppressed; it does not change any arm comparison, because the three arms are inside the noise band on this condition."
+  },
+  {
+   "id": "E6",
+   "trials": [
+    "ped_corner (global arm, 4 scored trials)"
+   ],
+   "arm": "global",
+   "count": 66,
+   "event": "REACHABILITY CONTRACT BREACH, 66 samples, worst filtered speed 1.098 m/s vs the 0.8 m/s global cap",
+   "class": "SENSOR_OBSERVABILITY",
+   "counted_against_arm": false,
+   "evidence": "All 66 breaches are in ped_corner and nowhere else; the other eight conditions record zero. Ground-truth actor speed never exceeds 0.655 m/s anywhere in the campaign, so no obstacle ever actually approached the 0.8 m/s cap. At corner emergence the visible extent of the body changes rapidly, the cluster centroid jumps and the filtered speed overshoots to 1.098-1.240 m/s (the same overshoot appears in the CV and class-aware arms, which simply have no cap to breach: CV has no capability premise at all, and the class-aware PEDESTRIAN cap is 2.5 m/s).",
+   "repaired": true,
+   "repair_evidence": "reachability_enforce_observed_speed is true. effectiveMaxSpeed() raises the cap to max(max_speed, observed_speed) on a contradicted premise -- the region is enlarged, never dropped -- publishes contract_status=kObservedSpeedExceedsCap, and logs a throttled WARN naming the track, the observed speed, the configured cap and the effective cap. Stage-5C.1 gate behaviour, confirmed live.",
+   "gate_treatment": "DECISION_RULE G5: a contract breach that the Stage-5C.1 observable response already repairs is reported, not counted against the arm."
+  }
+ ],
+ "totals": {
+  "collisions": {
+   "cv": 1,
+   "global": 0,
+   "classaware": 0
+  },
+  "timeouts": {
+   "cv": 0,
+   "global": 0,
+   "classaware": 0
+  },
+  "planner_or_controller_failures": {
+   "cv": 0,
+   "global": 0,
+   "classaware": 0
+  },
+  "trials_with_no_global_plan": {
+   "cv": 0,
+   "global": 0,
+   "classaware": 0
+  },
+  "near_misses": {
+   "cv": 5,
+   "global": 5,
+   "classaware": 7
+  },
+  "near_misses_excluding_condition_inherent_ped_longitudinal": {
+   "cv": 0,
+   "global": 0,
+   "classaware": 2
+  },
+  "infrastructure_faults_excluded": {
+   "cv": 0,
+   "global": 2,
+   "classaware": 1
+  }
+ }
+}

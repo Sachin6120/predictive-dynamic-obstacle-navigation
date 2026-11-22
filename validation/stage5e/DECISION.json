@@ -1,0 +1,209 @@
+{
+ "stage": "Stage-5E -- FINAL PREDICTOR ARCHITECTURE DECISION",
+ "repository": "~/predictive_nav_ws",
+ "branch": "main",
+ "head": "09e96a54d445adf16b7ad00a8f8ae51b01959475",
+ "simulation_only": true,
+ "real_world_validation_claimed": false,
+ "decision_rule": {
+  "file": "validation/stage5e/DECISION_RULE.md",
+  "sha256": "cfff14a96218264f0d2ca2929db173505c791a522228ecd13a12948fd8c483d6",
+  "fixed_at_trial": "4 of 135",
+  "fixed_before_aggregate": true
+ },
+ "decision": "SHIP_CV",
+ "global_reachability_role": "DEPLOYED_SECONDARY",
+ "class_aware_reachability_role": "RESEARCH_ONLY",
+ "gates": {
+  "G1_reliability": {
+   "cv": "pass (45/45 success, 0 timeouts, 0 planner/controller failures, 1 collision)",
+   "global": "pass (43/43, 0 collisions)",
+   "classaware": "pass (44/44, 0 collisions)"
+  },
+  "G2_safety_behaviour": {
+   "global": "FAIL",
+   "classaware": "FAIL",
+   "reason": "Route 1 (clearance): pooled conflict-only gain over CV is +0.0073 m (global) and +0.0030 m (class-aware); the largest single-condition gain anywhere is +0.0971 m (global, veh_longitudinal), below the 0.10 m practical threshold, inside its 0.1896 m two-sigma band, and produced entirely by CV's one collision trial (+0.0125 m without it). Route 2 (removing a collision/near-miss class): 1 collision in 45 CV trials vs 0 in 43 global is one event, not a class -- the collision-monitor hold that produced it occurs in 1/5 CV and 3/5 class-aware trials of that condition and is not predictor-specific. Near misses are 5/5/7: global removes none, class-aware adds two."
+  },
+  "G3_planner_stability": {
+   "cv": "pass",
+   "global": "pass",
+   "classaware": "pass"
+  },
+  "G4_cost": {
+   "cv": "pass",
+   "global": "pass",
+   "classaware": "pass",
+   "note": "0 layer rate shortfalls and 0 costmap update failures in all three arms; layer mean 24.9-25.4 us against a 200000 us budget"
+  },
+  "G5_soundness": {
+   "cv": "pass",
+   "global": "pass (66 contract breaches, all observably repaired per Stage-5C.1)",
+   "classaware": "pass (capability containment 1.0, 0 breaches, 0 prof_fb_badconfig)"
+  }
+ },
+ "decision_basis": "DECISION_RULE section 4: the incumbent is not displaced by a tie. Every navigation metric, for every pair of arms, lies inside the two-sigma-of-the-difference band; the only differences that resolve are how much costmap each arm paints, which E1 classes as a cost until it buys an outcome, and it bought none. CV is additionally the only arm whose field retains graded structure through the first second (54 cells at 0.5 s, 260 at 1.0 s, vs saturation at 529 for global from 1.0 s and for class-aware from 0.5 s), which is the horizon an MPPI controller at 0.48 m/s acts on.",
+ "not_grounds": [
+  "the Stage-5D/5D.1 oracle arms (absent by design)",
+  "the Stage-5E section 12 historical expectation",
+  "the two conditions this campaign could not run (reversal/acceleration-change, multi-obstacle)"
+ ],
+ "campaign": {
+  "conditions": 9,
+  "arms": 3,
+  "repetitions": 5,
+  "launched": 135,
+  "excluded_infrastructure": 3,
+  "scored": 132,
+  "wall_time_s": 7187
+ },
+ "headline_numbers": {
+  "success_rate": {
+   "cv": 1.0,
+   "global": 1.0,
+   "classaware": 1.0
+  },
+  "collisions": {
+   "cv": 1,
+   "global": 0,
+   "classaware": 0
+  },
+  "near_misses": {
+   "cv": 5,
+   "global": 5,
+   "classaware": 7
+  },
+  "worst_clearance_m": {
+   "cv": -0.1284,
+   "global": 0.123,
+   "classaware": 0.0687
+  },
+  "mean_clearance_m": {
+   "cv": 0.6579,
+   "global": 0.6676,
+   "classaware": 0.6649
+  },
+  "capability_containment": {
+   "cv": 0.009815,
+   "global": 0.017079,
+   "classaware": 1.0
+  },
+  "observed_containment": {
+   "cv_k2.0": 0.988843,
+   "cv_k1.5": 0.978333,
+   "global": 0.995553,
+   "classaware": 1.0
+  },
+  "region_area_m2": {
+   "cv": 24.2467,
+   "global": 47.308,
+   "classaware": 2151.734
+  },
+  "contract_breaches_live": {
+   "cv": 0,
+   "global": 66,
+   "classaware": 0
+  },
+  "unsafe_profile_events": {
+   "cv": 0,
+   "global": 0,
+   "classaware": 0
+  },
+  "fallback_rate": {
+   "global": 0.0,
+   "classaware": 0.4193
+  }
+ },
+ "functional_tests": {
+  "suites": 13,
+  "failures": 0,
+  "lint_debt_separated": true
+ },
+ "production_config_changed": false,
+ "verdict": "PASS",
+ "hard_blocker": null,
+ "report": "validation/stage5e/STAGE5E_README.md",
+ "ship_cv_interpretation": {
+  "means": "CV-Kalman is recommended as the production/default predictor for the validated simulation + Nav2 architecture.",
+  "does_not_claim": [
+   "CV is universally safest -- it is the only arm that recorded a collision",
+   "CV had zero collisions -- CV had 1, counted against it",
+   "CV statistically outperformed every reachability arm -- no pairwise navigation metric for any pair fell outside its two-sigma band",
+   "CV has better capability containment -- CV is 0.0098, the lowest of the three; class-aware is 1.0000"
+  ],
+  "reliability_side_by_side": {
+   "cv": "45/45 success, 1 collision",
+   "global": "43/43 success, 0 collisions",
+   "classaware": "44/44 success, 0 collisions"
+  },
+  "rests_on": [
+   "reliable navigation",
+   "graded early planner-visible structure",
+   "fewer predictive cells",
+   "stable planner interaction",
+   "bounded computation",
+   "adequate observed prediction performance"
+  ],
+  "does_not_rest_on": "any claim of statistical safety superiority"
+ },
+ "containment_caution": "Capability containment (a worst-case set property) and CV observed/probabilistic coverage (a calibration property at k=1.5 sigma) are NOT the same guarantee and are never combined into a single figure of merit. CV 0.9783 must not be read against class-aware 1.0000 capability containment as commensurable numbers.",
+ "cv_collision": {
+  "trial": "veh_longitudinal_cv_03",
+  "min_clearance_m": -0.1284,
+  "counted_against_cv": true,
+  "relabelled_as_infrastructure": false,
+  "class": "PLANNER_FIELD_COLLAPSE",
+  "causal_evidence": [
+   "the Nav2 collision monitor held the robot command at zero for ~3.60 s (v_nav 0.18-0.20 m/s, v_out 0)",
+   "the scripted vehicle actor remained non-reactive at a constant 0.471 m/s and traversed the stationary robot",
+   "analogous monitor holds appeared in 3 of 5 class-aware trials of the same condition (0.30/0.20/0.10 s)",
+   "hold duration correlates negatively with minimum clearance across all 15 trials of the condition, r = -0.784",
+   "the 13-track proliferation begins at t=8.50 s, AFTER contact at t=8.35 s, so it is a consequence not a cause"
+  ],
+  "conclusion": "the evidence does not establish a unique CV prediction failure"
+ },
+ "global_contract_breaches": {
+  "count": 66,
+  "all_repaired_by_stage5c1_response": true,
+  "ground_truth_actor_speed_max_mps": 0.655,
+  "filtered_estimate_overshoot_mps": [
+   1.098,
+   1.24
+  ],
+  "conclusion": "the runtime observable-breach mechanism worked as designed, but this campaign did NOT validate those events as true physical capability violations -- they were estimator overshoots at corner emergence"
+ },
+ "class_aware_result": {
+  "capability_containment": 1.0,
+  "observed_containment": 1.0,
+  "contract_breaches": 0,
+  "runtime_fallback_rate": 0.4193,
+  "offline_planner_visible_cells_from_0.5s": "529/529 (SATURATED)",
+  "conclusion": "perfect mathematical containment did not translate into any planner-level benefit"
+ },
+ "reversal_and_multi_obstacle": {
+  "included_in_stage5e_three_arm_campaign": false,
+  "reason": "the shared validated Stage-4F runner drives one obstacle at a constant one-way velocity and the shared launch spawns one obstacle; changing either would have broken the freeze and comparability",
+  "historical_evidence_status": "supporting evidence only; NOT part of the Stage-5E three-arm campaign and not counted in the 135 attempted or 132 scored trials",
+  "invalidates_decision": false,
+  "must_remain_stated": true
+ },
+ "explicit_limitations": [
+  "CV collision retained and counted against CV",
+  "no statistically resolved navigation superiority claim for any arm",
+  "reversal and multi-obstacle not included in the final equivalent three-arm campaign",
+  "simulation only -- no real-world validation claimed",
+  "global observable breach events were estimator overshoots in this campaign, not true capability violations",
+  "class-aware perfect containment did not translate to planner benefit"
+ ],
+ "raw_evidence_archive": {
+  "path": "~/predictive_nav_evidence/stage5e_raw_09e96a54.tar.gz",
+  "sha256": "45c695f9754c036005b19ed9ee6ad8770df3e9c00714abaafc50a4c1ffe630cd",
+  "bytes": 5890822,
+  "files": 406,
+  "trial_jsons": 135,
+  "series_jsons": 135,
+  "per_trial_logs": 135,
+  "in_git": false,
+  "note": "kept outside the repository by design; not added to Git"
+ }
+}
